@@ -4,6 +4,7 @@ import SVG from "react-inlinesvg";
 import { connect, useDispatch } from "react-redux";
 import { Prompt, useHistory, useLocation, matchPath } from "react-router-dom";
 import { v4 as uuid } from "uuid";
+import { changeDpiDataUrl } from "changedpi";
 import {
   Button,
   SideBar,
@@ -1251,16 +1252,18 @@ const Dashboard = (props) => {
       const img =
         downloadForm.type === "JPG"
           ? stagesRefs[canvas].current.stage.toDataURL({
-              pixelRatio: window.devicePixelRatio + 1,
+              pixelRatio: window.devicePixelRatio,
               mimeType: "image/jpeg",
             })
           : stagesRefs[canvas].current.stage.toDataURL({
-              pixelRatio: window.devicePixelRatio + 1,
+              pixelRatio: window.devicePixelRatio,
               mimeType: "image/png",
             });
 
+      const daurl15dpi = changeDpiDataUrl(img, 600);
+
       downloadURI(
-        img,
+        daurl15dpi,
         `${canvasAttrs.templateName || savedTemplateData.name}-canvas-${
           i + 1
         }.${downloadForm.type === "JPG" ? "jpg" : "png"}`
@@ -1311,11 +1314,14 @@ const Dashboard = (props) => {
           calculatedWidth = 0;
         }
 
+        const img = stagesRefs[canvas].current.stage.toDataURL({
+          pixelRatio: window.devicePixelRatio,
+          mimeType: "image/jpeg",
+        });
+        const daurl15dpi = changeDpiDataUrl(img, 600);
+
         doc.addImage(
-          stagesRefs[canvas].current.stage.toDataURL({
-            pixelRatio: window.devicePixelRatio + 1,
-            mimeType: "image/jpeg",
-          }),
+          daurl15dpi,
           "JPEG",
           calculatedWidth,
           calculatedHeight,
@@ -1336,18 +1342,13 @@ const Dashboard = (props) => {
 
       stageKeys.map((canvas, i) => {
         if (i !== 0) doc.addPage();
-        doc.addImage(
-          stagesRefs[canvas].current.stage.toDataURL({
-            pixelRatio: window.devicePixelRatio + 1,
-            mimeType: "image/jpeg",
-          }),
-          "JPEG",
-          0,
-          0,
-          width,
-          height,
-          `alias-${i + 1}`
-        );
+
+        const img = stagesRefs[canvas].current.stage.toDataURL({
+          pixelRatio: window.devicePixelRatio,
+          mimeType: "image/jpeg",
+        });
+        const daurl15dpi = changeDpiDataUrl(img, 600);
+        doc.addImage(daurl15dpi, "JPEG", 0, 0, width, height, `alias-${i + 1}`);
       });
 
       doc.save(
