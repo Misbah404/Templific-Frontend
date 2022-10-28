@@ -1,0 +1,591 @@
+/* @import url("../Fonts/AmaticSC-Regular.ttf"); */
+
+@font-face {
+  font-family: "AmaticSC";
+  src: url("../Fonts/AmaticSC-Regular.ttf");
+}
+@font-face {
+  font-family: "CaveatBrush";
+  src: url("../Fonts/CaveatBrush-Regular.ttf") format("truetype");
+}
+@font-face {
+  font-family: "FredokaOne";
+  src: local("FredokaOne"),
+    url("../Fonts/FredokaOne-Regular.ttf") format("truetype");
+}
+@font-face {
+  font-family: "Lora";
+  src: url("../Fonts/Lora-VariableFont_wght.ttf");
+}
+@font-face {
+  font-family: "Parisienne";
+  src: url("../Fonts/Parisienne-Regular.ttf");
+}
+@font-face {
+  font-family: "PetitFormalScript";
+  src: url("../Fonts/PetitFormalScript-Regular.ttf");
+}
+@font-face {
+  font-family: "Sacramento";
+  src: url("../Fonts/Sacramento-Regular.ttf");
+}
+
+@font-face {
+  font-family: "ShadowsIntoLightTwo";
+  src: url("../Fonts/ShadowsIntoLightTwo-Regular.ttf") format("truetype");
+}
+
+* {
+  font-family: "Roboto", sans-serif;
+  padding: 0;
+  margin: 0;
+}
+html body * {
+  padding: 0;
+  margin: 0;
+}
+
+::-webkit-scrollbar {
+  width: 0.8vw; /* width of the entire scrollbar */
+}
+
+::-webkit-scrollbar-track {
+  background: #f3f5fd; /* color of the tracking area */
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: rgb(82, 60, 230); /* color of the scroll thumb */
+  border-radius: 1vw; /* roundness of the scroll thumb */
+  border: 0.3vw solid #f3f5fd; /* creates padding around scroll thumb */
+}
+
+.check-list li {
+  padding-left: 2.5vw;
+  position: relative;
+  list-style: none;
+}
+.check-list li:before {
+  content: "";
+  width: 2vw;
+  height: 1.6vw;
+  background-image: url("../images/checkmark/checkmark.png");
+  background-size: 1.2vw 1.1vw;
+  background-repeat: no-repeat;
+  background-position: center;
+  position: absolute;
+  left: 0;
+}
+
+.font-pacifico {
+  font-family: "Pacifico", cursive !important;
+}
+
+a:hover {
+  text-decoration: none;
+}
+
+.dropdown-toggle::after {
+  content: "\f078";
+  font-family: "Font Awesome 5 Pro";
+  border: 0;
+  vertical-align: initial;
+}
+.dropdown-toggle:active,
+.dropdown-toggle:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+body .row {
+  margin-left: -0.5vw;
+  margin-right: -0.5vw;
+}
+
+body .col-sm-12,
+body .col-sm-11,
+body .col-sm-10,
+body .col-sm-9,
+body .col-sm-8,
+body .col-sm-7,
+body .col-sm-6,
+body .col-sm-5,
+body .col-sm-4,
+body .col-sm-3,
+body .col-sm-2,
+body .col-sm-1 {
+  padding: 0 0.5vw;
+}
+body .col-sm-6 {
+  flex: 0 0 50%;
+  max-width: 50%;
+}
+
+body .btn {
+  font-size: 1vw;
+}
+
+.toast-header {
+  padding: 0.5vw 1vw;
+}
+
+.lightbrown .close {
+  color: #ff9d74;
+  opacity: 1;
+  line-height: 0;
+  position: absolute;
+  top: 1vw;
+  right: 1vw;
+}
+.lightbrown .close span {
+  font-size: 1.7vw;
+  line-height: 1.7vw;
+}
+
+.right-0 {
+  right: 0;
+}
+.left-0 {
+  left: 0;
+}
+.top-0 {
+  top: 0;
+}
+.bottom-0 {
+  bottom: 0;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.modal-dialog {
+  max-width: 26vw;
+  margin: auto;
+}
+.modal-content {
+  border-width: 0;
+  border-radius: 1.2vw;
+}
+body .modal-footer > * {
+  margin: 0;
+}
+
+.st0ty {
+  fill: none;
+}
+.st1ty {
+  fill: #ff9a6f;
+  stroke: #ff9a6f;
+  stroke-miterlimit: 10;
+}
+.st2ty {
+  fill: #ff9a6f;
+}
+
+svg[fill="filled"] path {
+  fill: #fff;
+}
+svg[fill="filled"] circle {
+  stroke: #fff;
+}
+svg[fill="filled"] rect {
+  stroke: #fff;
+}
+
+svg[fill="filled"] text {
+  stroke: #fff;
+}
+
+svg[fill="filled"] tspan {
+  stroke: #fff;
+}
+
+svg[fill="filled"] g {
+  stroke: #fff;
+}
+
+.menu-link:hover,
+.menu-link:hover span,
+.darkPanel .menu-link,
+.darkPanel .menu-link span {
+  color: #fff !important;
+}
+
+.darkPanel .settings svg circle,
+.darkPanel .photos svg path,
+.darkPanel .photos svg circle,
+.darkPanel .photos svg rect,
+.darkPanel .elements svg path,
+.darkPanel .bkground svg path,
+.darkPanel .template svg rect,
+.darkPanel .template svg path,
+.darkPanel .template svg g path,
+.settings:hover svg circle,
+.photos:hover svg path,
+.photos:hover svg circle,
+.photos:hover svg rect,
+.elements:hover svg path,
+.elements:hover path,
+.bkground:hover svg path,
+.template:hover svg path,
+.template:hover svg g path,
+.template_active svg g path,
+.template:hover svg rect {
+  stroke: #fff !important;
+  /* fill: #fff !important; */
+  /* fill: #fff */
+}
+
+.groupTemplate:hover path,
+.groupTemplate:hover svg path {
+  fill: #fff !important;
+  stroke: #fff !important;
+}
+
+.darkPanel .stats svg rect,
+.darkPanel .stats svg path,
+.darkPanel .stats svg g path {
+  fill: #fff !important;
+}
+
+.darkPanel .payment svg path,
+.darkPanel .subscribtion svg path,
+.darkPanel .password svg path,
+.darkPanel .settings svg path,
+.darkPanel .text svg text,
+.payment:hover svg path,
+.subscribtion:hover svg path,
+.password:hover svg path,
+.settings:hover svg path,
+.stats:hover svg path,
+.text:hover svg text {
+  fill: #fff;
+}
+
+.darkPanel .groupTemplate svg path,
+.darkPanel .groupTemplate path {
+  fill: #fff;
+}
+
+input[type="radio"] {
+  -webkit-appearance: none;
+  width: 1.4vw;
+  height: 1.5vw;
+  border: 0.15vw solid rgba(0, 0, 0, 0.2);
+  border-radius: 50%;
+  outline: none;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+input[type="radio"]:before {
+  content: "";
+  width: 0.7vw;
+  height: 0.7vw;
+  margin: auto;
+  border-radius: 50%;
+}
+input[type="radio"]:checked {
+  background: #f3f5fd;
+  border-color: rgb(82, 60, 230);
+}
+input[type="radio"]:checked:before {
+  background: rgb(82, 60, 230);
+}
+.progress-bar {
+  background: rgb(82, 60, 230) !important;
+}
+
+.inner-main {
+  overflow: auto;
+}
+
+.line-height-0 {
+  line-height: 0 !important;
+}
+
+body .dropdown-menu {
+  min-width: 0;
+  width: 13vw;
+  border-radius: 0.6vw;
+  border-width: 0.1vw;
+  padding: 0.7vw 0;
+  box-shadow: 0 0.3vw 0.4vw -0.2vw rgb(0 0 0 / 40%);
+}
+
+body .dropdown-item {
+  padding: 0.8vw 1vw;
+  font-size: 1vw;
+  line-height: 1vw;
+}
+body .dropdown-item:focus,
+body .dropdown-item:hover {
+  background: #f3f5fd;
+}
+
+.darkPanel li .menu-link:hover {
+  background: transparent !important;
+}
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type="number"] {
+  -moz-appearance: textfield !important;
+}
+
+.loadingFontsDiv {
+  font-family: "AmaticSC", "CaveatBrush", "FredokaOne", "Lora", "Parisienne",
+    "PetitFormalScript", "Sacramento", "ShadowsIntoLightTwo";
+}
+
+.AmaticSC {
+  font-family: "AmaticSC";
+}
+.CaveatBrush {
+  font-family: "CaveatBrush";
+}
+.FredokaOne {
+  font-family: "FredokaOne";
+}
+.Lora {
+  font-family: "Lora";
+}
+.Parisienne {
+  font-family: "Parisienne";
+}
+.PetitFormalScript {
+  font-family: "PetitFormalScript";
+}
+.Sacramento {
+  font-family: "Sacramento";
+}
+.ShadowsIntoLightTwo {
+  font-family: "ShadowsIntoLightTwo";
+}
+
+.modal-content {
+  z-index: 0 !important;
+}
+
+/* The container */
+.container {
+  display: block;
+  position: relative;
+  padding-left: 2.5vw;
+  margin-bottom: 0.5vw;
+  cursor: pointer;
+  font-size: 1vw;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Hide the browser's default checkbox */
+.container input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+  border: 0.1vw solid #523ce6;
+}
+
+/* Create a custom checkbox */
+.checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 1.2vw;
+  width: 1.2vw;
+  border: 0.1vw solid #523ce6;
+  /* background-color: transparent; */
+}
+
+/* On mouse-over, add a grey background color */
+.container:hover input ~ .checkmark {
+  background-color: transparent;
+}
+
+/* When the checkbox is checked, add a blue background */
+.container input:checked ~ .checkmark {
+  /* background-color: #2196f3; */
+  border: 1px solid #523ce6;
+}
+
+/* Create the checkmark/indicator (hidden when not checked) */
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+  border: solid #523ce6;
+}
+
+/* Show the checkmark when checked */
+.container input:checked ~ .checkmark:after {
+  display: block;
+}
+
+/* Style the checkmark/indicator */
+.container .checkmark:after {
+  left: 0.5vw;
+  /* top: .05vw; */
+  bottom: 0.2vw;
+  width: 0.5vw;
+  height: 1.1vw;
+  border: solid #523ce6;
+  border-width: 0 0.2vw 0.2vw 0;
+  -webkit-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  transform: rotate(45deg);
+}
+
+.paymentForm .paymentForm .paper {
+  border: 1px solid lightgray;
+  box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.2),
+    0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 2px 1px -1px rgba(0, 0, 0, 0.12);
+  /* height: 550px; */
+  padding: 30px;
+  background: #fafafa;
+  border-radius: 6px;
+  margin-top: 90px;
+}
+.paymentForm .form-half {
+  flex: 0.5;
+}
+
+.paymentForm h1 {
+  color: #32325d;
+  font-weight: 400;
+  line-height: 50px;
+  font-size: 40px;
+  margin: 20px 0;
+  padding: 0;
+}
+.paymentForm .Checkout {
+  margin: 0 auto;
+  max-width: 800px;
+  box-sizing: border-box;
+  padding: 0 5px;
+}
+.paymentForm label {
+  color: #6b7c93;
+  font-weight: 300;
+  letter-spacing: 0.025em;
+}
+.paymentForm button {
+  white-space: nowrap;
+  border: 0;
+  outline: 0;
+  display: inline-block;
+  height: 40px;
+  line-height: 40px;
+  padding: 0 14px;
+  box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.08);
+  color: #fff;
+  border-radius: 4px;
+  font-size: 15px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+  background-color: #6772e5;
+  text-decoration: none;
+  -webkit-transition: all 150ms ease;
+  transition: all 150ms ease;
+  margin-top: 10px;
+}
+.paymentForm form {
+  margin-bottom: 40px;
+  padding-bottom: 40px;
+  border-bottom: 3px solid #e6ebf1;
+}
+
+.paymentForm input,
+.paymentForm .StripeElement {
+  display: block;
+  margin: 10px 0 20px 0;
+  /* max-width: 600px; */
+  padding: 20px 24px;
+  font-size: 1em;
+  box-shadow: rgba(50, 50, 93, 0.14902) 0px 1px 3px,
+    rgba(0, 0, 0, 0.0196078) 0px 1px 0px;
+  border: 0;
+  outline: 0;
+  background: white;
+
+  min-height: 3.5vw;
+  padding: 1vw;
+  margin-bottom: 1vw;
+  border-radius: 0.45vw;
+  font-size: 1.2vw !important;
+  font-weight: 500;
+  box-sizing: border-box;
+  border: 0.2vw solid #fff;
+}
+
+.paymentForm input:focus,
+.paymentForm .StripeElement--focus {
+  border-color: rgb(82 60 230 / 70%);
+}
+.paymentForm input::placeholder {
+  color: #aab7c4;
+}
+.paymentForm input:focus,
+.paymentForm .StripeElement--focus {
+  border: 0.2vw solid rgb(82 60 230 / 70%);
+}
+.paymentForm .StripeElement.IdealBankElement,
+.paymentForm .StripeElement.PaymentRequestButton {
+  padding: 0;
+}
+
+.paypal-button > .paypal-button-label-container * {
+  height: 5vw !important;
+}
+
+.__PrivateStripeElement-input {
+  font-size: 2vw !important;
+}
+
+.dropdown-toggle::after {
+  content: none !important;
+}
+
+.show > .btn-primary.dropdown-toggle:focus {
+  box-shadow: none;
+}
+
+.customScrollBar::-webkit-scrollbar {
+  width: 0.3vw;
+}
+
+.customScrollBar::-webkit-scrollbar-thumb {
+  background-color: rgb(82, 60, 230);
+  border-radius: 0.2vw;
+  border: 0.3vw solid #593fe9;
+}
+
+.customScrollBar::-webkit-scrollbar-track {
+  background: #dbdbdb;
+  border-radius: 0.2vw;
+}
+
+#canvas-container {
+  height: 60vh;
+  width: 60vw;
+  position: relative;
+}
+
+@media (min-width: 768px) {
+  #canvas-container {
+    height: auto;
+    width: auto;
+  }
+}

@@ -1,0 +1,15 @@
+<svg id="Mail-Icon" xmlns="http://www.w3.org/2000/svg" width="111" height="44" viewBox="0 0 111 44">
+  <g id="Mail-Icon-2" data-name="Mail-Icon">
+    <rect id="Rectangle" width="18" height="3" rx="1.5" transform="translate(14 13)" fill="#ffda70"/>
+    <rect id="Rectangle-2" data-name="Rectangle" width="23" height="3" rx="1.5" transform="translate(0 23)" fill="#ffda70"/>
+    <rect id="Rectangle-3" data-name="Rectangle" width="27" height="3" rx="1.5" transform="translate(6 33)" fill="#ffda70"/>
+    <rect id="Rectangle-4" data-name="Rectangle" width="67" height="44" rx="3" transform="translate(44)" fill="#562de9"/>
+    <g id="Mail-Icon-3" data-name="Mail-Icon" transform="translate(46 2)">
+      <g id="Group">
+        <path id="Rectangle_Copy" data-name="Rectangle Copy" d="M2.133-1.77A1,1,0,0,0,2.772,0H60.243a1,1,0,0,0,.641-1.767L33.23-24.871a2.534,2.534,0,0,0-3.243-.006Z" transform="translate(0 39)" fill="#fff"/>
+        <path id="Path_2" data-name="Path 2" d="M4.887,0a2,2,0,0,0-1.4,3.426l23.943,23.54A3,3,0,0,0,31.6,27L56.372,3.45A2,2,0,0,0,54.994,0Z" transform="translate(2)" fill="#fff" stroke="#562de9" stroke-miterlimit="10" stroke-width="3"/>
+        <path id="Path_2-2" data-name="Path 2" d="M2.456,0a1,1,0,0,0-.7,1.715L22.519,21.988a3,3,0,0,0,4.155.035l21.5-20.3A1,1,0,0,0,47.484,0Z" transform="translate(9 2)" fill="#ffdc6a"/>
+      </g>
+    </g>
+  </g>
+</svg>

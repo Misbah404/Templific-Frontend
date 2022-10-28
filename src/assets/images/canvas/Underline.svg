@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="25" height="24" viewBox="0 0 16 24">
+  <text id="Underline" transform="translate(0 20)" fill="#080808" font-size="20" align="center" font-family="Lato-Medium, Lato" font-weight="500" letter-spacing="0.013em">
+    <tspan x="0" y="0"></tspan>
+    <tspan y="0" x="0" text-decoration="underline">U</tspan>
+    <tspan y="0" x="0" font-size="15" text-decoration="underline"></tspan>
+  </text>
+</svg>

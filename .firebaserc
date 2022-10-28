@@ -1,0 +1,7 @@
+{
+  "projects": {
+    "default": "templific-e364c",
+    "staging": "templific-staging"
+  },
+  "targets": {}
+}

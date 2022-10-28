@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="70" height="70" viewBox="0 0 70 70">
+  <g id="Group_65" data-name="Group 65" transform="translate(-327 -193)">
+    <g id="Group_4" data-name="Group 4" transform="translate(327 193)">
+      <g id="Group_7" data-name="Group 7">
+        <circle id="Oval" cx="35" cy="35" r="35" fill="#ffece7"/>
+      </g>
+    </g>
+    <g id="CC" transform="translate(338 212)">
+      <g id="Group_6" data-name="Group 6">
+        <path id="Fill_1" data-name="Fill 1" d="M23,34H4.073a3.849,3.849,0,0,1-4-3.138.2.2,0,0,0-.046-.073c-.009-.011-.019-.022-.027-.034V3.253C.009,3.236.019,3.22.029,3.2A.377.377,0,0,0,.08,3.1,3.841,3.841,0,0,1,4.024,0C9.653,0,15.376,0,20.911,0L41.884,0A3.865,3.865,0,0,1,46,4.135V29.906A3.863,3.863,0,0,1,41.934,34ZM2,15v.5q0,2.385,0,4.769,0,4.769,0,9.538A1.95,1.95,0,0,0,4.17,32H41.823A1.95,1.95,0,0,0,44,29.812q0-7.154,0-14.306V15ZM2,8v5H44V8ZM5,2.012c-.44,0-.8,0-1.135.009A1.745,1.745,0,0,0,2.053,3.413,11.842,11.842,0,0,0,2.015,5.2c.007.263.015.534.015.8H43.987c0-.2,0-.393-.006-.581-.007-.408-.013-.792.012-1.177a2.052,2.052,0,0,0-.51-1.583A2.321,2.321,0,0,0,41.733,2h-.009c-6.767.016-13.336.018-18.869.018H6.644l-.82,0Z" transform="translate(0 0)" fill="#ff9a6f"/>
+        <rect id="Rectangle" width="43" height="6" transform="translate(2 7)" fill="#ff9a6f"/>
+      </g>
+    </g>
+    <rect id="Rectangle-2" data-name="Rectangle" width="28" height="2" rx="0.5" transform="translate(343 233)" fill="#ff9a6f"/>
+    <rect id="Rectangle-3" data-name="Rectangle" width="19" height="2" rx="0.5" transform="translate(343 237)" fill="#ff9a6f"/>
+  </g>
+</svg>

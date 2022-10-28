@@ -1,0 +1,15 @@
+<svg id="Transperency-Icon" xmlns="http://www.w3.org/2000/svg" width="25" height="23" viewBox="0 0 25 23">
+  <rect id="Rectangle" width="5" height="5" rx="1"/>
+  <rect id="Rectangle-2" data-name="Rectangle" width="5" height="5" rx="1" transform="translate(5 4)" fill="rgba(0,0,0,0.7)"/>
+  <rect id="Rectangle-3" data-name="Rectangle" width="5" height="5" rx="1" transform="translate(5 13)" fill="rgba(0,0,0,0.7)"/>
+  <rect id="Rectangle-4" data-name="Rectangle" width="5" height="5" rx="1" transform="translate(15 4)" fill="rgba(0,0,0,0.3)"/>
+  <rect id="Rectangle-5" data-name="Rectangle" width="5" height="5" rx="1" transform="translate(15 13)" fill="rgba(0,0,0,0.3)"/>
+  <rect id="Rectangle-6" data-name="Rectangle" width="5" height="5" rx="1" transform="translate(0 9)"/>
+  <rect id="Rectangle-7" data-name="Rectangle" width="5" height="5" rx="1" transform="translate(0 18)"/>
+  <rect id="Rectangle-8" data-name="Rectangle" width="5" height="5" rx="1" transform="translate(10)" fill="rgba(0,0,0,0.5)"/>
+  <rect id="Rectangle-9" data-name="Rectangle" width="5" height="5" rx="1" transform="translate(10 9)" fill="rgba(0,0,0,0.5)"/>
+  <rect id="Rectangle-10" data-name="Rectangle" width="5" height="5" rx="1" transform="translate(10 18)" fill="rgba(0,0,0,0.5)"/>
+  <rect id="Rectangle-11" data-name="Rectangle" width="5" height="5" rx="1" transform="translate(20)" fill="rgba(0,0,0,0.1)"/>
+  <rect id="Rectangle-12" data-name="Rectangle" width="5" height="5" rx="1" transform="translate(20 9)" fill="rgba(0,0,0,0.1)"/>
+  <rect id="Rectangle-13" data-name="Rectangle" width="5" height="5" rx="1" transform="translate(20 18)" fill="rgba(0,0,0,0.1)"/>
+</svg>
