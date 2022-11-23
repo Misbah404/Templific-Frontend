@@ -38,7 +38,6 @@ const TextTools = ({ selectElement, selectedStage, zoomValue, fonts }) => {
 
   const [textColor, setTextColor] = useState("#000");
   const [shadowColor, setShadowColor] = useState(selectElement.shadowColor);
-  console.log({selectElement})
 
   useEffect(() => {
     setTextState({

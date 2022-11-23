@@ -10,6 +10,9 @@ const ArrowKonva = forwardRef((props, ref) => {
     handleSelectElement,
     zoomValue,
     trRef,
+    strokeEnabled,
+		strokeRef,
+		setStrokeElement,
   } = props;
 
   const shapeRef = createRef();
@@ -21,6 +24,13 @@ const ArrowKonva = forwardRef((props, ref) => {
       trRef.current.getLayer().batchDraw();
     }
   }, [isSelected]);
+
+  useEffect(() => {
+		if (strokeEnabled) {
+			strokeRef.current.nodes([shapeRef.current]);
+			strokeRef.current.getLayer().batchDraw();
+		}
+	}, [strokeEnabled]);
 
   const handleDragEnd = (e) => {
     if (!arrow.isLocked) {
@@ -79,6 +89,8 @@ const ArrowKonva = forwardRef((props, ref) => {
         opacity={arrow.opacity}
         height={arrow.height}
         width={50}
+        onMouseOver={() => setStrokeElement(arrow)}
+				onMouseOut={() => setStrokeElement({})}
       />
 
       {/* {isSelected && (

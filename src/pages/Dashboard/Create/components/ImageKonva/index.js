@@ -1,120 +1,134 @@
 import {
-  forwardRef,
-  useEffect,
-  useImperativeHandle,
-  useMemo,
-  useState,
+	forwardRef,
+	useEffect,
+	useImperativeHandle,
+	useMemo,
+	useState,
 } from "react";
 import { createRef } from "react";
 import { Image } from "react-konva";
 import "gifler";
 
+import { Colors } from "../../../../../theme";
+
 const ImageKonva = forwardRef((props, ref) => {
-  const {
-    image,
-    zoomValue,
-    isSelected,
-    handleImageDrag,
-    handleSelectElement,
-    handleDeleteImage,
-    trRef,
-    user,
-  } = props;
+	const {
+		image,
+		zoomValue,
+		isSelected,
+		handleImageDrag,
+		handleSelectElement,
+		handleDeleteImage,
+		trRef,
+		user,
+		strokeEnabled,
+		strokeRef,
+		setStrokeElement,
+	} = props;
 
-  const [imageSrc, setImageSrc] = useState(null);
+	const [imageSrc, setImageSrc] = useState(null);
 
-  let imageData = {};
+	let imageData = {};
 
-  const imageRef = createRef();
+	const imageRef = createRef();
 
-  useEffect(() => {
-    if (isSelected && imageSrc) {
-      trRef.current.nodes([imageRef.current]);
-      trRef.current.getLayer().batchDraw();
-    }
-  }, [isSelected, image, imageSrc]);
+	useEffect(() => {
+		if (isSelected && imageSrc) {
+			trRef.current.nodes([imageRef.current]);
+			trRef.current.getLayer().batchDraw();
+		}
+	}, [isSelected, image, imageSrc]);
 
-  const handleSetImageSrc = () => {
-    setImageSrc(imageData);
-  };
+	useEffect(() => {
+		if (strokeEnabled) {
+			strokeRef.current.nodes([imageRef.current]);
+			strokeRef.current.getLayer().batchDraw();
+		}
+	}, [strokeEnabled]);
 
-  useEffect(() => {
-    imageData = new window.Image();
-    imageData.addEventListener("load", handleSetImageSrc);
-    imageData.crossOrigin = "Anonymous";
-    imageData.src = `${image.src}?${Math.random()}`;
+	const handleSetImageSrc = () => {
+		setImageSrc(imageData);
+	};
 
-    return () => {
-      imageData.removeEventListener("load", handleSetImageSrc);
-    };
-  }, [image.src]);
+	useEffect(() => {
+		imageData = new window.Image();
+		imageData.addEventListener("load", handleSetImageSrc);
+		imageData.crossOrigin = "Anonymous";
+		imageData.src = `${image.src}?${Math.random()}`;
 
-  const handleDragEnd = (e) => {
-    if (!image.isLocked) {
-      const newRect = {
-        ...image,
-        x: e.target.x() / (zoomValue / 100),
-        y: e.target.y() / (zoomValue / 100),
-      };
+		return () => {
+			imageData.removeEventListener("load", handleSetImageSrc);
+		};
+	}, [image.src]);
 
-      handleImageDrag(newRect.id, newRect);
-    }
-  };
+	const handleDragEnd = (e) => {
+		if (!image.isLocked) {
+			const newRect = {
+				...image,
+				x: e.target.x() / (zoomValue / 100),
+				y: e.target.y() / (zoomValue / 100),
+			};
 
-  const handleTransformEnd = (e) => {
-    if (!image.isLocked) {
-      const node = imageRef.current;
-      const scaleX = node.scaleX();
-      const scaleY = node.scaleY();
+			handleImageDrag(newRect.id, newRect);
+		}
+	};
 
-      node.scaleX(1);
-      node.scaleY(1);
+	const handleTransformEnd = (e) => {
+		if (!image.isLocked) {
+			const node = imageRef.current;
+			const scaleX = node.scaleX();
+			const scaleY = node.scaleY();
 
-      const newImage = {
-        ...image,
-        x: node.x() / (zoomValue / 100),
-        y: node.y() / (zoomValue / 100),
-        width: Math.max(5, node.width() * scaleX) / (zoomValue / 100),
-        height: Math.max(node.height() * scaleY) / (zoomValue / 100),
-      };
+			node.scaleX(1);
+			node.scaleY(1);
 
-      handleImageDrag(newImage.id, newImage);
-    }
-  };
+			const newImage = {
+				...image,
+				x: node.x() / (zoomValue / 100),
+				y: node.y() / (zoomValue / 100),
+				width: Math.max(5, node.width() * scaleX) / (zoomValue / 100),
+				height: Math.max(node.height() * scaleY) / (zoomValue / 100),
+			};
 
-  const handleClick = () => {
-    handleSelectElement(imageRef);
-  };
+			handleImageDrag(newImage.id, newImage);
+		}
+	};
 
-  useImperativeHandle(ref, () => {
-    return {
-      ...ref?.current,
-    };
-  });
+	const handleClick = () => {
+		handleSelectElement(imageRef);
+	};
 
-  return (
-    <>
-      {imageSrc !== null && (
-        <Image
-          {...image}
-          ref={imageRef}
-          draggable={!image.isLocked}
-          onDragEnd={handleDragEnd}
-          onClick={handleClick}
-          onTap={handleClick}
-          onTransformEnd={handleTransformEnd}
-          image={imageSrc}
-          x={image.x * (zoomValue / 100)}
-          y={image.y * (zoomValue / 100)}
-          width={image.width * (zoomValue / 100)}
-          height={image.height * (zoomValue / 100)}
-          name="image"
-          opacity={image.opacity}
-          crossOrigin="Anonymous"
-        />
-      )}
-    </>
-  );
+	useImperativeHandle(ref, () => {
+		return {
+			...ref?.current,
+		};
+	});
+
+	return (
+		<>
+			{imageSrc !== null && (
+				<Image
+					{...image}
+					ref={imageRef}
+					draggable={!image.isLocked}
+					onDragEnd={handleDragEnd}
+					onClick={handleClick}
+					onTap={handleClick}
+					onTransformEnd={handleTransformEnd}
+					image={imageSrc}
+					x={image.x * (zoomValue / 100)}
+					y={image.y * (zoomValue / 100)}
+					width={image.width * (zoomValue / 100)}
+					height={image.height * (zoomValue / 100)}
+					name="image"
+					opacity={image.opacity}
+					crossOrigin="Anonymous"
+					onMouseOver={() => setStrokeElement(image)}
+					onMouseOut={() => setStrokeElement({})}
+				/>
+			)}
+		</>
+	);
 });
 
 export default ImageKonva;

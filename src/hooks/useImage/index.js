@@ -12,14 +12,15 @@ const useImage = (
   setAllElements
 ) => {
   const handleAddImage = (key, image) => {
-    const height = canvasData.canvasInPx.canvasHeight / 2;
-    const width = canvasData.canvasInPx.canvasWidth / 2;
+    // const height = canvasData.canvasInPx.canvasHeight / 2;
+    const height = canvasData.canvasInPx.canvasHeight * .2;
+    // const width = canvasData.canvasInPx.canvasWidth / 2;
     let newImage = {
       id: uuid(),
       y: (canvasData.canvasInPx.canvasHeight - height) / 2,
-      x: (canvasData.canvasInPx.canvasWidth - width) / 2,
+      x: (canvasData.canvasInPx.canvasWidth - height) / 2,
       fontSize: 20 / (zoomValue / 100),
-      width,
+      width: height,
       height,
       isLocked: false,
       src: image,

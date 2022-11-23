@@ -207,8 +207,6 @@ const UploadFileModal = (props) => {
     },
   });
 
-  console.log({ fontsFace });
-
   const [addElementFile] = useMutation(UPLOAD_ELEMENT_DATA, {
     onCompleted(data) {
       setImagesBlob((state) => ({

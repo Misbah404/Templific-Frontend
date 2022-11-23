@@ -1,125 +1,137 @@
 import {
-  forwardRef,
-  useEffect,
-  useImperativeHandle,
-  useMemo,
-  useRef,
+	forwardRef,
+	useEffect,
+	useImperativeHandle,
+	useMemo,
+	useRef,
 } from "react";
 import { Image } from "react-konva";
 import "gifler";
 
 const GifImage = forwardRef((props, ref) => {
-  const {
-    image,
-    zoomValue,
-    isSelected,
-    handleImageDrag,
-    handleSelectElement,
-    handleDeleteImage,
-    trRef,
-  } = props;
+	const {
+		image,
+		zoomValue,
+		isSelected,
+		handleImageDrag,
+		handleSelectElement,
+		handleDeleteImage,
+		trRef,
+		strokeEnabled,
+		strokeRef,
+		setStrokeElement,
+	} = props;
 
-  const canvas = useMemo(() => {
-    const node = document.createElement("canvas");
-    return node;
-  }, []);
+	const canvas = useMemo(() => {
+		const node = document.createElement("canvas");
+		return node;
+	}, []);
 
-  const imageRef = useRef();
+	const imageRef = useRef();
 
-  useEffect(() => {
-    if (isSelected) {
-      trRef.current.nodes([imageRef.current]);
-      trRef.current.getLayer().batchDraw();
-    }
-  }, [isSelected]);
+	useEffect(() => {
+		if (isSelected) {
+			trRef.current.nodes([imageRef.current]);
+			trRef.current.getLayer().batchDraw();
+		}
+	}, [isSelected]);
 
-  useEffect(() => {
-    // save animation instance to stop it on unmount
-    let anim;
-    const imageSrc = `${image.src}?${Math.random()}`;
-    window.gifler(imageSrc).get((a) => {
-      anim = a;
-      anim.animateInCanvas(canvas);
-      anim.onDrawFrame = (ctx, frame) => {
-        ctx.drawImage(frame.buffer, frame.x, frame.y);
-        imageRef?.current?.getLayer()?.draw();
-      };
-    });
-    return () => anim.stop();
-  }, [image.src, canvas]);
+	useEffect(() => {
+		if (strokeEnabled) {
+			strokeRef.current.nodes([imageRef.current]);
+			strokeRef.current.getLayer().batchDraw();
+		}
+	}, [strokeEnabled]);
 
-  const handleDragEnd = (e) => {
-    if (!image.isLocked) {
-      const newRect = {
-        ...image,
-        x: e.target.x() / (zoomValue / 100),
-        y: e.target.y() / (zoomValue / 100),
-      };
+	useEffect(() => {
+		// save animation instance to stop it on unmount
+		let anim;
+		const imageSrc = `${image.src}?${Math.random()}`;
+		window.gifler(imageSrc).get((a) => {
+			anim = a;
+			anim.animateInCanvas(canvas);
+			anim.onDrawFrame = (ctx, frame) => {
+				ctx.drawImage(frame.buffer, frame.x, frame.y);
+				imageRef?.current?.getLayer()?.draw();
+			};
+		});
+		return () => anim.stop();
+	}, [image.src, canvas]);
 
-      handleImageDrag(newRect.id, newRect);
-    }
-  };
+	const handleDragEnd = (e) => {
+		if (!image.isLocked) {
+			const newRect = {
+				...image,
+				x: e.target.x() / (zoomValue / 100),
+				y: e.target.y() / (zoomValue / 100),
+			};
 
-  const handleTransformEnd = (e) => {
-    if (!image.isLocked) {
-      const node = imageRef.current;
-      const scaleX = node.scaleX();
-      const scaleY = node.scaleY();
+			handleImageDrag(newRect.id, newRect);
+		}
+	};
 
-      node.scaleX(1);
-      node.scaleY(1);
+	const handleTransformEnd = (e) => {
+		if (!image.isLocked) {
+			const node = imageRef.current;
+			const scaleX = node.scaleX();
+			const scaleY = node.scaleY();
 
-      const newImage = {
-        ...image,
-        x: node.x() / (zoomValue / 100),
-        y: node.y() / (zoomValue / 100),
-        width: Math.max(5, node.width() * scaleX) / (zoomValue / 100),
-        height: Math.max(node.height() * scaleY) / (zoomValue / 100),
-      };
+			node.scaleX(1);
+			node.scaleY(1);
 
-      handleImageDrag(newImage.id, newImage);
-    }
-  };
+			const newImage = {
+				...image,
+				x: node.x() / (zoomValue / 100),
+				y: node.y() / (zoomValue / 100),
+				width: Math.max(5, node.width() * scaleX) / (zoomValue / 100),
+				height: Math.max(node.height() * scaleY) / (zoomValue / 100),
+			};
 
-  const handleClick = () => {
-    handleSelectElement(imageRef);
-  };
+			handleImageDrag(newImage.id, newImage);
+		}
+	};
 
-  const handlePositions = (type) => {
-    if (type === "send to front") imageRef?.current?.moveToTop();
-    if (type === "send forward") imageRef?.current?.moveUp();
-    if (type === "send back") imageRef?.current?.moveToBottom();
-    if (type === "send backward") imageRef?.current?.moveDown();
-  };
+	const handleClick = () => {
+		handleSelectElement(imageRef);
+	};
 
-  useImperativeHandle(ref, () => {
-    return {
-      handlePositions,
-      ...ref?.current,
-    };
-  });
+	const handlePositions = (type) => {
+		if (type === "send to front") imageRef?.current?.moveToTop();
+		if (type === "send forward") imageRef?.current?.moveUp();
+		if (type === "send back") imageRef?.current?.moveToBottom();
+		if (type === "send backward") imageRef?.current?.moveDown();
+	};
 
-  return (
-    <>
-      <Image
-        {...image}
-        ref={imageRef}
-        draggable={!image.isLocked}
-        onDragEnd={handleDragEnd}
-        onClick={handleClick}
-        onTap={handleClick}
-        onTransformEnd={handleTransformEnd}
-        image={canvas}
-        x={image.x * (zoomValue / 100)}
-        y={image.y * (zoomValue / 100)}
-        width={image.width * (zoomValue / 100)}
-        height={image.height * (zoomValue / 100)}
-        name="image"
-        opacity={image.opacity}
-        crossOrigin="Anonymous"
-      />
-    </>
-  );
+	useImperativeHandle(ref, () => {
+		return {
+			handlePositions,
+			...ref?.current,
+		};
+	});
+
+	return (
+		<>
+			<Image
+				{...image}
+				ref={imageRef}
+				draggable={!image.isLocked}
+				onDragEnd={handleDragEnd}
+				onClick={handleClick}
+				onTap={handleClick}
+				onTransformEnd={handleTransformEnd}
+				image={canvas}
+				x={image.x * (zoomValue / 100)}
+				y={image.y * (zoomValue / 100)}
+				width={image.width * (zoomValue / 100)}
+				height={image.height * (zoomValue / 100)}
+				name="image"
+				opacity={image.opacity}
+				crossOrigin="Anonymous"
+        onMouseOver={() => setStrokeElement(image)}
+        onMouseOut={() => setStrokeElement({})}
+			/>
+		</>
+	);
 });
 
 export default GifImage;

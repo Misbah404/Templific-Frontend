@@ -13,152 +13,159 @@ import { logoutModal } from "../../actions/LayoutAction";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
 
 const ElementSidebar = (props) => {
-  const { selectedStage } = props;
+	const { selectedStage } = props;
 
-  const dispatch = useDispatch();
+	const dispatch = useDispatch();
 
-  const [search, setSearch] = useState("");
-  const [uploadModal, setUploadModal] = useState(false);
-  const [displayFiles, setDisplayFiles] = useState({});
+	console.log({ elements: props.elements });
 
-  const filesExtensions = ["svg", "jpg", "jpeg", "png", "gif"];
+	const [search, setSearch] = useState("");
+	const [uploadModal, setUploadModal] = useState(false);
+	const [displayFiles, setDisplayFiles] = useState({});
 
-  const [deleteUserElement] = useMutation(DELETE_USER_ELEMENT, {
-    onError(err) {
-      console.error(err);
-      if (err.message.includes("Received status code 401")) {
-        dispatch(logoutModal({ data: true }));
-      }
-    },
-  });
+	const filesExtensions = ["svg", "jpg", "jpeg", "png", "gif"];
 
-  useEffect(() => {
-    if (props.elements && Object.keys(props.elements).length > 0)
-      setDisplayFiles(props.elements);
-  }, [props.elements]);
+	const [deleteUserElement] = useMutation(DELETE_USER_ELEMENT, {
+		onError(err) {
+			console.error(err);
+			if (err.message.includes("Received status code 401")) {
+				dispatch(logoutModal({ data: true }));
+			}
+		},
+	});
 
-  const handleChange = (e) => {
-    setSearch(e.target.value);
-  };
+	useEffect(() => {
+		if (props.elements && Object.keys(props.elements).length > 0)
+			setDisplayFiles(props.elements);
+	}, [props.elements]);
 
-  const handleDeleteElement = (elementKey) => {
-    dispatch(deleteElementBlob({ elementKey }));
-    const allFiles = { ...displayFiles };
-    allFiles[elementKey] = {
-      ...allFiles[elementKey],
-      isDeleted: true,
-    };
+	const handleChange = (e) => {
+		setSearch(e.target.value);
+	};
 
-    setDisplayFiles(allFiles);
+	const handleDeleteElement = (elementKey) => {
+		dispatch(deleteElementBlob({ elementKey }));
+		const allFiles = { ...displayFiles };
+		allFiles[elementKey] = {
+			...allFiles[elementKey],
+			isDeleted: true,
+		};
 
-    if (displayFiles[elementKey] && displayFiles[elementKey].id) {
-      deleteUserElement({ variables: { id: displayFiles[elementKey].id } });
-    }
-  };
+		setDisplayFiles(allFiles);
 
-  const handleAddElement = (imageKey) => {
-    selectedStage?.canvas?.current?.handleAddImage(
-      imageKey,
-      displayFiles[imageKey].url
-    );
-  };
+		if (displayFiles[elementKey] && displayFiles[elementKey].id) {
+			deleteUserElement({ variables: { id: displayFiles[elementKey].id } });
+		}
+	};
 
-  const filteredElements = Object.keys(displayFiles).filter(
-    (imgName) =>
-      imgName.toLowerCase().match(search.toLowerCase()) &&
-      !displayFiles[imgName]?.isDeleted
-  );
+	const handleAddElement = (imageKey) => {
+		selectedStage?.canvas?.current?.handleAddImage(
+			imageKey,
+			displayFiles[imageKey].url
+		);
+	};
 
-  return (
-    <div className={`${css(styles.main)}`}>
-      <TextField
-        placeholder='Search Elements'
-        icon={Images.searchBarIcon}
-        styles={[styles.formInput]}
-        iconStyles={[styles.searchIcon]}
-        value={search}
-        onChange={handleChange}
-      />
+	const filteredElements = Object.keys(displayFiles).filter(
+		(imgName) =>
+			imgName.toLowerCase().match(search.toLowerCase()) &&
+			!displayFiles[imgName]?.isDeleted
+	);
 
-      <div
-        className={`d-flex justify-content-start align-items-center ${css(
-          styles.colorPickerRow
-        )}`}>
-        <OverlayTrigger
-          overlay={<Tooltip>Upload Elements</Tooltip>}
-          placement={"bottom"}>
-          {({ ref, ...triggerHandler }) => (
-            <button
-              className={`${css(styles.addIconWrapper)}`}
-              style={{ border: `0.2vw solid #fff` }}
-              onClick={() => setUploadModal(true)}
-              {...triggerHandler}>
-              <SVG
-                ref={ref}
-                width='auto'
-                height='auto'
-                src={Images.plusIcon}
-                className={`${css(styles.addIcon)}`}
-              />
-            </button>
-          )}
-        </OverlayTrigger>
+	return (
+		<div className={`${css(styles.main)}`}>
+			<TextField
+				placeholder="Search Elements"
+				icon={Images.searchBarIcon}
+				styles={[styles.formInput]}
+				iconStyles={[styles.searchIcon]}
+				value={search}
+				onChange={handleChange}
+			/>
 
-        <span className={`${css(styles.uploadText)}`}>Upload elements</span>
-      </div>
+			<div
+				className={`d-flex justify-content-start align-items-center ${css(
+					styles.colorPickerRow
+				)}`}
+			>
+				<OverlayTrigger
+					overlay={<Tooltip>Upload Elements</Tooltip>}
+					placement={"bottom"}
+				>
+					{({ ref, ...triggerHandler }) => (
+						<button
+							className={`${css(styles.addIconWrapper)}`}
+							style={{ border: `0.2vw solid #fff` }}
+							onClick={() => setUploadModal(true)}
+							{...triggerHandler}
+						>
+							<SVG
+								ref={ref}
+								width="auto"
+								height="auto"
+								src={Images.plusIcon}
+								className={`${css(styles.addIcon)}`}
+							/>
+						</button>
+					)}
+				</OverlayTrigger>
 
-      <div className={`d-flex flex-wrap align-item-`}>
-        {filteredElements &&
-          filteredElements.map((elementKey) => (
-            <div
-              key={elementKey}
-              className={`d-flex justify-content-center flex-column align-items-center ${css(
-                styles.imageBox
-              )}`}>
-              <img
-                src={displayFiles[elementKey].url}
-                key={elementKey}
-                alt={elementKey}
-                onClick={() => handleAddElement(elementKey)}
-                className={`${css(styles.imageBoxImage)}`}
-              />
+				<span className={`${css(styles.uploadText)}`}>Upload elements</span>
+			</div>
 
-              <div
-                className={`d-flex justify-content-between align-items-center ${css(
-                  styles.imageDeleteWrapper
-                )}`}>
-                <span className={`${css(styles.imageName)}`}>
-                  {elementKey.length > 17
-                    ? elementKey.substring(0, 13) + "..."
-                    : elementKey}
-                </span>
-                {displayFiles[elementKey] &&
-                  !displayFiles[elementKey].default && (
-                    <SVG
-                      width='auto'
-                      height='auto'
-                      src={Images.trashIcon}
-                      className={`${css(styles.imageDeleteIcon)}`}
-                      onClick={() => handleDeleteElement(elementKey)}
-                    />
-                  )}
-              </div>
-            </div>
-          ))}
-      </div>
+			<div className={`d-flex flex-wrap align-item-`}>
+				{filteredElements &&
+					filteredElements.map((elementKey) => (
+						<div
+							key={elementKey}
+							className={`d-flex justify-content-center flex-column align-items-center ${css(
+								styles.imageBox
+							)}`}
+						>
+							<img
+								src={displayFiles[elementKey].url}
+								key={elementKey}
+								alt={elementKey}
+								onClick={() => handleAddElement(elementKey)}
+								className={`${css(styles.imageBoxImage)}`}
+							/>
 
-      <UploadFileModal
-        uploadModal={uploadModal}
-        setUploadModal={setUploadModal}
-        filesExtensions={filesExtensions}
-        type={"elements"}
-      />
-    </div>
-  );
+							<div
+								className={`d-flex justify-content-between align-items-center ${css(
+									styles.imageDeleteWrapper
+								)}`}
+							>
+								<span className={`${css(styles.imageName)}`}>
+									{elementKey.length > 17
+										? elementKey.substring(0, 13) + "..."
+										: elementKey}
+								</span>
+								{displayFiles[elementKey] &&
+									!displayFiles[elementKey].default && (
+										<SVG
+											width="auto"
+											height="auto"
+											src={Images.trashIcon}
+											className={`${css(styles.imageDeleteIcon)}`}
+											onClick={() => handleDeleteElement(elementKey)}
+										/>
+									)}
+							</div>
+						</div>
+					))}
+			</div>
+
+			<UploadFileModal
+				uploadModal={uploadModal}
+				setUploadModal={setUploadModal}
+				filesExtensions={filesExtensions}
+				type={"elements"}
+			/>
+		</div>
+	);
 };
 
 const mapStateToProps = (state) => ({
-  elements: state.canvasData.elements,
+	elements: state.canvasData.elements,
 });
 
 export default connect(mapStateToProps)(ElementSidebar);
