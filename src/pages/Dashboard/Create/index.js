@@ -704,7 +704,7 @@ const Dashboard = (props) => {
 
 		if (
 			e.key.toLowerCase() === "delete" ||
-			e.key.toLowerCase() === "backspace"
+			(e.metaKey && e.key.toLowerCase() === "backspace")
 		) {
 			selectedStage.canvas.current.handleDeleteElement();
 		}
@@ -1227,6 +1227,20 @@ const Dashboard = (props) => {
 
 		const currentZoomValue = zoomValue;
 
+		const moderateValue = 1000;
+		console.log({ canvas: canvasAttrs });
+		// const { canvasHeight, canvasWidth } = canvasAttrs?.canvasInPx;
+		// if (canvasHeight < moderateValue || canvasWidth < moderateValue) {
+		// 	const optimizeValue =
+		// 		canvasWidth <= canvasHeight
+		// 			? canvasWidth / moderateValue
+		// 			: canvasHeight / moderateValue;
+
+		// 			console.log(parseInt(100 / optimizeValue))
+
+		// 	setZoomValue(parseInt(100 / optimizeValue));
+		// } else {
+		// }
 		setZoomValue(100);
 
 		if (downloadForm.bleed) setIsBleed(true);
@@ -1247,7 +1261,6 @@ const Dashboard = (props) => {
 		const zip = new JSZip();
 
 		const downloadURI = (uri, name) => {
-			console.log({ uri });
 			const link = document.createElement("a");
 			link.download = name;
 			link.href = uri;
@@ -1263,19 +1276,18 @@ const Dashboard = (props) => {
 					? stagesRefs[canvas].current.stage.toDataURL({
 							pixelRatio: window.devicePixelRatio,
 							mimeType: "image/jpeg",
+							quality: 1,
 					  })
 					: stagesRefs[canvas].current.stage.toDataURL({
 							pixelRatio: window.devicePixelRatio,
 							mimeType: "image/png",
+							quality: 1,
 					  });
 
 			const daurl15dpi = changeDpiDataUrl(img, 300);
-			console.group({daurl15dpi})
 
 			// img = img.replace(/^data:image\/(png|jpg);base64,/, "")
 			img = daurl15dpi.substr(daurl15dpi.indexOf(",") + 1);
-
-			console.log({ img });
 
 			const fileName = `${
 				canvasAttrs.templateName || savedTemplateData.name
@@ -1286,7 +1298,6 @@ const Dashboard = (props) => {
 
 		zip.generateAsync({ type: "blob" }).then(function (content) {
 			// see FileSaver.js
-			console.log({ content });
 			const url = window.URL.createObjectURL(content);
 			downloadURI(url, canvasAttrs.templateName || savedTemplateData.name);
 		});

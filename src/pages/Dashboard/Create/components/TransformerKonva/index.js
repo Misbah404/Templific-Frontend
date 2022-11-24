@@ -19,7 +19,7 @@ const TransformerKonva = forwardRef((props, ref) => {
 				enabledAnchors={[]}
 				rotateEnabled={false}
 				borderStroke={Colors.themeColor}
-				borderStrokeWidth={3}
+				borderStrokeWidth={1.5}
 			/>
 		);
 	}
@@ -63,8 +63,8 @@ const TransformerKonva = forwardRef((props, ref) => {
 					return oldBox;
 				}
 				if (selectedElement.name === "text") {
-					newBox.width = Math.max(70, newBox.width);
-					newBox.height = Math.max(40, newBox.height);
+					newBox.width = Math.max(20, newBox.width);
+					newBox.height = Math.max(20, newBox.height);
 					return newBox;
 				}
 

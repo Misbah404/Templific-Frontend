@@ -281,20 +281,17 @@ const CustomStage = forwardRef((props, ref) => {
 	};
 
 	const handleCopyNode = () => {
-		if (copyNodeAttrs && Object.keys(copyNodeAttrs).length > 0)
-			setCopyNodeAttrs((oldState) => ({ ...oldState, isCopied: true }));
-		else {
-			if (!_.isEmpty(selectedElement)) {
-				setCopyNodeAttrs((oldState) => ({
-					...oldState,
-					...selectedElement,
-					isCopied: true,
-				}));
-			}
+		// if (copyNodeAttrs && Object.keys(copyNodeAttrs).length > 0)
+		// 	setCopyNodeAttrs((oldState) => ({ ...oldState, isCopied: true }));
+		// else {
+		if (!_.isEmpty(selectedElement)) {
+			setCopyNodeAttrs({
+				...selectedElement,
+				isCopied: true,
+			});
 		}
+		// }
 	};
-
-	console.log({ copyNodeAttrs });
 
 	const handleCutNode = () => {
 		if (!_.isEmpty(selectedElement)) {
@@ -314,6 +311,8 @@ const CustomStage = forwardRef((props, ref) => {
 		// }
 	};
 
+	console.log({copyNodeAttrs})
+
 	const handleCloneNode = () => {
 		if (copyNodeAttrs && Object.keys(copyNodeAttrs).length > 0) {
 			const newElement = {
@@ -329,8 +328,10 @@ const CustomStage = forwardRef((props, ref) => {
 			}
 
 			if (newElement.name === "text") {
-				console.log(newElement.fontSize);
 				newElement.fontSize = newElement.fontSize / (zoomValue / 100);
+				const { textHeight, textWidth } = calculateTextSize({ ...newElement });
+				newElement.height = textHeight;
+				newElement.width = textWidth;
 			}
 
 			setAllElements([...allElements, { ...newElement }]);
@@ -339,7 +340,6 @@ const CustomStage = forwardRef((props, ref) => {
 	};
 
 	console.log({ allElements });
-
 	const handlePasteNode = (fromKey = false) => {
 		if (copyNodeAttrs && Object.keys(copyNodeAttrs).length > 0) {
 			const height =
@@ -408,7 +408,10 @@ const CustomStage = forwardRef((props, ref) => {
 			}
 
 			if (element.name === "text") {
-				element.fontSize = element.fontSize / (zoomValue / 100);
+				// element.fontSize = element.fontSize / (zoomValue / 100);
+				const { textHeight, textWidth } = calculateTextSize({ ...element });
+				element.height = textHeight;
+				element.width = textWidth;
 			}
 
 			delete element?.["isCopied"];
@@ -625,7 +628,6 @@ const CustomStage = forwardRef((props, ref) => {
 				setSelectedElement(null);
 			}
 		} catch (error) {
-			console.log({ error });
 			// setSelectedElement(null);
 		}
 	};
@@ -1308,11 +1310,11 @@ export default CustomStage;
 const styles = StyleSheet.create({
 	main: {
 		":hover": {
-			outline: "rgb(126, 228, 249) solid 3px",
+			outline: "rgb(126, 228, 249) solid 1.3px",
 		},
 	},
 
 	outlineClass: {
-		outline: "rgb(126, 228, 249) solid 3px",
+		outline: "rgb(126, 228, 249) solid 1.3px",
 	},
 });

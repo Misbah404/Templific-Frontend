@@ -17,7 +17,6 @@ const ElementSidebar = (props) => {
 
 	const dispatch = useDispatch();
 
-	console.log({ elements: props.elements });
 
 	const [search, setSearch] = useState("");
 	const [uploadModal, setUploadModal] = useState(false);

@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import { Text, Transformer } from "react-konva";
 import { Html } from "react-konva-utils";
 import { connect } from "react-redux";
+import { TEXT_MIN_HEIGHT, TEXT_MIN_WIDTH } from "../../../../../constants";
 
 const TextKonva = forwardRef((props, ref) => {
 	const {
@@ -148,14 +149,19 @@ const TextKonva = forwardRef((props, ref) => {
 
 		setCurrentStateText({
 			...newText,
-			height: textHeight,
-			width: textWidth,
+			height: 
+			// textHeight < TEXT_MIN_HEIGHT ? TEXT_MIN_HEIGHT :
+			 textHeight,
+			width: textWidth 
+			// < TEXT_MIN_WIDTH ? TEXT_MIN_WIDTH : textWidth,
 		});
 
 		handleTextDrag(text.id, {
 			...newText,
-			height: textHeight,
-			width: textWidth,
+			height: textHeight ,
+			// < TEXT_MIN_HEIGHT ? TEXT_MIN_HEIGHT : textHeight,
+			width: textWidth 
+			// < TEXT_MIN_WIDTH ? TEXT_MIN_WIDTH : textWidth,
 		});
 	};
 
@@ -273,15 +279,6 @@ const TextKonva = forwardRef((props, ref) => {
 						if (newBox.width < 30 || newBox.height < 10) return oldBox;
 
 						return newBox;
-					}}
-					config={{
-						pixelRatio: window.devicePixelRatio,
-					}}
-					toCanvas={{
-						pixelRatio: window.devicePixelRatio,
-					}}
-					toDataURL={{
-						pixelRatio: window.devicePixelRatio,
 					}}
 					onMouseOver={() => setStrokeElement && setStrokeElement(text)}
 					onMouseOut={() => setStrokeElement && setStrokeElement({})}
