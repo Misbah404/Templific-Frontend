@@ -18,25 +18,31 @@ import PrivacyPolicy from "./PrivacyPolicy";
 import TermsOfUse from "./TermsOfUse";
 import LoadGroupTemplates from "./LoadGroupTemplates";
 import Analytics from "./Analytics";
+import SelectCategories from "./SelectCategories";
+import SelectSubCategory from "./SelectSubCategory";
+import CategoryTemplate from "./CategoryTemplate";
 
 export {
-  Login,
-  Signup,
-  CodeConfirmation,
-  ForgotPassword,
-  NewPassword,
-  Payment,
-  PageNotFound,
-  Connect,
-  Dashboard,
-  DashboardCreate,
-  Settings,
-  SettingsSubscribtion,
-  SettingsPassword,
-  SelectTemplate,
-  EtsyAuthentication,
-  PrivacyPolicy,
-  TermsOfUse,
-  LoadGroupTemplates,
-  Analytics,
+	Login,
+	Signup,
+	CodeConfirmation,
+	ForgotPassword,
+	NewPassword,
+	Payment,
+	PageNotFound,
+	Connect,
+	Dashboard,
+	DashboardCreate,
+	Settings,
+	SettingsSubscribtion,
+	SettingsPassword,
+	SelectTemplate,
+	EtsyAuthentication,
+	PrivacyPolicy,
+	TermsOfUse,
+	LoadGroupTemplates,
+	Analytics,
+	SelectCategories,
+	SelectSubCategory,
+	CategoryTemplate,
 };

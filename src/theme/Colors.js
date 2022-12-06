@@ -13,21 +13,25 @@ const lightGray = "rgba(183,177,207,.29)";
 const greenishBlue = "#7ee4f9";
 const themeLightColor = "#593FE9";
 const AnalyticsThemeColor = "#D7D0FF";
+const shadedPurple = "#F0EDFF";
+const dashedBorder = "#D2D9DF";
 
 export default {
-  themeColor,
-  lightPurple,
-  lightPurple2,
-  authBG,
-  white,
-  placeHolderColor,
-  black,
-  pink,
-  darkGrey,
-  lightbrown,
-  lightbrown2,
-  lightGray,
-  greenishBlue,
-  themeLightColor,
-  AnalyticsThemeColor,
+	themeColor,
+	lightPurple,
+	lightPurple2,
+	authBG,
+	white,
+	placeHolderColor,
+	black,
+	pink,
+	darkGrey,
+	lightbrown,
+	lightbrown2,
+	lightGray,
+	greenishBlue,
+	themeLightColor,
+	AnalyticsThemeColor,
+	shadedPurple,
+	dashedBorder,
 };

@@ -1,16 +1,5 @@
 import { Images } from "../theme";
-import { Route } from "react-router-dom";
 import { v4 as uuid } from "uuid";
-
-import image1 from "../assets/image1.svg";
-import image2 from "../assets/image2.svg";
-import image3 from "../assets/image3.svg";
-import image4 from "../assets/image4.svg";
-import image5 from "../assets/image5.svg";
-import image6 from "../assets/image6.svg";
-import image7 from "../assets/image7.svg";
-// import image8 from "../assets/image8.png";
-// import image9 from "../assets/images/bkground/bkground.svg";
 
 export const SAGA_ALERT_TIMEOUT = 500;
 
@@ -107,6 +96,9 @@ export const ROUTES = {
 	TEMPLATE_TRANSACTION: "/template/transaction/:transactionId",
 	TEMPLATE_GROUP_DEMO: "/templates/group/demo/:demoId",
 	TEMPLATE_GROUP_TRANSACTION: "/templates/group/transaction/:transactionId",
+	SELECT_CATEGORIES: "/categories",
+	SELECT_SUB_CATEGORIES: "/sub-categories/:id",
+	CATEGORY_TEMPLATE: "/category/:categoryId/subCategory/:subCategoryId",
 };
 
 export const EMAIL_REGEX =
@@ -191,6 +183,11 @@ export const homeMenuItems = [
 		image: Images.photos,
 	},
 	{
+		name: "category",
+		link: ROUTES.SELECT_CATEGORIES,
+		image: Images.category,
+	},
+	{
 		name: "stats",
 		link: ROUTES.ANALYTICS,
 		image: Images.analytics,
@@ -265,12 +262,6 @@ export const textTransform = [
 ];
 
 export const positionData = {
-	// positions: [
-	//   { name: "send to back", action: "back", icon: Images.backIcon },
-	//   { name: "send backward", action: "backward", icon: Images.backwardIcon },
-	//   { name: "Bring to Front", action: "front", icon: Images.forwardIcon },
-	//   { name: "Bring Forward", action: "forward", icon: Images.toForwardIcon },
-	// ],
 	alignment: [
 		{ name: "Top", action: "top", icon: Images.topIcon },
 		{ name: "left", action: "left", icon: Images.leftIcon },
@@ -284,164 +275,6 @@ export const positionData = {
 export const textFilesExtensions = ["ttf", "woff", "woff2", "otf"];
 export const imageFilesExtension = ["png", "jpg", "svg", "jpeg", "gif"];
 
-// export const RANDOM_ELEMENTS = [
-//   {
-//     color: "#00A1FF",
-//     isLocked: false,
-//     name: "ellipse",
-//     opacity: 1,
-//     type: "ellipse",
-//     icon: Images.circleIcon,
-//     name2: "circle",
-//   },
-
-//   {
-//     color: "#00A1FF",
-//     isLocked: false,
-//     name: "rect",
-//     opacity: 1,
-//     type: "rect",
-//     icon: Images.rectIcon,
-//     name2: "square",
-//   },
-
-//   {
-//     name: "star",
-//     type: "star",
-//     icon: Images.starIcon,
-//     name2: "star",
-//   },
-
-//   {
-//     color: "#00A1FF",
-//     isFinished: true,
-//     isLocked: false,
-//     name: "polygon",
-//     type: "triangle",
-//     opacity: 1,
-//     name2: "triangle",
-//     icon: Images.triangleIcon,
-//     getPoints(pointValue) {
-//       return [
-//         [pointValue, pointValue],
-//         [0, pointValue + pointValue],
-//         [pointValue + pointValue, pointValue + pointValue],
-
-//         // [pointValue - pointValue / 2, pointValue + pointValue / 2],
-//         // [pointValue + pointValue / 2, pointValue + pointValue / 2],
-//       ];
-//     },
-//   },
-
-//   {
-//     color: "#00A1FF",
-//     isFinished: true,
-//     isLocked: false,
-//     name: "polygon",
-//     type: "triangle2",
-//     name2: "triangle",
-//     opacity: 1,
-//     icon: Images.triangle2Icon,
-//     getPoints(pointValue) {
-//       return [
-//         [pointValue, pointValue],
-//         [pointValue, pointValue + pointValue / 2],
-//         [pointValue + pointValue / 2, pointValue + pointValue / 2],
-//       ];
-//     },
-//   },
-
-//   {
-//     color: "#00A1FF",
-//     isFinished: true,
-//     isLocked: false,
-//     name: "polygon",
-//     type: "fiveSide",
-//     name2: "pentagon",
-//     opacity: 1,
-//     icon: Images.poly5Icon,
-//     getPoints(pointValue) {
-//       return [
-//         [pointValue, pointValue],
-//         [pointValue - pointValue / 3, pointValue + pointValue / 4],
-//         [pointValue - pointValue / 4, pointValue * 2 - pointValue / 4],
-//         [pointValue + pointValue / 4, pointValue * 2 - pointValue / 4],
-//         [pointValue + pointValue / 3, pointValue + pointValue / 4],
-//       ];
-//     },
-//   },
-
-//   {
-//     color: "#00A1FF",
-//     isFinished: true,
-//     isLocked: false,
-//     name: "polygon",
-//     type: "hexa",
-//     name2: "hexagon",
-//     opacity: 1,
-//     icon: Images.poly6Icon,
-//     getPoints(pointValue) {
-//       return [
-//         [pointValue, pointValue],
-//         [pointValue - pointValue / 2, pointValue + pointValue / 2],
-//         [pointValue, pointValue * 2],
-//         [pointValue * 2, pointValue * 2],
-//         [pointValue * 2 + pointValue / 2, pointValue + pointValue / 2],
-//         [pointValue * 2, pointValue],
-//       ];
-//     },
-//   },
-
-//   {
-//     color: "#00A1FF",
-//     isFinished: true,
-//     isLocked: false,
-//     name: "polygon",
-//     type: "arrow",
-//     name2: "arrow",
-//     opacity: 1,
-//     icon: Images.arrowElementIcon,
-//     getPoints(pointValue) {
-//       return [
-//         [pointValue, pointValue],
-//         [pointValue * 2, pointValue],
-//         [pointValue * 2, pointValue - pointValue / 8],
-//         [pointValue * 2.25, pointValue + pointValue / 16],
-//         [pointValue * 2, pointValue + pointValue / 8 + pointValue / 8],
-//         [pointValue * 2, pointValue + pointValue / 8],
-//         [pointValue, pointValue + pointValue / 8],
-
-//         // [pointValue * 3, pointValue],
-//         // [pointValue * 3, pointValue - pointValue / 4],
-//         // [pointValue * 3.5, pointValue + pointValue / 8],
-//         // [pointValue * 3, pointValue + pointValue / 4 + pointValue / 4],
-//         // [pointValue * 3, pointValue + pointValue / 4],
-//         // [pointValue, pointValue + pointValue / 4],
-//       ];
-//     },
-//   },
-
-//   {
-//     color: "#00A1FF",
-//     isFinished: true,
-//     isLocked: false,
-//     name: "polygon",
-//     type: "save",
-//     name2: "bookmark",
-//     opacity: 1,
-//     icon: Images.polySaveIcon,
-//     getPoints(pointValue) {
-//       return [
-//         [pointValue, pointValue],
-//         [pointValue, pointValue * 2],
-//         [pointValue + pointValue / 2, pointValue * 2 - pointValue / 2],
-//         [pointValue * 2, pointValue * 2],
-//         [pointValue * 2, pointValue],
-//       ];
-//     },
-//   },
-// ];
-
 export const contextMenuData = [
 	{ name: "Copy", icon: Images.copyIcon },
 	{ name: "Paste", icon: Images.pasteIcon },
@@ -453,36 +286,5 @@ export const contextMenuData = [
 	{ name: "Send to Front", icon: Images.toForwardIcon },
 ];
 
-export const LOCAL_IMAGES = {
-	image1: {
-		isDeleted: false,
-		url: image1,
-	},
-	image2: {
-		isDeleted: false,
-		url: image2,
-	},
-	image3: {
-		isDeleted: false,
-		url: image3,
-	},
-	image4: {
-		isDeleted: false,
-		url: image4,
-	},
-	image5: {
-		isDeleted: false,
-		url: image5,
-	},
-	image6: {
-		isDeleted: false,
-		url: image6,
-	},
-	image7: {
-		isDeleted: false,
-		url: image7,
-	},
-};
-
-export const TEXT_MIN_WIDTH = 30
-export const TEXT_MIN_HEIGHT = 20
+export const TEXT_MIN_WIDTH = 30;
+export const TEXT_MIN_HEIGHT = 20;

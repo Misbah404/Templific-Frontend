@@ -9,11 +9,10 @@ import {
 	TextField,
 	Button,
 	SideBar,
-	Templific_Toast,
 } from "../../components";
-import { FormControl, InputGroup } from "react-bootstrap";
+import { InputGroup } from "react-bootstrap";
 import _ from "lodash";
-import { MAX_CANVAS_SIZE, MIN_CANVAS_SIZE, ROUTES } from "../../constants";
+import { MAX_CANVAS_SIZE, ROUTES } from "../../constants";
 import { useHistory } from "react-router-dom";
 import { disableSideBar, logoutModal } from "../../actions/LayoutAction";
 import { userNewCategory } from "../../actions/CanvasDataAction";
@@ -192,17 +191,7 @@ const SelectTemplate = (props) => {
 					`Max height or width must be less than or equal to ${MAX_CANVAS_SIZE[selectedUnit]}${selectedUnit}`
 				);
 				return false;
-			} 
-			// else if (
-			// 	canvasHeight < MIN_CANVAS_SIZE[selectedUnit] ||
-			// 	canvasWidth < MIN_CANVAS_SIZE[selectedUnit]
-			// ) {
-			// 	setErrors(
-			// 		`Min height or width must be greater than or equal to ${MIN_CANVAS_SIZE[selectedUnit]}${selectedUnit}`
-			// 	);
-			// 	return false;
-			// } 
-			else {
+			} else {
 				return true;
 			}
 		}

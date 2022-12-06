@@ -220,6 +220,7 @@ svg[fill="filled"] g {
 .darkPanel .template svg rect,
 .darkPanel .template svg path,
 .darkPanel .template svg g path,
+.darkPanel .category svg g path,
 .settings:hover svg circle,
 .photos:hover svg path,
 .photos:hover svg circle,
@@ -253,14 +254,17 @@ svg[fill="filled"] g {
 .darkPanel .password svg path,
 .darkPanel .settings svg path,
 .darkPanel .text svg text,
+.darkPanel .category svg text,
 .payment:hover svg path,
 .subscribtion:hover svg path,
 .password:hover svg path,
 .settings:hover svg path,
 .stats:hover svg path,
+.category:hover svg path,
 .text:hover svg text {
   fill: #fff;
 }
+
 
 .darkPanel .groupTemplate svg path,
 .darkPanel .groupTemplate path {

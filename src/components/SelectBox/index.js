@@ -11,7 +11,7 @@ const SelectBox = (props) => {
 
   return (
     <div
-      className={`position-relative line-height-0 ${css([
+      className={`position-relative line-height-0 w-100 ${css([
         icon && style.withIcon,
       ])}`}
     >
