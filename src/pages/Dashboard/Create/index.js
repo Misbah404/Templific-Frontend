@@ -1227,20 +1227,6 @@ const Dashboard = (props) => {
 
 		const currentZoomValue = zoomValue;
 
-		const moderateValue = 1000;
-		console.log({ canvas: canvasAttrs });
-		// const { canvasHeight, canvasWidth } = canvasAttrs?.canvasInPx;
-		// if (canvasHeight < moderateValue || canvasWidth < moderateValue) {
-		// 	const optimizeValue =
-		// 		canvasWidth <= canvasHeight
-		// 			? canvasWidth / moderateValue
-		// 			: canvasHeight / moderateValue;
-
-		// 			console.log(parseInt(100 / optimizeValue))
-
-		// 	setZoomValue(parseInt(100 / optimizeValue));
-		// } else {
-		// }
 		setZoomValue(100);
 
 		if (downloadForm.bleed) setIsBleed(true);
@@ -1286,7 +1272,6 @@ const Dashboard = (props) => {
 
 			const daurl15dpi = changeDpiDataUrl(img, 300);
 
-			// img = img.replace(/^data:image\/(png|jpg);base64,/, "")
 			img = daurl15dpi.substr(daurl15dpi.indexOf(",") + 1);
 
 			const fileName = `${

@@ -40,10 +40,12 @@ import {
 } from "../../actions/CanvasDataAction";
 import { userLogout, verifyUser } from "../../actions/AuthActions";
 import { GET_GLYPHS } from "../../services/userHelper";
+import { useGetCategoryData } from "../../api";
 
 const DashboardLayout = (props) => {
 	let history = useHistory();
 	const dispatch = useDispatch();
+	const { getMainCategory, getSubCategory } = useGetCategoryData();
 	const { sideMenuItems, darkSidePanel } = props.children.props;
 	const [sidePanelMenu, setSidePanelMenu] = useState([]);
 	const location = useLocation();
@@ -306,7 +308,20 @@ const DashboardLayout = (props) => {
 	});
 
 	useEffect(() => {
-		setSidePanelMenu(sideMenuItems);
+		let allItems = [...sideMenuItems];
+
+		if (props?.user?.isAdmin) {
+			allItems = [...sideMenuItems];
+			// ?.filter(
+			// 	(item) => item.name !== "stats" && item?.name !== "category"
+			// );
+		} else {
+			allItems = [...sideMenuItems]?.filter(
+				(item) => item?.name !== "category"
+			);
+		}
+
+		setSidePanelMenu(allItems);
 		dispatch(disableSideBar());
 		if (!_.isNil(location.state) && location.state.hideSidePanel) {
 			setHideSidePanel(true);
@@ -322,6 +337,10 @@ const DashboardLayout = (props) => {
 		getElements({ variables: { email: props.user.email } });
 		getTemplates({ variables: { email: props.user.email } });
 		getDefaultElements();
+		if (props.user?.isAdmin) {
+			getMainCategory();
+			getSubCategory();
+		}
 	}, []);
 
 	useEffect(() => {
@@ -469,7 +488,7 @@ const DashboardLayout = (props) => {
 							location.pathname === ROUTES.SETTINGS_SUBSCRIBTION) && (
 							<li className={`d-inline-flex`}>
 								<span
-									className={` ${css(styles.menuLi)} ${css(styles.menuItem)}`}
+									className={`${css(styles.menuLi)} ${css(styles.menuItem)}`}
 								>
 									Settings
 								</span>
@@ -556,10 +575,6 @@ const DashboardLayout = (props) => {
 					>
 						<i className={`fa fa-plus ${css(styles.plusBtn)}`} />
 					</Button>
-
-					{/* <Button className={`${css(styles.shareBtn)}`} disabled>
-            <i className={`fa fa-share-alt ${css(styles.shareIcon)}`} />
-          </Button> */}
 
 					<Dropdown className="d-inline">
 						<OverlayTrigger

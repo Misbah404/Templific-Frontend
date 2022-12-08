@@ -5,11 +5,11 @@ const CANCEL = "CANCEL";
 const FAILURE = "FAILURE";
 
 function createRequestTypes(base) {
-  const res = {};
-  [REQUEST, SUCCESS, FAILURE, CANCEL].forEach((type) => {
-    res[type] = `${base}_${type}`;
-  });
-  return res;
+	const res = {};
+	[REQUEST, SUCCESS, FAILURE, CANCEL].forEach((type) => {
+		res[type] = `${base}_${type}`;
+	});
+	return res;
 }
 
 export const NETWORK_INFO = "NETWORK_INFO";
@@ -55,4 +55,7 @@ export const DELETE_GROUP_TEMPLATES = "DELETE_GROUP_TEMPLATES";
 
 export const ADD_DEMO_GROUP_TEMPLATES = "ADD_DEMO_GROUP_TEMPLATES";
 export const ADD_TRANSACTION_GROUP_TEMPLATES =
-  "ADD_TRANSACTION_GROUP_TEMPLATES";
+	"ADD_TRANSACTION_GROUP_TEMPLATES";
+
+export const GET_MAIN_CATEGORIES = "GET_MAIN_CATEGORIES";
+export const SET_SUB_CATEGORIES = "SET_SUB_CATEGORIES";

@@ -25,12 +25,17 @@ function SelectCategoriesUI(props) {
 		handleSetImage,
 		triggerFilePickerClick,
 		handleClickItemCard,
+		createCategory,
+		isLoading,
+		error,
+		closeModals,
+		mainCategoryList,
 	} = props;
 
 	const renderCards = () => {
 		return (
 			<div className={`w-100 ${css(styles.tempRow)}`}>
-				{template_types.map((res) => (
+				{mainCategoryList?.map((res) => (
 					<>{cardItem(res)}</>
 				))}
 			</div>
@@ -51,16 +56,16 @@ function SelectCategoriesUI(props) {
 				className={`d-flex flex-column align-items-center justify-content-center ${css(
 					styles.tempCol
 				)}`}
-				key={res.title}
-				onClick={() => handleClickItemCard()}
+				key={res.id}
+				onClick={() => handleClickItemCard(res)}
 			>
 				{cardAction()}
 				<img
-					src={res.image}
-					alt={res.title}
+					src={res?.image?.url}
+					alt={res?.image?.name}
 					className={`${css(styles.templateImg)}`}
 				/>
-				<p className={`${css(styles.templateName)}`}>{res.title}</p>
+				<p className={`${css(styles.templateName)}`}>{res?.name}</p>
 			</div>
 		);
 	};
@@ -135,11 +140,11 @@ function SelectCategoriesUI(props) {
 				>
 					<option disabled>Choose category</option>
 
-					{/* {template_categories.map((res, idx) => (
-						<option value={res} key={idx}>
-							{res}
+					{mainCategoryList?.map((res) => (
+						<option value={res?.id} key={res?.id}>
+							{res?.name}
 						</option>
-					))} */}
+					))}
 				</SelectBox>
 
 				<SelectBox
@@ -191,22 +196,17 @@ function SelectCategoriesUI(props) {
 					/>
 				</div>
 
-				<InputGroup className={`align-items-end position-relative`}>
-					<TextField
-						wrapClass={`flex-grow-1`}
-						styles={[styles.canvasInput, styles.categoryInput]}
-						label="Sub Category Name"
-						name={`sub-name`}
-						value={subCategory}
-						onChange={(value) => setSubCategory(value.target.value)}
-					/>
-					<Button
-						title={`Add`}
-						btnWrap={styles.btnWrap}
-						className={`${css(styles.groupfieldBtn)}`}
-						// onClick={() => addInCategory()}
-					/>
-				</InputGroup>
+				{error && <div className={`${css(styles.errors)}`}>{error}</div>}
+			</div>
+		);
+	};
+
+	const emptyList = () => {
+		return (
+			<div className="d-flex justify-content-center align-items-center">
+				<span className={`${css(styles.mainHeading)}`}>
+					No categories for now.
+				</span>
 			</div>
 		);
 	};
@@ -226,7 +226,7 @@ function SelectCategoriesUI(props) {
 
 				<h2 className={`${css(styles.mainHeading)}`}>All Categories</h2>
 
-				{renderCards()}
+				{[...mainCategoryList]?.length > 0 ? renderCards() : emptyList()}
 			</div>
 
 			<ModalView
@@ -235,7 +235,7 @@ function SelectCategoriesUI(props) {
 				submitText={"Create"}
 				showModal={addTemplateModal}
 				setShowModal={toggleTemplateModal}
-				cancelOnClick={toggleTemplateModal}
+				cancelOnClick={closeModals}
 				submitOnClick={toggleTemplateModal}
 			>
 				{renderTemplateModalContent()}
@@ -247,8 +247,9 @@ function SelectCategoriesUI(props) {
 				submitText={"Create"}
 				showModal={addCategoryModal}
 				setShowModal={toggleAddCategoryModal}
-				cancelOnClick={toggleAddCategoryModal}
-				submitOnClick={toggleAddCategoryModal}
+				cancelOnClick={closeModals}
+				submitOnClick={createCategory}
+				isLoading={isLoading}
 			>
 				{renderCategoryModalContent()}
 			</ModalView>

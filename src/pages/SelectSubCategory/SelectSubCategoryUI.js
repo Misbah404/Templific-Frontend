@@ -1,7 +1,6 @@
 import { css } from "aphrodite";
 import React from "react";
 import { Button, ModalView, SelectBox, TextField } from "../../components";
-import { ROUTES } from "../../constants";
 import { AppStyles, Images } from "../../theme";
 import styles from "./styles";
 import SVG from "react-inlinesvg";
@@ -24,12 +23,18 @@ function SelectSubCategoryUI(props) {
 		handleSetImage,
 		triggerFilePickerClick,
 		handleItemClick,
+		selectedMainCategory,
+		mainCategoryList,
+		isLoading,
+		createCategory,
+		error,
+		subCategoryOfMainCategory,
 	} = props;
 
 	const renderCards = () => {
 		return (
 			<div className={`w-100 ${css(styles.tempRow)}`}>
-				{template_types.map((res) => (
+				{subCategoryOfMainCategory.map((res) => (
 					<>{cardItem(res)}</>
 				))}
 			</div>
@@ -50,16 +55,16 @@ function SelectSubCategoryUI(props) {
 				className={`d-flex flex-column align-items-center justify-content-center ${css(
 					styles.tempCol
 				)}`}
-				key={res.title}
-                onClick={() => handleItemClick()}
+				key={res.id}
+				onClick={() => handleItemClick(res)}
 			>
 				{cardAction()}
 				<img
-					src={res.image}
-					alt={res.title}
+					src={res?.image?.url}
+					alt={res?.image?.name}
 					className={`${css(styles.templateImg)}`}
 				/>
-				<p className={`${css(styles.templateName)}`}>{res.title}</p>
+				<p className={`${css(styles.templateName)}`}>{res.name}</p>
 			</div>
 		);
 	};
@@ -134,11 +139,11 @@ function SelectSubCategoryUI(props) {
 				>
 					<option disabled>Choose category</option>
 
-					{/* {template_categories.map((res, idx) => (
-						<option value={res} key={idx}>
-							{res}
+					{mainCategoryList.map((res, idx) => (
+						<option value={res?.id} key={res?.id}>
+							{res?.name}
 						</option>
-					))} */}
+					))}
 				</SelectBox>
 
 				<SelectBox
@@ -185,28 +190,24 @@ function SelectSubCategoryUI(props) {
 					<TextField
 						name={`main-category`}
 						styles={[styles.canvasInput]}
-						value={mainCategory}
+						value={selectedMainCategory?.name}
 						disabled={true}
-						onChange={(e) => setMainCategory(e.target.value)}
 					/>
 				</div>
 
 				<InputGroup className={`align-items-end position-relative`}>
 					<TextField
 						wrapClass={`flex-grow-1`}
-						styles={[styles.canvasInput, styles.categoryInput]}
+						styles={[styles.canvasInput]}
 						label="Sub Category Name"
 						name={`sub-name`}
 						value={subCategory}
 						onChange={(value) => setSubCategory(value.target.value)}
 						autofocus
 					/>
-					<Button
-						title={`Add`}
-						btnWrap={styles.btnWrap}
-						className={`${css(styles.groupfieldBtn)}`}
-					/>
 				</InputGroup>
+
+				{error && <div className={`${css(styles.errors)}`}>{error}</div>}
 			</div>
 		);
 	};
@@ -237,6 +238,7 @@ function SelectSubCategoryUI(props) {
 				setShowModal={toggleTemplateModal}
 				cancelOnClick={toggleTemplateModal}
 				submitOnClick={toggleTemplateModal}
+				isLoading={isLoading}
 			>
 				{renderTemplateModalContent()}
 			</ModalView>
@@ -248,7 +250,8 @@ function SelectSubCategoryUI(props) {
 				showModal={addCategoryModal}
 				setShowModal={toggleAddCategoryModal}
 				cancelOnClick={toggleAddCategoryModal}
-				submitOnClick={toggleAddCategoryModal}
+				submitOnClick={createCategory}
+				isLoading={isLoading}
 			>
 				{renderCategoryModalContent()}
 			</ModalView>
