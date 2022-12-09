@@ -91,6 +91,8 @@ export const ROUTES = {
 	POLOTNO: "/polotno",
 	KONVA: "/konva",
 	SELECT_TEMPLATE: "/select-template",
+	SELECT_ADMIN_TEMPLATE:
+		"/select-template/mainCategory/:categoryId/subCategory/:subCategoryId",
 	ETSY_AUTH: "/etsy/auth",
 	TEMPLATE_DEMO: "/templates/demo/:demoId",
 	TEMPLATE_TRANSACTION: "/template/transaction/:transactionId",
@@ -99,6 +101,7 @@ export const ROUTES = {
 	SELECT_CATEGORIES: "/categories",
 	SELECT_SUB_CATEGORIES: "/sub-categories/:id",
 	CATEGORY_TEMPLATE: "/category/:categoryId/subCategory/:subCategoryId",
+	ADMIN_TEMPLATE_CREATE: "/admin/template/create",
 };
 
 export const EMAIL_REGEX =

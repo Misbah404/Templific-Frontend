@@ -510,6 +510,7 @@ const DashboardLayout = (props) => {
 										</NavLink>
 									</li>
 									{(location.pathname === ROUTES.DASHBOARD_CREATE ||
+										location.pathname === ROUTES.ADMIN_TEMPLATE_CREATE ||
 										params?.path === ROUTES.EDIT_TEMPLATE) && (
 										<li
 											className={`d-inline-flex`}
@@ -676,6 +677,8 @@ const DashboardLayout = (props) => {
 												{res.name !== "template" &&
 													res.name !== "group templates" &&
 													(location.pathname === ROUTES.DASHBOARD_CREATE ||
+														location.pathname ===
+															ROUTES.ADMIN_TEMPLATE_CREATE ||
 														params?.path === ROUTES.EDIT_TEMPLATE) && (
 														<div
 															className={`menu-link ${res.name} ${

@@ -27,9 +27,11 @@ import {
 import { Form, OverlayTrigger, Spinner, Tooltip } from "react-bootstrap";
 import { useLazyQuery, useMutation } from "@apollo/client";
 import {
+	CREATE_PREDFINED_TEMPLATE,
 	CREATE_USER_TEMPLATE,
 	GET_DEMO_TEMPLATE,
 	GET_TRANSACTION_TEMPLATE,
+	UPDATE_PREDEFINED_TEMPLATE,
 	UPDATE_USER_TEMPLATE,
 	UPLOAD_FILE_TO_SERVER,
 } from "../../../graphQueries";
@@ -61,6 +63,8 @@ const Dashboard = (props) => {
 	const [templateNameError, setTemplateNameError] = useState("");
 	const [duplicateStageChildElements, setDuplicateStageChildElements] =
 		useState({});
+
+	console.log({ location });
 
 	const [isLoading, setIsLoading] = useState(() => false);
 	const [downloadForm, setDownloadForm] = useState({
@@ -133,7 +137,57 @@ const Dashboard = (props) => {
 
 			dispatch(addUserTemplate(saveTemplateToStore));
 
-			const updateCheckState = _.cloneDeep(templateCheckState);
+			setTemplateCheckStateDuplicate({ ...templateCheckState });
+
+			setIsLoading(false);
+		},
+
+		onError(err) {
+			setIsLoading(false);
+
+			if (err?.message?.includes("This attribute must be unique")) {
+				saveTemplates();
+			} else {
+				setSaveTemplateRes({ err: "Something went wrong", success: "" });
+				setIsLoading(false);
+			}
+
+			if (err.message.includes("Received status code 401")) {
+				dispatch(logoutModal({ data: true }));
+			}
+		},
+	});
+
+	const [createPredefinedTemplate] = useMutation(CREATE_PREDFINED_TEMPLATE, {
+		onCompleted(data) {
+			setSaveTemplateRes({ err: "", success: "Template Saved Successfully!" });
+
+			const template = {
+				id: data.createPreDefineTemplate.data.id,
+				...data.createPreDefineTemplate.data.attributes,
+				category: {
+					name: data.createPreDefineTemplate.data.attributes?.sub_category?.data
+						?.attributes?.name,
+					id: data.createPreDefineTemplate.data.attributes?.sub_category?.data
+						?.id,
+				},
+				image: {
+					name: data.createPreDefineTemplate.data.attributes?.image?.data
+						?.attributes?.name,
+					url: data.createPreDefineTemplate.data.attributes?.image?.data
+						?.attributes?.url,
+					height:
+						data.createPreDefineTemplate.data.attributes?.image?.data
+							?.attributes?.height,
+					width:
+						data.createPreDefineTemplate.data.attributes?.image?.data
+							?.attributes?.width,
+					id: data.createPreDefineTemplate.data.attributes?.image?.data?.id,
+				},
+			};
+
+			setSavedTemplateData(template);
+
 			setTemplateCheckStateDuplicate({ ...templateCheckState });
 
 			setIsLoading(false);
@@ -192,6 +246,51 @@ const Dashboard = (props) => {
 			};
 
 			dispatch(addUserTemplate(saveTemplateToStore));
+		},
+		onError(err) {
+			setSaveTemplateRes({ err: "Something went wrong", success: "" });
+			setShowSaveModal(true);
+			setIsLoading(false);
+
+			if (err.message.includes("Received status code 401")) {
+				dispatch(logoutModal({ data: true }));
+			}
+		},
+	});
+
+	const [updatePredefinedTemplate] = useMutation(UPDATE_PREDEFINED_TEMPLATE, {
+		onCompleted(data) {
+			setSaveTemplateRes({ err: "", success: "Template Saved Successfully!" });
+			setShowSaveModal(true);
+			setIsLoading(false);
+
+			setTemplateCheckStateDuplicate({ ...templateCheckState });
+
+			const template = {
+				id: data.updatePreDefineTemplate.data.id,
+				...data.updatePreDefineTemplate.data.attributes,
+				category: {
+					name: data.updatePreDefineTemplate.data.attributes?.sub_category?.data
+						?.attributes?.name,
+					id: data.updatePreDefineTemplate.data.attributes?.sub_category?.data
+						?.id,
+				},
+				image: {
+					name: data.updatePreDefineTemplate.data.attributes?.image?.data
+						?.attributes?.name,
+					url: data.updatePreDefineTemplate.data.attributes?.image?.data
+						?.attributes?.url,
+					height:
+						data.updatePreDefineTemplate.data.attributes?.image?.data
+							?.attributes?.height,
+					width:
+						data.updatePreDefineTemplate.data.attributes?.image?.data
+							?.attributes?.width,
+					id: data.updatePreDefineTemplate.data.attributes?.image?.data?.id,
+				},
+			};
+
+			setSavedTemplateData(template);
 		},
 		onError(err) {
 			setSaveTemplateRes({ err: "Something went wrong", success: "" });
@@ -495,7 +594,10 @@ const Dashboard = (props) => {
 		setTemplateCheckState({});
 		setTemplateCheckStateDuplicate({});
 
-		if (location.pathname === ROUTES.DASHBOARD_CREATE) {
+		if (
+			location.pathname === ROUTES.DASHBOARD_CREATE ||
+			location.pathname === ROUTES.ADMIN_TEMPLATE_CREATE
+		) {
 			const moderateValue = 360;
 			if (
 				canvasAttrs?.canvas &&
@@ -1197,26 +1299,45 @@ const Dashboard = (props) => {
 					allFonts,
 				},
 			};
-			saveTemplateToDB({ variables: data });
+
+			if (location?.pathname === ROUTES.ADMIN_TEMPLATE_CREATE) {
+				delete data.userId;
+				delete data.demoId;
+				delete data.transactionId;
+				data.categoryId = canvasData?.subCategory;
+
+				createPredefinedTemplate({ variables: data });
+			} else {
+				saveTemplateToDB({ variables: data });
+			}
 		} else {
-			updateUserTemplate({
-				variables: {
-					templateId: savedTemplateData.id,
-					template,
-					zoomValue,
-					name: savedTemplateData.name,
-					image: id,
-					canvasAttrs: {
-						templateType: canvasAttrs.templateType,
-						canvas: canvasAttrs.canvas,
-						canvasInPx: canvasAttrs.canvasInPx,
-						allFonts,
-					},
+			const data = {
+				templateId: savedTemplateData.id,
+				template,
+				zoomValue,
+				name: savedTemplateData.name,
+				image: id,
+				canvasAttrs: {
+					templateType: canvasAttrs.templateType,
+					canvas: canvasAttrs.canvas,
+					canvasInPx: canvasAttrs.canvasInPx,
+					allFonts,
 				},
-			});
+			};
+
+			if (location?.pathname === ROUTES.ADMIN_TEMPLATE_CREATE) {
+				data.categoryId = canvasData?.subCategory;
+				updatePredefinedTemplate({
+					variables: data,
+				});
+			} else {
+				updateUserTemplate({
+					variables: data,
+				});
+			}
 		}
 	};
-
+	console.log({ canvasData });
 	const downloadTemplate = () => {
 		if (_.isEmpty(downloadForm.type) || _.isNil(downloadForm.type)) {
 			setDownloadForm({ ...downloadForm, typeError: "File type is required" });

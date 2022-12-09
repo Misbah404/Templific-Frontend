@@ -13,6 +13,17 @@ function CategoryTemplateUI(props) {
 		toggleTemplateModal,
 		templateName,
 		setTemplateName,
+		selectedUnit,
+		canvasHeight,
+		setCanvasHeight,
+		canvasWidth,
+		setCanvasWidth,
+		showSizeModal,
+		initialState,
+		errors,
+		handleChangeUnit,
+		toggleShowSizeModal,
+		handleSubmitTemplateName,
 	} = props;
 
 	const renderCards = () => {
@@ -96,6 +107,119 @@ function CategoryTemplateUI(props) {
 		);
 	};
 
+	const renderTemplateSizeContent = () => {
+		return (
+			<div>
+				<div className={`d-flex`}>
+					<form onSubmit={(e) => e.preventDefault()}>
+						<div
+							className={`${css(
+								styles.formRow
+							)} d-flex align-items-center justify-content-between`}
+						>
+							<p className={`${css(styles.formlabel)}`}>Units:</p>
+							<div>
+								<label
+									className={`d-inline-flex align-items-center ${css(
+										styles.unitLabel
+									)}`}
+								>
+									<input
+										type="radio"
+										className={`${css(styles.unitRadio)}`}
+										onChange={handleChangeUnit}
+										value="inches"
+										checked={selectedUnit === "inches"}
+									/>
+									inches
+								</label>
+								<label
+									className={`d-inline-flex align-items-center ${css(
+										styles.unitLabel
+									)}`}
+								>
+									<input
+										type="radio"
+										className={`${css(styles.unitRadio)}`}
+										onChange={handleChangeUnit}
+										value="mm"
+										checked={selectedUnit === "mm"}
+									/>
+									mm
+								</label>
+								<label
+									className={`d-inline-flex align-items-center ${css(
+										styles.unitLabel
+									)}`}
+								>
+									<input
+										type="radio"
+										className={`${css(styles.unitRadio)}`}
+										onChange={handleChangeUnit}
+										value="pixels"
+										checked={selectedUnit === "pixels"}
+									/>
+									pixels
+								</label>
+							</div>
+						</div>
+						<div
+							className={`${css(
+								styles.formRow
+							)} d-flex align-items-center justify-content-between`}
+						>
+							<p className={`${css(styles.formlabel)}`}>Canvas:</p>
+							<div className={`d-flex align-items-center`}>
+								<div className={`position-relative`}>
+									<TextField
+										name={`canvas-width`}
+										styles={[styles.canvasInput]}
+										value={canvasWidth}
+										onChange={(value) => setCanvasWidth(value.target.value)}
+										type="number"
+										autofocus
+									/>
+									<span
+										className={`d-flex align-items-center position-absolute ${css(
+											styles.canvasFieldSufix
+										)}`}
+									>
+										w
+									</span>
+								</div>
+								<span style={{ margin: "0 0.5vw", fontSize: "1.2vw" }}>
+									{" "}
+									x{" "}
+								</span>
+								<div className={`position-relative`}>
+									<TextField
+										name={`canvas-height`}
+										styles={[styles.canvasInput]}
+										value={canvasHeight}
+										onChange={(value) => setCanvasHeight(value.target.value)}
+										type="number"
+									/>
+									<span
+										className={`d-flex align-items-center position-absolute ${css(
+											styles.canvasFieldSufix
+										)}`}
+									>
+										h
+									</span>
+								</div>
+							</div>
+						</div>
+						{errors && (
+							<div className="d-flex align-items-center">
+								<span className={`${css(styles.errors)}`}>{errors}</span>
+							</div>
+						)}
+					</form>
+				</div>
+			</div>
+		);
+	};
+
 	return (
 		<div
 			className={`${css(
@@ -115,13 +239,28 @@ function CategoryTemplateUI(props) {
 			</div>
 
 			<ModalView
+				showModal={showSizeModal}
+				setShowModal={toggleShowSizeModal}
+				title={`Set Template Size`}
+				cancelText={`Cancel`}
+				cancelOnClick={() => {
+					toggleShowSizeModal();
+					initialState();
+				}}
+				submitText={`Create`}
+				// submitOnClick={handleSubmitTemplateSize}
+			>
+				{renderTemplateSizeContent()}
+			</ModalView>
+
+			<ModalView
 				title={"Add Template"}
 				cancelText={"Cancel"}
 				submitText={"Create"}
 				showModal={addTemplateModal}
 				setShowModal={toggleTemplateModal}
 				cancelOnClick={toggleTemplateModal}
-				submitOnClick={toggleTemplateModal}
+				submitOnClick={handleSubmitTemplateName}
 			>
 				{renderTemplateModalContent()}
 			</ModalView>

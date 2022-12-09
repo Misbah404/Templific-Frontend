@@ -36,6 +36,7 @@ import {
 	SelectCategories,
 	SelectSubCategory,
 	CategoryTemplate,
+	SelectAdminTemplate,
 } from "../pages";
 
 import { Route, Switch, Redirect } from "react-router-dom";
@@ -106,7 +107,7 @@ const AuthRoute = ({ ...props }) => {
 
 function CustomRoutes(props) {
 	const { user } = props;
-	console.log({user})
+	console.log({ user });
 	const dispatch = useDispatch();
 	const repeatedProps = {
 		user,
@@ -219,10 +220,27 @@ function CustomRoutes(props) {
 			/>
 
 			<AuthRoute
+				path={ROUTES.ADMIN_TEMPLATE_CREATE}
+				component={DashboardCreate}
+				hasBack={false}
+				sideMenuItems={[...homeMenuItems, ...settingMenuItems]}
+				{...repeatedProps}
+			/>
+
+			<AuthRoute
 				path={ROUTES.EDIT_TEMPLATE}
 				component={DashboardCreate}
 				hasBack={false}
 				sideMenuItems={[...homeMenuItems, ...settingMenuItems]}
+				{...repeatedProps}
+			/>
+
+			<AuthRoute
+				path={ROUTES.SELECT_ADMIN_TEMPLATE}
+				component={SelectAdminTemplate}
+				hasBack={true}
+				sideMenuItems={[...homeMenuItems, ...settingMenuItems]}
+				darkSidePanel
 				{...repeatedProps}
 			/>
 

@@ -21,6 +21,7 @@ import Analytics from "./Analytics";
 import SelectCategories from "./SelectCategories";
 import SelectSubCategory from "./SelectSubCategory";
 import CategoryTemplate from "./CategoryTemplate";
+import SelectAdminTemplate from "./SelectAdminTemplate";
 
 export {
 	Login,
@@ -45,4 +46,5 @@ export {
 	SelectCategories,
 	SelectSubCategory,
 	CategoryTemplate,
+	SelectAdminTemplate,
 };

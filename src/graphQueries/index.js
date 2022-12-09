@@ -1123,3 +1123,106 @@ export const GET_SUB_CATEGORIES = gql`
 		}
 	}
 `;
+
+export const CREATE_PREDFINED_TEMPLATE = gql`
+	mutation createPredefinedTemplate(
+		$name: String!
+		$height: Float!
+		$template: JSON!
+		$unit: String!
+		$width: Float!
+		$zoomValue: Int!
+		$image: ID!
+		$canvasAttrs: JSON!
+		$categoryId: ID!
+	) {
+		createPreDefineTemplate(
+			data: {
+				name: $name
+				height: $height
+				width: $width
+				template: $template
+				unit: $unit
+				zoomValue: $zoomValue
+				image: $image
+				canvasAttrs: $canvasAttrs
+				sub_category: $categoryId
+			}
+		) {
+			data {
+				attributes {
+					name
+					height
+					width
+					template
+					unit
+					canvasAttrs
+					sub_category {
+						data {
+							id
+							attributes {
+								name
+							}
+						}
+					}
+					image {
+						data {
+							id
+							attributes {
+								height
+								url
+								width
+								name
+							}
+						}
+					}
+				}
+				id
+			}
+		}
+	}
+`;
+
+export const UPDATE_PREDEFINED_TEMPLATE = gql`
+	mutation updatePredefinedTemplate(
+		$templateId: ID!
+		$template: JSON!
+		$zoomValue: Int!
+		$name: String!
+		$image: ID!
+	) {
+		updatePreDefineTemplate(
+			id: $templateId
+			data: {
+				template: $template
+				zoomValue: $zoomValue
+				name: $name
+				image: $image
+			}
+		) {
+			data {
+				attributes {
+					name
+					height
+					width
+					template
+					zoomValue
+					unit
+					canvasAttrs
+					image {
+						data {
+							id
+							attributes {
+								height
+								url
+								width
+								name
+							}
+						}
+					}
+				}
+				id
+			}
+		}
+	}
+`;
