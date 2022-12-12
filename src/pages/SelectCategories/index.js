@@ -68,7 +68,8 @@ const template_types = [
 
 function SelectCategories(props) {
 	const history = useHistory();
-	const { handleCreateMainCategory, uploadCategoryImage } = useMainCategory();
+	const { handleCreateMainCategory, uploadCategoryImage, updateCategoryMain } =
+		useMainCategory();
 	const { getMainCategory } = useGetCategoryData();
 
 	const mainCategoryList = props?.mainCategoryList;
@@ -81,6 +82,8 @@ function SelectCategories(props) {
 	const [imageFile, setImageFile] = useState(() => null);
 	const [isLoading, setIsLoading] = useState(() => false);
 	const [error, setError] = useState(() => "");
+	const [isEditing, setIsEditing] = useState(() => false);
+	const [editCategory, setEditCategory] = useState(() => {});
 
 	const filePickerRef = useRef();
 
@@ -114,7 +117,10 @@ function SelectCategories(props) {
 	const _isValidPayloadCategory = () => {
 		let isValid = true;
 
-		if (!!imageFile?.name === false || _.isEmpty(imageFile?.name)) {
+		if (
+			(!!imageFile?.name === false || _.isEmpty(imageFile?.name)) &&
+			isEditing === false
+		) {
 			isValid = false;
 			setError("Image is required.");
 			return isValid;
@@ -130,10 +136,27 @@ function SelectCategories(props) {
 			(category) => category?.name === mainCategory
 		);
 
-		if (!_.isEmpty(categoryWithSameName) && categoryWithSameName) {
+		if (
+			!_.isEmpty(categoryWithSameName) &&
+			categoryWithSameName &&
+			isEditing == false
+		) {
 			isValid = false;
 			setError("Category name is already taken.");
 			return;
+		}
+
+		if (isEditing) {
+			const sameName = mainCategoryList?.find(
+				(category) =>
+					category?.name === mainCategory && category?.id !== editCategory?.id
+			);
+
+			if (!_.isEmpty(sameName) && sameName) {
+				isValid = false;
+				setError("Category name is already taken.");
+				return;
+			}
 		}
 
 		return isValid;
@@ -155,17 +178,59 @@ function SelectCategories(props) {
 		}
 	};
 
-	const handleUploadSuccessCallback = (data) => {
-		const payload = {
-			name: mainCategory,
-			imageId: data?.id,
-		};
+	const updateCategory = () => {
+		if (_isValidPayloadCategory()) {
+			setIsLoading(true);
+			if (imageFile?.name) {
+				const payload = {
+					file: imageFile,
+				};
 
-		handleCreateMainCategory(
-			payload,
-			handleCreateSuccessCallback,
-			handleCreateErrorCallback
-		);
+				uploadCategoryImage(
+					payload,
+					handleUploadSuccessCallback,
+					handleUploadErrorCallback
+				);
+			} else {
+				const payload = {
+					name: mainCategory,
+					id: editCategory?.id,
+				};
+
+				updateCategoryMain(
+					payload,
+					handleCreateSuccessCallback,
+					handleCreateErrorCallback
+				);
+			}
+		}
+	};
+
+	const handleUploadSuccessCallback = (data) => {
+		if (isEditing) {
+			const payload = {
+				name: mainCategory,
+				imageId: data?.id,
+				id: editCategory?.id,
+			};
+
+			updateCategoryMain(
+				payload,
+				handleCreateSuccessCallback,
+				handleCreateErrorCallback
+			);
+		} else {
+			const payload = {
+				name: mainCategory,
+				imageId: data?.id,
+			};
+
+			handleCreateMainCategory(
+				payload,
+				handleCreateSuccessCallback,
+				handleCreateErrorCallback
+			);
+		}
 	};
 
 	const handleUploadErrorCallback = (message) => {
@@ -175,11 +240,18 @@ function SelectCategories(props) {
 
 	const handleCreateSuccessCallback = () => {
 		setIsLoading(false);
-		Util.postNotification(
-			"Category Created",
-			"Category Successfully Created.",
-			"success"
-		);
+		if (isEditing) {
+			Util.postNotification(
+				"Category Updated",
+				"Category Successfully Updated.",
+				"success"
+			);
+		} else
+			Util.postNotification(
+				"Category Created",
+				"Category Successfully Created.",
+				"success"
+			);
 		closeModals();
 		getMainCategory();
 	};
@@ -198,7 +270,62 @@ function SelectCategories(props) {
 		setImageFile(null);
 		isLoading && setIsLoading(false);
 		error && setError("");
+		setEditCategory({});
+		isEditing && setIsEditing(false);
 	};
+
+	const setEditModal = (data) => {
+		setMainCategory(data?.name);
+		setIsEditing(true);
+		setAddCategoryModal(true);
+		setEditCategory(data);
+	};
+
+	const _validateAddTemplate = () => {
+		let isValid = true;
+
+		if (_.isEmpty(mainCategory)) {
+			setError("Main Category is required");
+			isValid = false;
+			return;
+		}
+
+		if (_.isEmpty(subCategory)) {
+			setError("Sub category is required");
+			isValid = false;
+			return;
+		}
+
+		const findSubCategory = props?.subCategoryList?.find(
+			(category) =>
+				category?.id === subCategory &&
+				category?.mainCategory?.id === mainCategory
+		);
+
+		if (_.isEmpty(findSubCategory)) {
+			setError("Sub Category is not of main category.");
+			isValid = false;
+			return isValid;
+		}
+
+		return isValid;
+	};
+
+	const createTemplate = () => {
+		if (_validateAddTemplate()) {
+			closeModals();
+			history.push(
+				ROUTES.SELECT_ADMIN_TEMPLATE?.replace(
+					":categoryId",
+					mainCategory
+				).replace(":subCategoryId", subCategory)
+			);
+		}
+	};
+
+	const subCategoryList = props?.subCategoryList?.filter(
+		(category) => category?.mainCategory?.id === mainCategory
+	);
 
 	return (
 		<SelectCategoriesUI
@@ -209,21 +336,27 @@ function SelectCategories(props) {
 			templateName={templateName}
 			mainCategory={mainCategory}
 			subCategory={subCategory}
+			filePickerRef={filePickerRef}
+			imageFile={imageFile}
+			isLoading={isLoading}
+			error={error}
+			mainCategoryList={mainCategoryList}
+			isEditing={isEditing}
+			editCategory={editCategory}
+			subCategoryList={subCategoryList}
 			setTemplateName={setTemplateName}
 			toggleAddCategoryModal={toggleAddCategoryModal}
 			toggleTemplateModal={toggleTemplateModal}
 			setMainCategory={setMainCategory}
 			setSubCategory={setSubCategory}
-			filePickerRef={filePickerRef}
-			imageFile={imageFile}
 			handleSetImage={handleSetImage}
 			triggerFilePickerClick={triggerFilePickerClick}
 			handleClickItemCard={handleClickItemCard}
 			createCategory={createCategory}
-			isLoading={isLoading}
-			error={error}
 			closeModals={closeModals}
-			mainCategoryList={mainCategoryList}
+			setEditModal={setEditModal}
+			updateCategory={updateCategory}
+			createTemplate={createTemplate}
 		/>
 	);
 }
@@ -231,6 +364,7 @@ function SelectCategories(props) {
 const mapStateToProps = (state) => {
 	return {
 		mainCategoryList: state?.category?.mainCategory || [],
+		subCategoryList: state?.category?.subCategory || [],
 	};
 };
 

@@ -311,8 +311,6 @@ const CustomStage = forwardRef((props, ref) => {
 		// }
 	};
 
-	console.log({copyNodeAttrs})
-
 	const handleCloneNode = () => {
 		if (copyNodeAttrs && Object.keys(copyNodeAttrs).length > 0) {
 			const newElement = {
@@ -339,7 +337,6 @@ const CustomStage = forwardRef((props, ref) => {
 		}
 	};
 
-	console.log({ allElements });
 	const handlePasteNode = (fromKey = false) => {
 		if (copyNodeAttrs && Object.keys(copyNodeAttrs).length > 0) {
 			const height =

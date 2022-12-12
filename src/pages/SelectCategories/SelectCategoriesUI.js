@@ -5,12 +5,10 @@ import { ROUTES } from "../../constants";
 import { AppStyles, Images } from "../../theme";
 import styles from "./styles";
 import SVG from "react-inlinesvg";
-import { InputGroup } from "react-bootstrap";
+import { Dropdown } from "react-bootstrap";
 
 function SelectCategoriesUI(props) {
 	const {
-		history,
-		template_types,
 		addTemplateModal,
 		addCategoryModal,
 		toggleTemplateModal,
@@ -30,6 +28,11 @@ function SelectCategoriesUI(props) {
 		error,
 		closeModals,
 		mainCategoryList,
+		isEditing,
+		setEditModal,
+		updateCategory,
+		subCategoryList,
+		createTemplate,
 	} = props;
 
 	const renderCards = () => {
@@ -42,10 +45,28 @@ function SelectCategoriesUI(props) {
 		);
 	};
 
-	const cardAction = () => {
+	const cardAction = (res) => {
 		return (
-			<div className={css(styles.cardAction)}>
-				<img src={Images.ellipse} className={css(styles.cardActionImage)} />
+			<div
+				className={css(styles.cardAction)}
+				onClick={(e) => e.preventDefault()}
+			>
+				<Dropdown trigger="hover">
+					<Dropdown.Toggle
+						id="dropdown-autoclose-true"
+						variant="transparent"
+						style={{ padding: 0 }}
+					>
+						<img src={Images.ellipse} className={css(styles.cardActionImage)} />
+					</Dropdown.Toggle>
+
+					<Dropdown.Menu>
+						<Dropdown.Item onClick={() => setEditModal(res)}>
+							Edit
+						</Dropdown.Item>
+						<Dropdown.Item href="#/action-2">Delete</Dropdown.Item>
+					</Dropdown.Menu>
+				</Dropdown>
 			</div>
 		);
 	};
@@ -57,15 +78,19 @@ function SelectCategoriesUI(props) {
 					styles.tempCol
 				)}`}
 				key={res.id}
-				onClick={() => handleClickItemCard(res)}
 			>
-				{cardAction()}
-				<img
-					src={res?.image?.url}
-					alt={res?.image?.name}
-					className={`${css(styles.templateImg)}`}
-				/>
-				<p className={`${css(styles.templateName)}`}>{res?.name}</p>
+				{cardAction(res)}
+				<div
+					className="w-100 h-100 d-flex flex-column align-items-center justify-content-center"
+					onClick={() => handleClickItemCard(res)}
+				>
+					<img
+						src={res?.image?.url}
+						alt={res?.image?.name}
+						className={`${css(styles.templateImg)}`}
+					/>
+					<p className={`${css(styles.templateName)}`}>{res?.name}</p>
+				</div>
 			</div>
 		);
 	};
@@ -120,8 +145,8 @@ function SelectCategoriesUI(props) {
 	const renderTemplateModalContent = () => {
 		return (
 			<div className="d-flex align-items-start flex-column w-100">
-				<p className={`${css(styles.formlabel)}`}>Template Name:</p>
-				<div className={`position-relative w-100`}>
+				{/* <p className={`${css(styles.formlabel)}`}>Template Name:</p> */}
+				{/* <div className={`position-relative w-100`}>
 					<TextField
 						name={`canvas-height`}
 						styles={[styles.canvasInput]}
@@ -129,16 +154,18 @@ function SelectCategoriesUI(props) {
 						onChange={(e) => setTemplateName(e.target.value)}
 						type="number"
 					/>
-				</div>
+				</div> */}
 
 				<SelectBox
 					styles={[styles.canvasInput]}
 					label="Main Category"
 					name={`main-category`}
-					value={mainCategory}
+					value={mainCategory ?? ""}
 					onChange={(value) => setMainCategory(value.target.value)}
 				>
-					<option disabled>Choose category</option>
+					<option disabled selected value="">
+						Choose category
+					</option>
 
 					{mainCategoryList?.map((res) => (
 						<option value={res?.id} key={res?.id}>
@@ -150,18 +177,22 @@ function SelectCategoriesUI(props) {
 				<SelectBox
 					styles={[styles.canvasInput]}
 					label="Sub Category"
-					name={`main-category`}
+					name={`sub-category`}
 					value={subCategory}
 					onChange={(value) => setSubCategory(value.target.value)}
 				>
-					<option disabled>Choose category</option>
+					<option disabled selected value="">
+						Choose category
+					</option>
 
-					{/* {template_categories.map((res, idx) => (
-						<option value={res} key={idx}>
-							{res}
+					{subCategoryList?.map((res) => (
+						<option value={res?.id} key={res?.id}>
+							{res?.name}
 						</option>
-					))} */}
+					))}
 				</SelectBox>
+
+				{error && <div className={`${css(styles.errors)}`}>{error}</div>}
 			</div>
 		);
 	};
@@ -236,19 +267,19 @@ function SelectCategoriesUI(props) {
 				showModal={addTemplateModal}
 				setShowModal={toggleTemplateModal}
 				cancelOnClick={closeModals}
-				submitOnClick={toggleTemplateModal}
+				submitOnClick={createTemplate}
 			>
 				{renderTemplateModalContent()}
 			</ModalView>
 
 			<ModalView
-				title={"Add Category"}
+				title={isEditing ? "Edit Category" : "Add Category"}
 				cancelText={"Cancel"}
-				submitText={"Create"}
+				submitText={isEditing ? "Update" : "Create"}
 				showModal={addCategoryModal}
 				setShowModal={toggleAddCategoryModal}
 				cancelOnClick={closeModals}
-				submitOnClick={createCategory}
+				submitOnClick={isEditing ? updateCategory : createCategory}
 				isLoading={isLoading}
 			>
 				{renderCategoryModalContent()}

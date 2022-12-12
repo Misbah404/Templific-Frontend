@@ -1126,15 +1126,15 @@ export const GET_SUB_CATEGORIES = gql`
 
 export const CREATE_PREDFINED_TEMPLATE = gql`
 	mutation createPredefinedTemplate(
-		$name: String!
-		$height: Float!
-		$template: JSON!
-		$unit: String!
-		$width: Float!
-		$zoomValue: Int!
-		$image: ID!
-		$canvasAttrs: JSON!
-		$categoryId: ID!
+		$name: String
+		$height: Float
+		$template: JSON
+		$unit: String
+		$width: Float
+		$zoomValue: Int
+		$image: ID
+		$canvasAttrs: JSON
+		$categoryId: ID
 	) {
 		createPreDefineTemplate(
 			data: {
@@ -1190,6 +1190,7 @@ export const UPDATE_PREDEFINED_TEMPLATE = gql`
 		$zoomValue: Int!
 		$name: String!
 		$image: ID!
+		$subCategoryId: ID
 	) {
 		updatePreDefineTemplate(
 			id: $templateId
@@ -1198,6 +1199,7 @@ export const UPDATE_PREDEFINED_TEMPLATE = gql`
 				zoomValue: $zoomValue
 				name: $name
 				image: $image
+				sub_category: $subCategoryId
 			}
 		) {
 			data {
@@ -1221,6 +1223,16 @@ export const UPDATE_PREDEFINED_TEMPLATE = gql`
 						}
 					}
 				}
+				id
+			}
+		}
+	}
+`;
+
+export const UPDATE_MAIN_CATEGORY = gql`
+	mutation updateMainCategory($id: ID!, $name: String, $imageId: ID) {
+		updateMainCategory(id: $id, data: { name: $name, image: $imageId }) {
+			data {
 				id
 			}
 		}

@@ -331,8 +331,6 @@ const SelectAdminTemplate = (props) => {
 		? []
 		: Object.keys(props.canvasData.categories);
 
-	console.log({ params });
-
 	return (
 		<>
 			{props.layout.sideBar && <SideBar />}

@@ -23,6 +23,7 @@ import {
 	addUserTemplate,
 	downloadTemplateAction,
 	saveTemplateAction,
+	triggerOpenCategoryModal,
 } from "../../../actions/CanvasDataAction";
 import { Form, OverlayTrigger, Spinner, Tooltip } from "react-bootstrap";
 import { useLazyQuery, useMutation } from "@apollo/client";
@@ -64,7 +65,15 @@ const Dashboard = (props) => {
 	const [duplicateStageChildElements, setDuplicateStageChildElements] =
 		useState({});
 
-	console.log({ location });
+	const [mainCategoryId, setMainCategoryId] = useState(() => "");
+	const [subCategoryId, setSubCategoryId] = useState(() => "");
+
+	const [modalMainCategoryId, setModalMainCategoryId] = useState(() => "");
+	const [modalSubCategoryId, setModalSubCategoryId] = useState(() => "");
+
+	const [openEditCategoryModal, setOpenEditCategoryModal] = useState(
+		() => false
+	);
 
 	const [isLoading, setIsLoading] = useState(() => false);
 	const [downloadForm, setDownloadForm] = useState({
@@ -614,14 +623,21 @@ const Dashboard = (props) => {
 			}
 
 			const findTemplate =
-				Object.keys(props.userTemplates).find(
-					(key) => props.userTemplates[key].name === canvasAttrs.templateName
+				Object.keys(props?.userTemplates).find(
+					(key) => props?.userTemplates[key]?.name === canvasAttrs?.templateName
 				) || "";
 
 			if (findTemplate === "") {
 				handleCreateCanvas();
 			} else {
 				history.push(ROUTES.SELECT_TEMPLATE);
+			}
+
+			if (location?.pathname === ROUTES.ADMIN_TEMPLATE_CREATE) {
+				setMainCategoryId(canvasData?.mainCategory);
+				setModalMainCategoryId(canvasData?.mainCategory);
+				setSubCategoryId(canvasData?.subCategory);
+				setModalSubCategoryId(canvasData?.subCategory);
 			}
 		}
 
@@ -753,7 +769,16 @@ const Dashboard = (props) => {
 			setShowDownloadModal(true);
 			dispatch(downloadTemplateAction(false));
 		}
-	}, [props.triggerSaveTemplate, props.triggerDownloadTemplate]);
+
+		if (props.triggerCategoryEditModal) {
+			setOpenEditCategoryModal(true);
+			dispatch(triggerOpenCategoryModal());
+		}
+	}, [
+		props.triggerSaveTemplate,
+		props.triggerDownloadTemplate,
+		props.triggerCategoryEditModal,
+	]);
 
 	useEffect(() => {
 		setSelectElement({});
@@ -788,7 +813,6 @@ const Dashboard = (props) => {
 	};
 
 	const handleKeyPress = (e) => {
-		console.log(e);
 		if (
 			(e.ctrlKey || e.metaKey) &&
 			e.key.toLowerCase() === "z" &&
@@ -1305,6 +1329,7 @@ const Dashboard = (props) => {
 				delete data.demoId;
 				delete data.transactionId;
 				data.categoryId = canvasData?.subCategory;
+				data.mainCategoryId = canvasData?.mainCategory;
 
 				createPredefinedTemplate({ variables: data });
 			} else {
@@ -1327,6 +1352,7 @@ const Dashboard = (props) => {
 
 			if (location?.pathname === ROUTES.ADMIN_TEMPLATE_CREATE) {
 				data.categoryId = canvasData?.subCategory;
+				data.mainCategoryId = canvasData?.mainCategory;
 				updatePredefinedTemplate({
 					variables: data,
 				});
@@ -1337,7 +1363,7 @@ const Dashboard = (props) => {
 			}
 		}
 	};
-	console.log({ canvasData });
+
 	const downloadTemplate = () => {
 		if (_.isEmpty(downloadForm.type) || _.isNil(downloadForm.type)) {
 			setDownloadForm({ ...downloadForm, typeError: "File type is required" });
@@ -1562,14 +1588,51 @@ const Dashboard = (props) => {
 		return !_.isEqual(currentState, duplicateState);
 	};
 
+	const handleUpdateCategory = () => {
+		if (_.isEmpty(modalMainCategoryId)) {
+			setTemplateNameError("Main Category is required.");
+			return;
+		}
+
+		if (_.isEmpty(modalSubCategoryId)) {
+			setTemplateNameError("Sub Category is required.");
+			return;
+		}
+
+		const isSubCategoryOfMainCategory = props?.subCategoryList?.find(
+			(sub) =>
+				sub?.id === modalSubCategoryId &&
+				sub?.mainCategory?.id === modalMainCategoryId
+		);
+
+		if (_.isEmpty(isSubCategoryOfMainCategory)) {
+			setTemplateNameError("Sub Category is not of main category");
+		}
+
+		templateNameError && setTemplateNameError("");
+
+		setMainCategoryId(modalMainCategoryId);
+		setSubCategoryId(modalSubCategoryId);
+
+		setOpenEditCategoryModal(false);
+	};
+
 	const isUserModule =
 		demoTemplate?.path === ROUTES.TEMPLATE_DEMO ||
 		transactionTemplate?.path === ROUTES.TEMPLATE_TRANSACTION;
 
-	if (!canvasData && location.pathname === ROUTES.DASHBOARD_CREATE) {
+	if (
+		!canvasData &&
+		(location.pathname === ROUTES.DASHBOARD_CREATE ||
+			location.pathname === ROUTES.ADMIN_TEMPLATE_CREATE)
+	) {
 		history.push(ROUTES.SELECT_TEMPLATE);
 		return <div></div>;
 	}
+
+	const filteredSubCategoryList = props?.subCategoryList?.filter(
+		(c) => c?.mainCategory?.id === mainCategoryId
+	);
 
 	return (
 		<>
@@ -1975,6 +2038,62 @@ const Dashboard = (props) => {
 					)}
 				</div>
 			</ModalView>
+
+			<ModalView
+				title={"Edit Template"}
+				showModal={openEditCategoryModal}
+				setShowModal={() => setOpenEditCategoryModal(true)}
+				cancelText={"Cancel"}
+				submitText={"Save"}
+				cancelOnClick={() => {
+					setOpenEditCategoryModal(false);
+				}}
+				submitOnClick={handleUpdateCategory}
+			>
+				<div>
+					<SelectBox
+						styles={[styles.canvasInput]}
+						label="Main Category"
+						name={`main-category`}
+						value={modalMainCategoryId}
+						onChange={(value) => setModalMainCategoryId(value.target.value)}
+					>
+						<option disabled>Choose category</option>
+
+						{props?.mainCategoryList.map((res, idx) => (
+							<option value={res?.id} key={res?.id}>
+								{res?.name}
+							</option>
+						))}
+					</SelectBox>
+
+					<SelectBox
+						styles={[styles.canvasInput]}
+						label="Main Category"
+						name={`main-category`}
+						value={modalSubCategoryId}
+						onChange={(value) => setModalSubCategoryId(value.target.value)}
+						disabled={!!!mainCategoryId}
+						// disabled
+					>
+						<option disabled>Choose category</option>
+
+						{filteredSubCategoryList?.map((res, idx) => (
+							<option value={res?.id} key={res?.id}>
+								{res?.name}
+							</option>
+						))}
+					</SelectBox>
+
+					{templateNameError && (
+						<div className="d-flex align-items-center">
+							<span className={`${css(styles.errors)}`}>
+								{templateNameError}
+							</span>
+						</div>
+					)}
+				</div>
+			</ModalView>
 		</>
 	);
 };
@@ -1985,8 +2104,11 @@ const mapStateToProps = (state) => ({
 	images: { ...state.canvasData.images, ...state.canvasData.elements },
 	triggerSaveTemplate: state.canvasData.triggerSaveTemplate,
 	triggerDownloadTemplate: state.canvasData.triggerDownloadTemplate,
+	triggerCategoryEditModal: state.canvasData?.triggerCategoryEditModal,
 	user: state.user,
 	userTemplates: state.canvasData.templates,
+	mainCategoryList: state?.category?.mainCategory,
+	subCategoryList: state?.category?.subCategory,
 });
 
 const actions = {};

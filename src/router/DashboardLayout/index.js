@@ -37,6 +37,7 @@ import {
 	setUserFonts,
 	setUserImages,
 	setUserTemplates,
+	triggerOpenCategoryModal,
 } from "../../actions/CanvasDataAction";
 import { userLogout, verifyUser } from "../../actions/AuthActions";
 import { GET_GLYPHS } from "../../services/userHelper";
@@ -564,10 +565,24 @@ const DashboardLayout = (props) => {
 					</h1>
 				</div>
 				<div
-					className={`d-flex align-items-center justify-content-between ${css(
+					className={`d-flex align-items-center justify-content-end ${css(
 						styles.rightArea
 					)}`}
 				>
+					{ROUTES.ADMIN_TEMPLATE_CREATE === location.pathname && (
+						<Button
+							title={`Edit Category`}
+							className={`${css([
+								styles.templateBtn,
+								styles.editCategoryButton,
+							])}`}
+							leftIcon
+							onClick={() => dispatch(triggerOpenCategoryModal())}
+						>
+							<i className={`fa fa-plus ${css(styles.plusBtn)}`} />
+						</Button>
+					)}
+
 					<Button
 						title={`New Template`}
 						className={`${css(styles.templateBtn)}`}

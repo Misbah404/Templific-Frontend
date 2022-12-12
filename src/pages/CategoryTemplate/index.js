@@ -73,8 +73,6 @@ function CategoryTemplate() {
 	const [showSizeModal, setShowSizeModal] = useState(() => false);
 	const [errors, setErrors] = useState(() => "");
 
-	console.log({ params });
-
 	const toggleTemplateModal = () => {
 		setAddTemplateModal(!addTemplateModal);
 	};

@@ -169,15 +169,23 @@ export default StyleSheet.create({
 		marginTop: "1vw"
 	},
 	cardAction: {
-		position: "absolute",
-		right: "0.5vw",
+		position: "absolute !important",
+		right: "0vw",
 		top: "0vw",
-		zIndex: 100,
+		zIndex: "100 !important",
 		padding: ".2vw",
+		width: "2vw",
+		height:"2.5vw"
 	},
 	cardActionImage: {
 		height: "1.2vw",
 		width: "0.8vw",
+		background: "transparent",
+		border: "none",
+		outline: "none",
+		":focus": {
+			border: "none"
+		}
 	},
 	uploadImage: {
 		border: `.2vw dashed ${Colors.dashedBorder}`,
@@ -187,4 +195,11 @@ export default StyleSheet.create({
 		cursor: "pointer",
 		fontSize: "1vw",
 	},
+
+	itemCardActionWrapper: {
+		background: Colors.white,
+		padding: "1vw",
+		border: "0.1vw solid #efefef",
+		borderRadius: "0.5vw"
+	}
 });

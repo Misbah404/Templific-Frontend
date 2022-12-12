@@ -107,7 +107,7 @@ const AuthRoute = ({ ...props }) => {
 
 function CustomRoutes(props) {
 	const { user } = props;
-	console.log({ user });
+
 	const dispatch = useDispatch();
 	const repeatedProps = {
 		user,

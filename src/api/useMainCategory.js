@@ -5,6 +5,7 @@ import { logoutModal } from "../actions/LayoutAction";
 import {
 	CREATE_MAIN_CATEGORY,
 	CREATE_SUB_CATEGORY,
+	UPDATE_MAIN_CATEGORY,
 	UPLOAD_FILE_TO_SERVER,
 } from "../graphQueries";
 
@@ -13,6 +14,7 @@ const useMainCategory = () => {
 	const [createMainCategory] = useMutation(CREATE_MAIN_CATEGORY);
 	const [uploadFile] = useMutation(UPLOAD_FILE_TO_SERVER);
 	const [createSubCategory] = useMutation(CREATE_SUB_CATEGORY);
+	const [updateMainCategory] = useMutation(UPDATE_MAIN_CATEGORY);
 
 	const handleCreateMainCategory = (
 		payload,
@@ -21,7 +23,6 @@ const useMainCategory = () => {
 	) => {
 		createMainCategory({ variables: payload })
 			.then((data) => {
-				console.log({ data });
 				if (createSuccessCallback) {
 					const res = data?.data?.createMainCategory?.data;
 					const mainCategory = {
@@ -37,7 +38,6 @@ const useMainCategory = () => {
 				}
 			})
 			.catch((err) => {
-				console.log({ err });
 				if (err.message.includes("Received status code 401")) {
 					dispatch(logoutModal({ data: true }));
 					return;
@@ -52,7 +52,6 @@ const useMainCategory = () => {
 	const uploadCategoryImage = (payload, successCallback, errorCallback) => {
 		uploadFile({ variables: payload })
 			.then((data) => {
-				console.log({ data });
 				const response = {
 					...data?.data?.upload?.data?.attributes,
 					id: data?.data?.upload?.data?.id,
@@ -61,7 +60,6 @@ const useMainCategory = () => {
 				successCallback(response);
 			})
 			.catch((err) => {
-				console.log({ err: err.message });
 				if (err.message.includes("Received status code 401")) {
 					dispatch(logoutModal({ data: true }));
 					return;
@@ -77,7 +75,6 @@ const useMainCategory = () => {
 	) => {
 		createSubCategory({ variables: payload })
 			.then((data) => {
-				console.log({ data });
 				if (createSuccessCallback) {
 					const res = data?.data?.createSubCategory?.data;
 					const subCategory = {
@@ -93,7 +90,6 @@ const useMainCategory = () => {
 				}
 			})
 			.catch((err) => {
-				console.log({ err });
 				if (err.message.includes("Received status code 401")) {
 					dispatch(logoutModal({ data: true }));
 					return;
@@ -105,10 +101,31 @@ const useMainCategory = () => {
 			});
 	};
 
+	const updateCategoryMain = (payload, updateSuccess, updateError) => {
+		updateMainCategory({ variables: payload })
+			.then((res) => {
+				console.log({ res });
+				updateSuccess();
+			})
+			.catch((err) => {
+				console.log({ err });
+				if (err.message.includes("Received status code 401")) {
+					dispatch(logoutModal({ data: true }));
+					return;
+				}
+				updateError && updateError("Invalid Input.");
+			});
+	};
+
+	const deleteMainCategory = () => {
+		
+	}
+
 	return {
 		handleCreateMainCategory,
 		uploadCategoryImage,
 		handleCreateSubCategory,
+		updateCategoryMain,
 	};
 };
 
