@@ -4,61 +4,83 @@ import { Button, ModalView, SelectBox, TextField } from "../../components";
 import { AppStyles, Images } from "../../theme";
 import styles from "./styles";
 import SVG from "react-inlinesvg";
-import { InputGroup } from "react-bootstrap";
+import { Dropdown, InputGroup } from "react-bootstrap";
 
 function CategoryTemplateUI(props) {
 	const {
-		template_types,
 		addTemplateModal,
 		toggleTemplateModal,
 		templateName,
 		setTemplateName,
-		selectedUnit,
-		canvasHeight,
-		setCanvasHeight,
-		canvasWidth,
-		setCanvasWidth,
-		showSizeModal,
-		initialState,
-		errors,
-		handleChangeUnit,
-		toggleShowSizeModal,
 		handleSubmitTemplateName,
+		templateList,
+		editModal,
+		toggleEditModal,
+		openEditModal,
+		mainCategoryList,
+		subCategoryList,
+		subCategory,
+		mainCategory,
+		setSubCategory,
+		setMainCategory,
+		handleUpdateTemplate,
+		closeModal,
+		handleDeleteTemplate,
+		onClickTemplate,
+		selectedSubCategory,
 	} = props;
 
 	const renderCards = () => {
 		return (
 			<div className={`w-100 ${css(styles.tempRow)}`}>
-				{template_types.map((res) => (
-					<>{cardItem(res)}</>
-				))}
+				{templateList?.length > 0 &&
+					templateList.map((res) => <>{cardItem(res)}</>)}
 			</div>
 		);
 	};
 
-	const cardAction = () => {
+	const cardAction = (res) => {
 		return (
 			<div className={css(styles.cardAction)}>
-				<img src={Images.ellipse} className={css(styles.cardActionImage)} />
+				{/* <img src={Images.ellipse} className={css(styles.cardActionImage)} /> */}
+
+				<Dropdown>
+					<Dropdown.Toggle
+						id="dropdown-autoclose-true"
+						variant="transparent"
+						style={{ padding: 0 }}
+					>
+						<img src={Images.ellipse} className={css(styles.cardActionImage)} />
+					</Dropdown.Toggle>
+
+					<Dropdown.Menu>
+						<Dropdown.Item onClick={() => openEditModal(res)}>
+							Edit
+						</Dropdown.Item>
+						<Dropdown.Item onClick={() => handleDeleteTemplate(res)}>
+							Delete
+						</Dropdown.Item>
+					</Dropdown.Menu>
+				</Dropdown>
 			</div>
 		);
 	};
 
 	const cardItem = (res) => {
 		return (
-			<div
-				className={`d-flex flex-column align-items-center justify-content-center ${css(
-					styles.tempCol
-				)}`}
-				key={res.title}
-			>
-				{cardAction()}
-				<img
-					src={res.image}
-					alt={res.title}
-					className={`${css(styles.templateImg)}`}
-				/>
-				<p className={`${css(styles.templateName)}`}>{res.title}</p>
+			<div className={`${css(styles.tempCol)}`} key={res.id}>
+				{cardAction(res)}
+				<div
+					className="d-flex flex-column align-items-center justify-content-center w-100 h-100"
+					onClick={() => onClickTemplate(res)}
+				>
+					<img
+						src={res?.image?.url}
+						alt={res.name}
+						className={`${css(styles.templateImg)}`}
+					/>
+					<p className={`${css(styles.templateName)}`}>{res.name}</p>
+				</div>
 			</div>
 		);
 	};
@@ -70,7 +92,7 @@ function CategoryTemplateUI(props) {
 					className={css(styles.addTemplate)}
 					leftIcon
 					btnWrap={styles.addTemplateWrap}
-					onClick={toggleTemplateModal}
+					onClick={handleSubmitTemplateName}
 				>
 					<div
 						className={`${css(AppStyles.flexRow)} ${css(
@@ -107,114 +129,58 @@ function CategoryTemplateUI(props) {
 		);
 	};
 
-	const renderTemplateSizeContent = () => {
+	const renderEditModalContent = () => {
 		return (
-			<div>
-				<div className={`d-flex`}>
-					<form onSubmit={(e) => e.preventDefault()}>
-						<div
-							className={`${css(
-								styles.formRow
-							)} d-flex align-items-center justify-content-between`}
-						>
-							<p className={`${css(styles.formlabel)}`}>Units:</p>
-							<div>
-								<label
-									className={`d-inline-flex align-items-center ${css(
-										styles.unitLabel
-									)}`}
-								>
-									<input
-										type="radio"
-										className={`${css(styles.unitRadio)}`}
-										onChange={handleChangeUnit}
-										value="inches"
-										checked={selectedUnit === "inches"}
-									/>
-									inches
-								</label>
-								<label
-									className={`d-inline-flex align-items-center ${css(
-										styles.unitLabel
-									)}`}
-								>
-									<input
-										type="radio"
-										className={`${css(styles.unitRadio)}`}
-										onChange={handleChangeUnit}
-										value="mm"
-										checked={selectedUnit === "mm"}
-									/>
-									mm
-								</label>
-								<label
-									className={`d-inline-flex align-items-center ${css(
-										styles.unitLabel
-									)}`}
-								>
-									<input
-										type="radio"
-										className={`${css(styles.unitRadio)}`}
-										onChange={handleChangeUnit}
-										value="pixels"
-										checked={selectedUnit === "pixels"}
-									/>
-									pixels
-								</label>
-							</div>
-						</div>
-						<div
-							className={`${css(
-								styles.formRow
-							)} d-flex align-items-center justify-content-between`}
-						>
-							<p className={`${css(styles.formlabel)}`}>Canvas:</p>
-							<div className={`d-flex align-items-center`}>
-								<div className={`position-relative`}>
-									<TextField
-										name={`canvas-width`}
-										styles={[styles.canvasInput]}
-										value={canvasWidth}
-										onChange={(value) => setCanvasWidth(value.target.value)}
-										type="number"
-										autofocus
-									/>
-									<span
-										className={`d-flex align-items-center position-absolute ${css(
-											styles.canvasFieldSufix
-										)}`}
-									>
-										w
-									</span>
-								</div>
-								<span style={{ margin: "0 0.5vw", fontSize: "1.2vw" }}>
-									{" "}
-									x{" "}
-								</span>
-								<div className={`position-relative`}>
-									<TextField
-										name={`canvas-height`}
-										styles={[styles.canvasInput]}
-										value={canvasHeight}
-										onChange={(value) => setCanvasHeight(value.target.value)}
-										type="number"
-									/>
-									<span
-										className={`d-flex align-items-center position-absolute ${css(
-											styles.canvasFieldSufix
-										)}`}
-									>
-										h
-									</span>
-								</div>
-							</div>
-						</div>
-						{errors && (
-							<div className="d-flex align-items-center">
-								<span className={`${css(styles.errors)}`}>{errors}</span>
-							</div>
-						)}
-					</form>
+			<div className="d-flex align-items-start flex-column w-100">
+				<div className={`position-relative w-100`}>
+					<SelectBox
+						styles={[styles.canvasInput]}
+						label="Main Category"
+						name={`main-category`}
+						value={mainCategory}
+						onChange={(value) => {
+							setMainCategory(value.target.value);
+							setSubCategory("");
+						}}
+					>
+						<option disabled selected value="">
+							Choose main category
+						</option>
+
+						{mainCategoryList.map((res) => (
+							<option value={res?.id} key={res?.id}>
+								{res?.name}
+							</option>
+						))}
+					</SelectBox>
+
+					<SelectBox
+						styles={[styles.canvasInput]}
+						label="Sub Category"
+						name={`main-category`}
+						value={subCategory}
+						onChange={(value) => setSubCategory(value.target.value)}
+						disabled={!!!mainCategory}
+					>
+						<option disabled selected value="">
+							Choose sub category
+						</option>
+
+						{subCategoryList.map((res) => (
+							<option value={res?.id} key={res?.id}>
+								{res?.name}
+							</option>
+						))}
+					</SelectBox>
+
+					<TextField
+						label={"Template name"}
+						name={`canvas-height`}
+						styles={[styles.canvasInput]}
+						value={templateName}
+						onChange={(e) => setTemplateName(e.target.value)}
+						autofocus
+					/>
 				</div>
 			</div>
 		);
@@ -233,26 +199,12 @@ function CategoryTemplateUI(props) {
 			>
 				{actionButtons()}
 
-				<h2 className={`${css(styles.mainHeading)}`}>All templates</h2>
+				<h2 className={`${css(styles.mainHeading)}`}>
+					{selectedSubCategory?.name ?? "All templates"}
+				</h2>
 
 				{renderCards()}
 			</div>
-
-			<ModalView
-				showModal={showSizeModal}
-				setShowModal={toggleShowSizeModal}
-				title={`Set Template Size`}
-				cancelText={`Cancel`}
-				cancelOnClick={() => {
-					toggleShowSizeModal();
-					initialState();
-				}}
-				submitText={`Create`}
-				// submitOnClick={handleSubmitTemplateSize}
-			>
-				{renderTemplateSizeContent()}
-			</ModalView>
-
 			<ModalView
 				title={"Add Template"}
 				cancelText={"Cancel"}
@@ -263,6 +215,18 @@ function CategoryTemplateUI(props) {
 				submitOnClick={handleSubmitTemplateName}
 			>
 				{renderTemplateModalContent()}
+			</ModalView>
+
+			<ModalView
+				title={"Edit Template"}
+				cancelText={"Cancel"}
+				submitText={"Save"}
+				showModal={editModal}
+				setShowModal={toggleEditModal}
+				cancelOnClick={closeModal}
+				submitOnClick={handleUpdateTemplate}
+			>
+				{renderEditModalContent()}
 			</ModalView>
 		</div>
 	);

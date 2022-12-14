@@ -6,6 +6,8 @@ import {
 	CREATE_MAIN_CATEGORY,
 	CREATE_SUB_CATEGORY,
 	UPDATE_MAIN_CATEGORY,
+	UPDATE_PREDEFINED_TEMPLATE,
+	UPDATE_SUB_CATEGORY,
 	UPLOAD_FILE_TO_SERVER,
 } from "../graphQueries";
 
@@ -15,6 +17,8 @@ const useMainCategory = () => {
 	const [uploadFile] = useMutation(UPLOAD_FILE_TO_SERVER);
 	const [createSubCategory] = useMutation(CREATE_SUB_CATEGORY);
 	const [updateMainCategory] = useMutation(UPDATE_MAIN_CATEGORY);
+	const [updateSubCategoryRequest] = useMutation(UPDATE_SUB_CATEGORY);
+	const [updateTemplateRequest] = useMutation(UPDATE_PREDEFINED_TEMPLATE);
 
 	const handleCreateMainCategory = (
 		payload,
@@ -117,15 +121,66 @@ const useMainCategory = () => {
 			});
 	};
 
-	const deleteMainCategory = () => {
-		
-	}
+	const deleteMainCategory = (payload, successCallback, errorCallback) => {
+		updateMainCategory({ variables: payload })
+			.then((res) => {
+				console.log({ res });
+				successCallback(res);
+			})
+			.catch((err) => {
+				console.log({ err });
+				if (err.message.includes("Received status code 401")) {
+					dispatch(logoutModal({ data: true }));
+					return;
+				}
+				errorCallback(err);
+			});
+	};
+
+	const handleUpdateSubCategory = (payload, successCallback, errorCallback) => {
+		updateSubCategoryRequest({ variables: payload })
+			.then((res) => {
+				console.log({ res });
+				successCallback && successCallback(res);
+			})
+			.catch((err) => {
+				console.log({ err });
+				if (err.message.includes("Received status code 401")) {
+					dispatch(logoutModal({ data: true }));
+					return;
+				}
+
+				errorCallback && errorCallback(err.message);
+			});
+	};
+
+	const handleUpdateTemplate = (
+		payload,
+		successCallback = () => {},
+		errorCallback = () => {}
+	) => {
+		updateTemplateRequest({ variables: payload })
+			.then((res) => {
+				successCallback(res);
+			})
+			.catch((err) => {
+				if (err.message.includes("Received status code 401")) {
+					dispatch(logoutModal({ data: true }));
+					return;
+				}
+
+				errorCallback && errorCallback(err.message);
+			});
+	};
 
 	return {
 		handleCreateMainCategory,
 		uploadCategoryImage,
 		handleCreateSubCategory,
 		updateCategoryMain,
+		deleteMainCategory,
+		handleUpdateSubCategory,
+		handleUpdateTemplate,
 	};
 };
 

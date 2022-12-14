@@ -3,7 +3,7 @@ import React, { useRef, useState } from "react";
 import { connect } from "react-redux";
 import { useHistory, useParams } from "react-router-dom";
 import { useGetCategoryData, useMainCategory } from "../../api";
-import { ROUTES } from "../../constants";
+import { ROUTES, SOMETHING_WRONG } from "../../constants";
 import Util from "../../services/Util";
 import { Images } from "../../theme";
 import SelectSubCategoryUI from "./SelectSubCategoryUI";
@@ -70,7 +70,11 @@ function SelectCategories(props) {
 	const { mainCategoryList, subCategoryList } = props;
 	const params = useParams();
 	const { getSubCategory } = useGetCategoryData();
-	const { uploadCategoryImage, handleCreateSubCategory } = useMainCategory();
+	const {
+		uploadCategoryImage,
+		handleCreateSubCategory,
+		handleUpdateSubCategory,
+	} = useMainCategory();
 	const [addTemplateModal, setAddTemplateModal] = useState(() => false);
 	const [addCategoryModal, setAddCategoryModal] = useState(() => false);
 	const [templateName, setTemplateName] = useState(() => "");
@@ -78,6 +82,8 @@ function SelectCategories(props) {
 	const [subCategory, setSubCategory] = useState(() => "");
 	const [imageFile, setImageFile] = useState(() => null);
 	const [isLoading, setIsLoading] = useState(() => false);
+	const [editCategory, setEditCategory] = useState(() => ({}));
+	const [isEditing, setIsEditing] = useState(() => false);
 	const [error, setError] = useState(() => "");
 	const filePickerRef = useRef();
 
@@ -112,7 +118,10 @@ function SelectCategories(props) {
 	const _isValidPayloadCategory = () => {
 		let isValid = true;
 
-		if (!!imageFile?.name === false || _.isEmpty(imageFile?.name)) {
+		if (
+			(!!imageFile?.name === false || _.isEmpty(imageFile?.name)) &&
+			isEditing !== true
+		) {
 			isValid = false;
 			setError("Image is required.");
 			return isValid;
@@ -124,9 +133,7 @@ function SelectCategories(props) {
 			return;
 		}
 
-		// const categoryWithSameName = mainCategoryList?.find(
-		// 	(category) => category?.name === mainCategory
-		// );
+		console.log({ mainCategory });
 
 		// if (!_.isEmpty(categoryWithSameName) && categoryWithSameName) {
 		// 	isValid = false;
@@ -154,17 +161,32 @@ function SelectCategories(props) {
 	};
 
 	const handleUploadSuccessCallback = (data) => {
-		const payload = {
-			name: subCategory,
-			imageId: data?.id,
-			mainCategoryId: params?.id,
-		};
+		if (!!!isEditing) {
+			const payload = {
+				name: subCategory,
+				imageId: data?.id,
+				mainCategoryId: params?.id,
+			};
 
-		handleCreateSubCategory(
-			payload,
-			handleCreateSuccessCallback,
-			handleCreateErrorCallback
-		);
+			handleCreateSubCategory(
+				payload,
+				handleCreateSuccessCallback,
+				handleCreateErrorCallback
+			);
+		} else {
+			const payload = {
+				name: subCategory,
+				imageId: data?.id,
+				mainCategoryId: params?.id,
+				id: editCategory?.id,
+			};
+
+			handleUpdateSubCategory(
+				payload,
+				handleCreateSuccessCallback,
+				handleCreateErrorCallback
+			);
+		}
 	};
 
 	const handleUploadErrorCallback = (message) => {
@@ -174,13 +196,45 @@ function SelectCategories(props) {
 
 	const handleCreateSuccessCallback = () => {
 		setIsLoading(false);
-		Util.postNotification(
-			"Category Created",
-			"Category Successfully Created.",
-			"success"
-		);
+		!!!isEditing
+			? Util.postNotification(
+					"Category Created",
+					"Category Successfully Created.",
+					"success"
+			  )
+			: Util.postNotification(
+					"Category Updated",
+					"Category Successfully Updated.",
+					"success"
+			  );
 		closeModals();
 		getSubCategory();
+	};
+
+	const handleDeleteCategory = (data) => {
+		const payload = {
+			id: data?.id,
+			isDelete: true,
+		};
+
+		handleUpdateSubCategory(
+			payload,
+			() => {
+				getSubCategory();
+				Util.postNotification(
+					"Category Deleted",
+					"Category Successfully Deleted.",
+					"success"
+				);
+			},
+			(message) => {
+				Util.postNotification(
+					"Category Update Failed",
+					message ?? SOMETHING_WRONG,
+					"danger"
+				);
+			}
+		);
 	};
 
 	const handleCreateErrorCallback = (message) => {
@@ -197,6 +251,44 @@ function SelectCategories(props) {
 		setImageFile(null);
 		isLoading && setIsLoading(false);
 		error && setError("");
+		setIsEditing(false);
+		setEditCategory({});
+	};
+
+	const openEditModal = (data) => {
+		setMainCategory(data?.mainCategory?.id);
+		setSubCategory(data?.name);
+		setEditCategory(data);
+		setIsEditing(true);
+		setAddCategoryModal(true);
+	};
+
+	const handleEditCategoryReq = () => {
+		if (_isValidPayloadCategory()) {
+			setIsLoading(true);
+			if (imageFile?.name) {
+				const payload = {
+					file: imageFile,
+				};
+
+				uploadCategoryImage(
+					payload,
+					handleUploadSuccessCallback,
+					handleUploadErrorCallback
+				);
+			} else {
+				const payload = {
+					id: editCategory?.id,
+					name: subCategory,
+					mainCategory: mainCategory,
+				};
+				handleUpdateSubCategory(
+					payload,
+					handleCreateSuccessCallback,
+					handleCreateErrorCallback
+				);
+			}
+		}
 	};
 
 	const selectedMainCategory = mainCategoryList?.find(
@@ -232,6 +324,10 @@ function SelectCategories(props) {
 			createCategory={createCategory}
 			error={error}
 			subCategoryOfMainCategory={subCategoryOfMainCategory}
+			openEditModal={openEditModal}
+			isEditing={isEditing}
+			handleEditCategoryReq={handleEditCategoryReq}
+			handleDeleteCategory={handleDeleteCategory}
 		/>
 	);
 }

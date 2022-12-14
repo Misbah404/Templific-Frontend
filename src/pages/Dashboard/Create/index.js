@@ -41,11 +41,13 @@ import { Store } from "react-notifications-component";
 import { jsPDF } from "jspdf";
 import { addFonts } from "../../../actions/CanvasDataAction";
 import { GET_GLYPHS } from "../../../services/userHelper";
+import { useGetCategoryData } from "../../../api";
 
 const Dashboard = (props) => {
 	const dispatch = useDispatch();
 	const history = useHistory();
 	const location = useLocation();
+	const { getPredefinedTemplates } = useGetCategoryData();
 	const canvasData = history.location.state;
 	const [stagesRefs, setStagesRefs] = useState({});
 	const [isBleed, setIsBleed] = useState(false);
@@ -62,6 +64,7 @@ const Dashboard = (props) => {
 	const [thumbnail, setThumbnail] = useState({});
 	const [editTemplateName, setEditTemplateName] = useState("");
 	const [templateNameError, setTemplateNameError] = useState("");
+	const [modalError, setModalError] = useState(() => "");
 	const [duplicateStageChildElements, setDuplicateStageChildElements] =
 		useState({});
 
@@ -200,6 +203,7 @@ const Dashboard = (props) => {
 			setTemplateCheckStateDuplicate({ ...templateCheckState });
 
 			setIsLoading(false);
+			getPredefinedTemplates();
 		},
 
 		onError(err) {
@@ -300,6 +304,7 @@ const Dashboard = (props) => {
 			};
 
 			setSavedTemplateData(template);
+			getPredefinedTemplates();
 		},
 		onError(err) {
 			setSaveTemplateRes({ err: "Something went wrong", success: "" });
@@ -589,6 +594,11 @@ const Dashboard = (props) => {
 		exact: true,
 	});
 
+	const adminEditTemplate = matchPath(location.pathname, {
+		path: ROUTES.ADMIN_TEMPLATE_UPDATE,
+		exact: true,
+	});
+
 	const demoTemplate = matchPath(location.pathname, {
 		path: ROUTES.TEMPLATE_DEMO,
 		exact: true,
@@ -642,11 +652,6 @@ const Dashboard = (props) => {
 		}
 
 		if (editTemplate?.path && editTemplate.path === ROUTES.EDIT_TEMPLATE) {
-			const path = matchPath(location.pathname, {
-				path: ROUTES.EDIT_TEMPLATE,
-				exact: true,
-			});
-
 			const id = editTemplate?.params?.id || "";
 
 			const templateId = Object.keys(props.userTemplates).filter(
@@ -673,6 +678,112 @@ const Dashboard = (props) => {
 				setCanvasAttrs({
 					...templateData?.canvasAttrs,
 					templateName: templateData.name,
+				});
+				setZoomValue(templateData?.zoomValue);
+
+				const allStagesRef = {};
+				let allLayouts = {};
+				let templateFeat = {};
+
+				Object.keys(template).map((layout) => {
+					allLayouts[layout] = {};
+					templateDuplicate[layout] = {};
+
+					Object.keys(template[layout])
+						.sort((a, b) => a.split("***")[1] - b.split("***")[1])
+						.map((row) => {
+							const rowName = row.split("***")[0];
+
+							templateDuplicate[layout][rowName] = {};
+							allLayouts[layout][rowName] = [];
+
+							Object.keys(template[layout][row])
+								.sort(
+									(a, b) =>
+										template[layout][row][a].order -
+										template[layout][row][b].order
+								)
+								.map((col) => {
+									allStagesRef[col] = createRef();
+
+									templateFeat[col] = {
+										orderingElements: template[layout][row][col].allElements,
+
+										allElements: template[layout][row][col].allElements,
+
+										bgColor: template[layout][row][col].bgColor,
+									};
+
+									templateDuplicate[layout][rowName] = {
+										...templateDuplicate[layout][rowName],
+										[col]: {
+											allElements: template[layout][row][col].allElements,
+											bgColor: template[layout][row][col].bgColor,
+										},
+									};
+
+									allLayouts = {
+										...allLayouts,
+										[layout]: {
+											...allLayouts[layout],
+											[rowName]: [...allLayouts[layout][rowName], col],
+										},
+									};
+								});
+						});
+				});
+
+				setTemplateCheckStateDuplicate(templateDuplicate);
+				setDuplicateStageChildElements(templateFeat);
+				setCanvasLayout(allLayouts);
+
+				setStagesRefs(allStagesRef);
+			} catch (error) {
+				console.error(error);
+			}
+		}
+
+		if (
+			adminEditTemplate?.path &&
+			adminEditTemplate.path === ROUTES.ADMIN_TEMPLATE_UPDATE
+		) {
+			const id = adminEditTemplate?.params?.id || "";
+
+			const templateId = props?.preDefineTemplates?.filter(
+				(temp) => temp?.id === id
+			);
+
+			if (!templateId || templateId.length === 0 || id === "") {
+				history.replace(ROUTES.SELECT_CATEGORIES);
+			}
+
+			const templateData = templateId[0];
+
+			setModalSubCategoryId(templateData?.subCategory?.id);
+
+			const subCategoryInfoOfTemplate = props?.subCategoryList?.find(
+				(s) => s?.id === templateData?.subCategory?.id
+			);
+
+			if (!_.isEmpty(subCategoryInfoOfTemplate))
+				setModalMainCategoryId(subCategoryInfoOfTemplate?.mainCategory?.id);
+
+			if (!templateData || _.isEmpty(templateData) || _.isNil(templateData)) {
+				history.replace(ROUTES.SELECT_CATEGORIES);
+			}
+
+			try {
+				let template = templateData?.template || {};
+
+				console.log({ templateData });
+
+				let templateDuplicate = {};
+
+				setThumbnail(templateData?.image);
+				setSavedTemplateData(templateData);
+				setCanvasAttrs({
+					...templateData?.canvasAttrs,
+					templateName: templateData?.name,
 				});
 				setZoomValue(templateData?.zoomValue);
 
@@ -1350,7 +1461,10 @@ const Dashboard = (props) => {
 				},
 			};
 
-			if (location?.pathname === ROUTES.ADMIN_TEMPLATE_CREATE) {
+			if (
+				location?.pathname === ROUTES.ADMIN_TEMPLATE_CREATE ||
+				adminEditTemplate?.path === ROUTES.ADMIN_TEMPLATE_UPDATE
+			) {
 				data.categoryId = canvasData?.subCategory;
 				data.mainCategoryId = canvasData?.mainCategory;
 				updatePredefinedTemplate({
@@ -1590,12 +1704,12 @@ const Dashboard = (props) => {
 
 	const handleUpdateCategory = () => {
 		if (_.isEmpty(modalMainCategoryId)) {
-			setTemplateNameError("Main Category is required.");
+			setModalError("Main Category is required.");
 			return;
 		}
 
 		if (_.isEmpty(modalSubCategoryId)) {
-			setTemplateNameError("Sub Category is required.");
+			setModalError("Sub Category is required.");
 			return;
 		}
 
@@ -1606,10 +1720,10 @@ const Dashboard = (props) => {
 		);
 
 		if (_.isEmpty(isSubCategoryOfMainCategory)) {
-			setTemplateNameError("Sub Category is not of main category");
+			setModalError("Sub Category is not of main category");
 		}
 
-		templateNameError && setTemplateNameError("");
+		modalError && setModalError("");
 
 		setMainCategoryId(modalMainCategoryId);
 		setSubCategoryId(modalSubCategoryId);
@@ -1631,7 +1745,7 @@ const Dashboard = (props) => {
 	}
 
 	const filteredSubCategoryList = props?.subCategoryList?.filter(
-		(c) => c?.mainCategory?.id === mainCategoryId
+		(c) => c?.mainCategory?.id === modalMainCategoryId
 	);
 
 	return (
@@ -2047,6 +2161,7 @@ const Dashboard = (props) => {
 				submitText={"Save"}
 				cancelOnClick={() => {
 					setOpenEditCategoryModal(false);
+					setModalError("");
 				}}
 				submitOnClick={handleUpdateCategory}
 			>
@@ -2056,9 +2171,14 @@ const Dashboard = (props) => {
 						label="Main Category"
 						name={`main-category`}
 						value={modalMainCategoryId}
-						onChange={(value) => setModalMainCategoryId(value.target.value)}
+						onChange={(value) => {
+							setModalMainCategoryId(value.target.value);
+							setModalSubCategoryId("");
+						}}
 					>
-						<option disabled>Choose category</option>
+						<option disabled selected value="">
+							Choose category
+						</option>
 
 						{props?.mainCategoryList.map((res, idx) => (
 							<option value={res?.id} key={res?.id}>
@@ -2069,14 +2189,16 @@ const Dashboard = (props) => {
 
 					<SelectBox
 						styles={[styles.canvasInput]}
-						label="Main Category"
-						name={`main-category`}
+						label="Sub Category"
+						name={`sub-category`}
 						value={modalSubCategoryId}
 						onChange={(value) => setModalSubCategoryId(value.target.value)}
-						disabled={!!!mainCategoryId}
+						disabled={!!!modalMainCategoryId}
 						// disabled
 					>
-						<option disabled>Choose category</option>
+						<option disabled selected value="">
+							Choose category
+						</option>
 
 						{filteredSubCategoryList?.map((res, idx) => (
 							<option value={res?.id} key={res?.id}>
@@ -2085,11 +2207,9 @@ const Dashboard = (props) => {
 						))}
 					</SelectBox>
 
-					{templateNameError && (
+					{modalError && (
 						<div className="d-flex align-items-center">
-							<span className={`${css(styles.errors)}`}>
-								{templateNameError}
-							</span>
+							<span className={`${css(styles.errors)}`}>{modalError}</span>
 						</div>
 					)}
 				</div>
@@ -2100,15 +2220,16 @@ const Dashboard = (props) => {
 
 const mapStateToProps = (state) => ({
 	layout: state.layout,
-	fonts: { ...state.canvasData.defaultFonts, ...state.canvasData.fonts },
-	images: { ...state.canvasData.images, ...state.canvasData.elements },
-	triggerSaveTemplate: state.canvasData.triggerSaveTemplate,
+	fonts: { ...state.canvasData?.defaultFonts, ...state.canvasData?.fonts },
+	images: { ...state.canvasData?.images, ...state.canvasData?.elements },
+	triggerSaveTemplate: state.canvasData?.triggerSaveTemplate,
 	triggerDownloadTemplate: state.canvasData.triggerDownloadTemplate,
 	triggerCategoryEditModal: state.canvasData?.triggerCategoryEditModal,
 	user: state.user,
-	userTemplates: state.canvasData.templates,
+	userTemplates: state.canvasData?.templates,
 	mainCategoryList: state?.category?.mainCategory,
 	subCategoryList: state?.category?.subCategory,
+	preDefineTemplates: state?.category?.preDefineTemplates,
 });
 
 const actions = {};

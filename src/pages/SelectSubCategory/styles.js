@@ -64,7 +64,7 @@ export default StyleSheet.create({
 	},
 	tempCol: {
 		border: "0.3vw solid #F6F4FA",
-        backgroundColor: "#F6F4FA",
+		backgroundColor: "#F6F4FA",
 		borderRadius: "1.5vw",
 		padding: "1.5vw 0",
 		cursor: "pointer",
@@ -77,7 +77,7 @@ export default StyleSheet.create({
 		width: "5.5vw",
 		height: "8vw",
 		marginBottom: "0.8vw",
-		objectFit: "cover"
+		objectFit: "cover",
 	},
 	templateName: {
 		fontSize: "1vw",
@@ -169,11 +169,13 @@ export default StyleSheet.create({
 		fontSize: "1vw",
 	},
 	cardAction: {
-		position: "absolute",
-		right: "0.5vw",
+		position: "absolute !important",
+		right: "0vw",
 		top: "0vw",
-		zIndex: 100,
+		zIndex: "100 !important",
 		padding: ".2vw",
+		width: "2vw",
+		height: "2.5vw",
 	},
 	cardActionImage: {
 		height: "1.2vw",

@@ -1,4 +1,8 @@
-import { GET_MAIN_CATEGORIES, SET_SUB_CATEGORIES } from "../actions/ActionTypes";
+import {
+	GET_MAIN_CATEGORIES,
+	SET_PREDEFINE_TEMPLATES,
+	SET_SUB_CATEGORIES,
+} from "../actions/ActionTypes";
 
 const initialState = {
 	mainCategory: [],
@@ -18,6 +22,12 @@ export default (state = initialState, action) => {
 			return {
 				...state,
 				subCategory: [...action?.payload],
+			};
+
+		case SET_PREDEFINE_TEMPLATES:
+			return {
+				...state,
+				preDefineTemplates: [...action?.payload],
 			};
 
 		default:

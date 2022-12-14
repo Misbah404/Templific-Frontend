@@ -2,139 +2,186 @@ import React, { useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import _ from "lodash";
 import { Images } from "../../theme";
-import { ROUTES } from "../../constants";
+import { ROUTES, SOMETHING_WRONG } from "../../constants";
 import CategoryTemplateUI from "./CategoryTemplateUI";
+import { connect } from "react-redux";
+import { useMainCategory } from "../../api";
+import Util from "../../services/Util";
 
-const template_types = [
-	{
-		image: Images.singleCard,
-		title: "Single",
-		templateType: "single",
-		layout: {
-			row: 1,
-			col: 1,
-		},
-	},
-	{
-		image: Images.doubleCard,
-		title: "Double-Sided",
-		templateType: "double",
-		layout: {
-			row: 1,
-			col: 1,
-		},
-	},
-	{
-		image: Images.bookFoldCard,
-		title: "Book - Fold",
-		templateType: "bookFold",
-		layout: {
-			row: 1,
-			col: 2,
-		},
-	},
-	{
-		image: Images.tentFoldCard,
-		title: "Tent Fold",
-		templateType: "tentFold",
-		layout: {
-			row: 2,
-			col: 1,
-		},
-	},
-	{
-		image: Images.geofilterCard,
-		title: "Geofilter",
-		templateType: "geoFilter",
-		layout: {
-			row: 1,
-			col: 1,
-		},
-	},
-	{
-		image: Images.customCard,
-		title: "Custom",
-		templateType: "customCard",
-		layout: {
-			row: 1,
-			col: 1,
-		},
-	},
-];
-
-function CategoryTemplate() {
+function CategoryTemplate(props) {
 	const history = useHistory();
 	const params = useParams();
+	const { subCategoryList, mainCategoryList, templateList } = props;
+	const { handleUpdateTemplate } = useMainCategory();
 	const [addTemplateModal, setAddTemplateModal] = useState(() => false);
 	const [templateName, setTemplateName] = useState(() => "");
-	const [selectedUnit, setSelectedUnit] = useState(() => "pixels");
-	const [canvasHeight, setCanvasHeight] = useState(() => 1000);
-	const [canvasWidth, setCanvasWidth] = useState(() => 1000);
-	const [showSizeModal, setShowSizeModal] = useState(() => false);
 	const [errors, setErrors] = useState(() => "");
+	const [editModal, setEditModal] = useState(() => false);
+	const [editTemplate, setEditTemplate] = useState(() => ({}));
+	const [subCategory, setSubCategory] = useState(() => "");
+	const [mainCategory, setMainCategory] = useState(() => "");
 
 	const toggleTemplateModal = () => {
 		setAddTemplateModal(!addTemplateModal);
 	};
 
-	const _validateTemplateName = () => {
+	const toggleEditModal = () => {
+		setEditModal(!!!editModal);
+	};
+
+	const handleSubmitTemplateName = () => {
+		history.push(
+			ROUTES.SELECT_ADMIN_TEMPLATE?.replace(
+				":categoryId",
+				params?.categoryId
+			).replace(":subCategoryId", params?.subCategoryId)
+		);
+	};
+
+	const openEditModal = (res) => {
+		console.log(res);
+		setEditTemplate(res);
+		setTemplateName(res?.name);
+		setMainCategory(params?.categoryId);
+		setSubCategory(params?.subCategoryId);
+		setEditModal(true);
+	};
+
+	const _validatePayload = () => {
 		let isValid = true;
 
-		if (_.isEmpty(templateName?.trim())) {
+		if (_.isEmpty(templateName) || !!!templateName) {
 			isValid = false;
-			setErrors("Name is required.");
+			setErrors("Template Name is required.");
+			return;
+		}
+
+		if (_.isEmpty(mainCategory) || !!!mainCategory) {
+			isValid = false;
+			setErrors("Main Category is required.");
+			return;
+		}
+
+		if (_.isEmpty(subCategory) || !!!subCategory) {
+			isValid = false;
+			setErrors("Sub Category is required.");
+			return;
 		}
 
 		return isValid;
 	};
 
-	const handleSubmitTemplateName = () => {
-		if (_validateTemplateName()) {
-			setAddTemplateModal(false);
-			history.push(
-				ROUTES.SELECT_ADMIN_TEMPLATE?.replace(
-					":categoryId",
-					params?.categoryId
-				).replace(":subCategoryId", params?.subCategoryId)
+	const closeModal = () => {
+		setEditModal(false);
+		setMainCategory("");
+		setSubCategory("");
+		setTemplateName("");
+		setErrors("");
+	};
+
+	const handleDeleteTemplate = (res) => {
+		const payload = {
+			templateId: editTemplate?.id,
+			isDelete: true,
+		};
+
+		handleUpdateTemplate(
+			payload,
+			() => {
+				closeModal();
+				Util.postNotification(
+					"Template Deleted.",
+					"Template Deleted Successfully.",
+					"success"
+				);
+			},
+			() => {
+				Util.postNotification(
+					"Template Delete failed",
+					SOMETHING_WRONG,
+					"danger"
+				);
+			}
+		);
+	};
+
+	const handleUpdateTemplateReq = () => {
+		if (_validatePayload()) {
+			const payload = {
+				templateId: editTemplate?.id,
+				name: templateName,
+				subCategoryId: subCategory,
+			};
+
+			handleUpdateTemplate(
+				payload,
+				() => {
+					closeModal();
+					Util.postNotification(
+						"Template Updated.",
+						"Template Updated Successfully.",
+						"success"
+					);
+				},
+				() => {
+					Util.postNotification(
+						"Template Update failed",
+						SOMETHING_WRONG,
+						"danger"
+					);
+				}
 			);
 		}
 	};
 
-	const handleChangeUnit = () => {};
-
-	const toggleShowSizeModal = () => {
-		setShowSizeModal(!!!showSizeModal);
+	const onClickTemplate = (data) => {
+		history.push(ROUTES.ADMIN_TEMPLATE_UPDATE?.replace(":id", data?.id));
 	};
 
-	const initialState = () => {
-		addTemplateModal && setAddTemplateModal(false);
-		templateName && setTemplateName("");
-		setSelectedUnit("pixels");
-		setCanvasHeight(1000);
-		setCanvasWidth(1000);
-		showSizeModal && setShowSizeModal(false);
-	};
+	const subCategoryFilteredMain = subCategoryList?.filter(
+		(category) => category?.mainCategory?.id == mainCategory
+	);
+
+	const selectedSubCategory = props?.subCategoryList?.find(
+		(s) => s?.id === params?.subCategoryId
+	);
 
 	return (
 		<CategoryTemplateUI
-			template_types={template_types}
 			addTemplateModal={addTemplateModal}
 			templateName={templateName}
 			setTemplateName={setTemplateName}
 			toggleTemplateModal={toggleTemplateModal}
-			selectedUnit={selectedUnit}
-			canvasHeight={canvasHeight}
-			canvasWidth={canvasWidth}
-			setCanvasHeight={setCanvasHeight}
-			setCanvasWidth={setCanvasWidth}
-			showSizeModal={showSizeModal}
-			initialState={initialState}
 			errors={errors}
-			handleChangeUnit={handleChangeUnit}
-			toggleShowSizeModal={toggleShowSizeModal}
 			handleSubmitTemplateName={handleSubmitTemplateName}
+			subCategoryList={subCategoryFilteredMain}
+			mainCategoryList={mainCategoryList}
+			templateList={templateList}
+			toggleEditModal={toggleEditModal}
+			editModal={editModal}
+			openEditModal={openEditModal}
+			subCategory={subCategory}
+			mainCategory={mainCategory}
+			setSubCategory={setSubCategory}
+			setMainCategory={setMainCategory}
+			handleUpdateTemplate={handleUpdateTemplateReq}
+			closeModal={closeModal}
+			handleDeleteTemplate={handleDeleteTemplate}
+			onClickTemplate={onClickTemplate}
+			selectedSubCategory={selectedSubCategory}
 		/>
 	);
 }
 
-export default CategoryTemplate;
+const mapStateToProps = (state, params) => {
+	const predefTemp = state?.category?.preDefineTemplates?.filter(
+		(p) => p?.subCategory?.id == params?.match?.params?.subCategoryId
+	);
+	return {
+		subCategoryList: [...state?.category?.subCategory],
+		mainCategoryList: [...state?.category?.mainCategory],
+		templateList: [...predefTemp],
+	};
+};
+
+export default connect(mapStateToProps)(CategoryTemplate);

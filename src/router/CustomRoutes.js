@@ -220,6 +220,14 @@ function CustomRoutes(props) {
 			/>
 
 			<AuthRoute
+				path={ROUTES.ADMIN_TEMPLATE_UPDATE}
+				component={DashboardCreate}
+				hasBack={false}
+				sideMenuItems={[...homeMenuItems, ...settingMenuItems]}
+				{...repeatedProps}
+			/>
+
+			<AuthRoute
 				path={ROUTES.ADMIN_TEMPLATE_CREATE}
 				component={DashboardCreate}
 				hasBack={false}

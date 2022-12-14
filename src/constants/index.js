@@ -102,6 +102,7 @@ export const ROUTES = {
 	SELECT_SUB_CATEGORIES: "/sub-categories/:id",
 	CATEGORY_TEMPLATE: "/category/:categoryId/subCategory/:subCategoryId",
 	ADMIN_TEMPLATE_CREATE: "/admin/template/create",
+	ADMIN_TEMPLATE_UPDATE: "/admin/template/edit/:id",
 };
 
 export const EMAIL_REGEX =

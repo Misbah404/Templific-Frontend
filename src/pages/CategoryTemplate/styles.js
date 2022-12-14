@@ -73,9 +73,10 @@ export default StyleSheet.create({
 		},
 	},
 	templateImg: {
-		maxWidth: "5.5vw",
-		maxHeight: "8vw",
+		width: "5.5vw",
+		height: "8vw",
 		marginBottom: "0.8vw",
+		objectFit: "cover",
 	},
 	templateName: {
 		fontSize: "1vw",

@@ -4,7 +4,7 @@ import { Button, ModalView, SelectBox, TextField } from "../../components";
 import { AppStyles, Images } from "../../theme";
 import styles from "./styles";
 import SVG from "react-inlinesvg";
-import { InputGroup } from "react-bootstrap";
+import { Dropdown, InputGroup } from "react-bootstrap";
 
 function SelectSubCategoryUI(props) {
 	const {
@@ -29,6 +29,10 @@ function SelectSubCategoryUI(props) {
 		createCategory,
 		error,
 		subCategoryOfMainCategory,
+		openEditModal,
+		isEditing,
+		handleEditCategoryReq,
+		handleDeleteCategory,
 	} = props;
 
 	const renderCards = () => {
@@ -41,30 +45,47 @@ function SelectSubCategoryUI(props) {
 		);
 	};
 
-	const cardAction = () => {
+	const cardAction = (res) => {
 		return (
 			<div className={css(styles.cardAction)}>
-				<img src={Images.ellipse} className={css(styles.cardActionImage)} />
+				{/* <img src={Images.ellipse} className={css(styles.cardActionImage)} /> */}
+				<Dropdown>
+					<Dropdown.Toggle
+						id="dropdown-autoclose-true"
+						variant="transparent"
+						style={{ padding: 0 }}
+					>
+						<img src={Images.ellipse} className={css(styles.cardActionImage)} />
+					</Dropdown.Toggle>
+
+					<Dropdown.Menu>
+						<Dropdown.Item onClick={() => openEditModal(res)}>
+							Edit
+						</Dropdown.Item>
+						<Dropdown.Item onClick={() => handleDeleteCategory(res)}>
+							Delete
+						</Dropdown.Item>
+					</Dropdown.Menu>
+				</Dropdown>
 			</div>
 		);
 	};
 
 	const cardItem = (res) => {
 		return (
-			<div
-				className={`d-flex flex-column align-items-center justify-content-center ${css(
-					styles.tempCol
-				)}`}
-				key={res.id}
-				onClick={() => handleItemClick(res)}
-			>
-				{cardAction()}
-				<img
-					src={res?.image?.url}
-					alt={res?.image?.name}
-					className={`${css(styles.templateImg)}`}
-				/>
-				<p className={`${css(styles.templateName)}`}>{res.name}</p>
+			<div className={`${css(styles.tempCol)}`} key={res.id}>
+				{cardAction(res)}
+				<div
+					className="d-flex flex-column align-items-center justify-content-center  w-100 h-100"
+					onClick={() => handleItemClick(res)}
+				>
+					<img
+						src={res?.image?.url}
+						alt={res?.image?.name}
+						className={`${css(styles.templateImg)}`}
+					/>
+					<p className={`${css(styles.templateName)}`}>{res.name}</p>
+				</div>
 			</div>
 		);
 	};
@@ -137,7 +158,9 @@ function SelectSubCategoryUI(props) {
 					value={mainCategory}
 					onChange={(value) => setMainCategory(value.target.value)}
 				>
-					<option disabled>Choose category</option>
+					<option disabled selected value="">
+						Choose category
+					</option>
 
 					{mainCategoryList.map((res, idx) => (
 						<option value={res?.id} key={res?.id}>
@@ -185,15 +208,37 @@ function SelectSubCategoryUI(props) {
 					accept=".png, .jpg, .jpeg"
 				/>
 
-				<p className={`${css(styles.formlabel)}`}>Main Category:</p>
-				<div className={`position-relative w-100`}>
-					<TextField
-						name={`main-category`}
+				{isEditing ? (
+					<SelectBox
 						styles={[styles.canvasInput]}
-						value={selectedMainCategory?.name}
-						disabled={true}
-					/>
-				</div>
+						label="Main Category"
+						name={`main-category`}
+						value={mainCategory}
+						onChange={(value) => setMainCategory(value.target.value)}
+					>
+						<option disabled selected value="">
+							Choose category
+						</option>
+
+						{mainCategoryList.map((res, idx) => (
+							<option value={res?.id} key={res?.id}>
+								{res?.name}
+							</option>
+						))}
+					</SelectBox>
+				) : (
+					<>
+						<p className={`${css(styles.formlabel)}`}>Main Category:</p>
+						<div className={`position-relative w-100`}>
+							<TextField
+								name={`main-category`}
+								styles={[styles.canvasInput]}
+								value={selectedMainCategory?.name}
+								disabled={true}
+							/>
+						</div>
+					</>
+				)}
 
 				<InputGroup className={`align-items-end position-relative`}>
 					<TextField
@@ -225,7 +270,9 @@ function SelectSubCategoryUI(props) {
 			>
 				{actionButtons()}
 
-				<h2 className={`${css(styles.mainHeading)}`}>All Sub Categories</h2>
+				<h2 className={`${css(styles.mainHeading)}`}>
+					{selectedMainCategory?.name ?? "All Sub Categories"}
+				</h2>
 
 				{renderCards()}
 			</div>
@@ -244,13 +291,13 @@ function SelectSubCategoryUI(props) {
 			</ModalView>
 
 			<ModalView
-				title={"Add Sub Category"}
+				title={!!!isEditing ? "Add Sub Category" : "Edit Sub Category"}
 				cancelText={"Cancel"}
-				submitText={"Create"}
+				submitText={isEditing ? "Update" : "Create"}
 				showModal={addCategoryModal}
 				setShowModal={toggleAddCategoryModal}
 				cancelOnClick={toggleAddCategoryModal}
-				submitOnClick={createCategory}
+				submitOnClick={isEditing ? handleEditCategoryReq : createCategory}
 				isLoading={isLoading}
 			>
 				{renderCategoryModalContent()}

@@ -4,7 +4,7 @@ import { ConeStriped } from "react-bootstrap-icons";
 import { connect } from "react-redux";
 import { useHistory } from "react-router-dom";
 import { useGetCategoryData, useMainCategory } from "../../api";
-import { ROUTES } from "../../constants";
+import { ROUTES, SOMETHING_WRONG } from "../../constants";
 import Util from "../../services/Util";
 import { Images } from "../../theme";
 import SelectCategoriesUI from "./SelectCategoriesUI";
@@ -68,8 +68,12 @@ const template_types = [
 
 function SelectCategories(props) {
 	const history = useHistory();
-	const { handleCreateMainCategory, uploadCategoryImage, updateCategoryMain } =
-		useMainCategory();
+	const {
+		handleCreateMainCategory,
+		uploadCategoryImage,
+		updateCategoryMain,
+		deleteMainCategory,
+	} = useMainCategory();
 	const { getMainCategory } = useGetCategoryData();
 
 	const mainCategoryList = props?.mainCategoryList;
@@ -323,6 +327,33 @@ function SelectCategories(props) {
 		}
 	};
 
+	const deleteSuccessCallback = () => {
+		Util.postNotification(
+			"Category Deleted.",
+			"Category Deleted Successfully.",
+			"success"
+		);
+
+		getMainCategory();
+	};
+
+	const handleDeleteErrorCallback = () => {
+		Util.postNotification("Category Delete", SOMETHING_WRONG, "danger");
+	};
+
+	const handleDeleteCategory = (data) => {
+		const payload = {
+			isDelete: true,
+			id: data?.id,
+		};
+
+		deleteMainCategory(
+			payload,
+			deleteSuccessCallback,
+			handleDeleteErrorCallback
+		);
+	};
+
 	const subCategoryList = props?.subCategoryList?.filter(
 		(category) => category?.mainCategory?.id === mainCategory
 	);
@@ -357,6 +388,7 @@ function SelectCategories(props) {
 			setEditModal={setEditModal}
 			updateCategory={updateCategory}
 			createTemplate={createTemplate}
+			handleDeleteCategory={handleDeleteCategory}
 		/>
 	);
 }

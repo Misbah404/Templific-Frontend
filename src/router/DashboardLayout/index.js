@@ -46,7 +46,8 @@ import { useGetCategoryData } from "../../api";
 const DashboardLayout = (props) => {
 	let history = useHistory();
 	const dispatch = useDispatch();
-	const { getMainCategory, getSubCategory } = useGetCategoryData();
+	const { getMainCategory, getSubCategory, getPredefinedTemplates } =
+		useGetCategoryData();
 	const { sideMenuItems, darkSidePanel } = props.children.props;
 	const [sidePanelMenu, setSidePanelMenu] = useState([]);
 	const location = useLocation();
@@ -338,10 +339,12 @@ const DashboardLayout = (props) => {
 		getElements({ variables: { email: props.user.email } });
 		getTemplates({ variables: { email: props.user.email } });
 		getDefaultElements();
-		if (props.user?.isAdmin) {
-			getMainCategory();
-			getSubCategory();
-		}
+
+		// if (props.user?.isAdmin) {
+		getMainCategory();
+		getSubCategory();
+		getPredefinedTemplates();
+		// }
 	}, []);
 
 	useEffect(() => {
@@ -464,6 +467,10 @@ const DashboardLayout = (props) => {
 		path: ROUTES.EDIT_TEMPLATE,
 	});
 
+	const adminTemplateUpdate = matchPath(location.pathname, {
+		path: ROUTES.ADMIN_TEMPLATE_UPDATE,
+	});
+
 	return (
 		<>
 			<header
@@ -512,7 +519,9 @@ const DashboardLayout = (props) => {
 									</li>
 									{(location.pathname === ROUTES.DASHBOARD_CREATE ||
 										location.pathname === ROUTES.ADMIN_TEMPLATE_CREATE ||
-										params?.path === ROUTES.EDIT_TEMPLATE) && (
+										params?.path === ROUTES.EDIT_TEMPLATE ||
+										adminTemplateUpdate?.path ===
+											ROUTES.ADMIN_TEMPLATE_UPDATE) && (
 										<li
 											className={`d-inline-flex`}
 											style={{ marginleft: "1vw" }}
@@ -569,7 +578,8 @@ const DashboardLayout = (props) => {
 						styles.rightArea
 					)}`}
 				>
-					{ROUTES.ADMIN_TEMPLATE_CREATE === location.pathname && (
+					{(ROUTES.ADMIN_TEMPLATE_CREATE === location.pathname ||
+						adminTemplateUpdate?.path === ROUTES.ADMIN_TEMPLATE_UPDATE) && (
 						<Button
 							title={`Edit Category`}
 							className={`${css([
@@ -694,7 +704,9 @@ const DashboardLayout = (props) => {
 													(location.pathname === ROUTES.DASHBOARD_CREATE ||
 														location.pathname ===
 															ROUTES.ADMIN_TEMPLATE_CREATE ||
-														params?.path === ROUTES.EDIT_TEMPLATE) && (
+														params?.path === ROUTES.EDIT_TEMPLATE ||
+														adminTemplateUpdate?.path ===
+															ROUTES.ADMIN_TEMPLATE_UPDATE) && (
 														<div
 															className={`menu-link ${res.name} ${
 																res.name === props.layout.sideBarElement &&

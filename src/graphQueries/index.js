@@ -1058,7 +1058,7 @@ export const CREATE_MAIN_CATEGORY = gql`
 
 export const GET_MAIN_CATEGORIES = gql`
 	query getMainCategories {
-		mainCategories {
+		mainCategories(filters: { isDelete: { not: { eq: true } } }) {
 			data {
 				id
 				attributes {
@@ -1097,7 +1097,7 @@ export const CREATE_SUB_CATEGORY = gql`
 
 export const GET_SUB_CATEGORIES = gql`
 	query getSubCategories {
-		subCategories {
+		subCategories(filters: { isDelete: { not: { eq: true } } }) {
 			data {
 				id
 				attributes {
@@ -1186,11 +1186,12 @@ export const CREATE_PREDFINED_TEMPLATE = gql`
 export const UPDATE_PREDEFINED_TEMPLATE = gql`
 	mutation updatePredefinedTemplate(
 		$templateId: ID!
-		$template: JSON!
-		$zoomValue: Int!
-		$name: String!
-		$image: ID!
+		$template: JSON
+		$zoomValue: Int
+		$name: String
+		$image: ID
 		$subCategoryId: ID
+		$isDelete: Boolean
 	) {
 		updatePreDefineTemplate(
 			id: $templateId
@@ -1200,6 +1201,7 @@ export const UPDATE_PREDEFINED_TEMPLATE = gql`
 				name: $name
 				image: $image
 				sub_category: $subCategoryId
+				isDelete: $isDelete
 			}
 		) {
 			data {
@@ -1230,10 +1232,75 @@ export const UPDATE_PREDEFINED_TEMPLATE = gql`
 `;
 
 export const UPDATE_MAIN_CATEGORY = gql`
-	mutation updateMainCategory($id: ID!, $name: String, $imageId: ID) {
-		updateMainCategory(id: $id, data: { name: $name, image: $imageId }) {
+	mutation updateMainCategory(
+		$id: ID!
+		$name: String
+		$imageId: ID
+		$isDelete: Boolean
+	) {
+		updateMainCategory(
+			id: $id
+			data: { name: $name, image: $imageId, isDelete: $isDelete }
+		) {
 			data {
 				id
+			}
+		}
+	}
+`;
+
+export const UPDATE_SUB_CATEGORY = gql`
+	mutation updateSubCategory(
+		$id: ID!
+		$name: String
+		$mainCategory: ID
+		$imageId: ID
+		$isDelete: Boolean
+	) {
+		updateSubCategory(
+			id: $id
+			data: {
+				name: $name
+				main_category: $mainCategory
+				image: $imageId
+				isDelete: $isDelete
+			}
+		) {
+			data {
+				id
+			}
+		}
+	}
+`;
+
+export const GET_PREDEFINED_TEMPLATES = gql`
+	query getPredefinedTemplates {
+		preDefineTemplates(filters: { isDelete: { not: { eq: true } } }) {
+			data {
+				id
+				attributes {
+					width
+					height
+					unit
+					isDelete
+					name
+					template
+					canvasAttrs
+					zoomValue
+					image {
+						data {
+							id
+							attributes {
+								url
+							}
+						}
+					}
+					sub_category {
+						data {
+							id
+						}
+					}
+				}
 			}
 		}
 	}

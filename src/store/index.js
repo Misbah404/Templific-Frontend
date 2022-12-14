@@ -19,7 +19,7 @@ export default function configureStore(reducers, onComplete: Function) {
     key: "root",
     storage: reduxStorage,
     stateReconciler: autoMergeLevel2, // see "Merge Process" section for details.
-    whitelist: ["user", "canvasData", "dmPersist"],
+    whitelist: ["user", "canvasData", "dmPersist", "category"],
   };
 
   const syncStateConfig = {

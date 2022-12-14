@@ -33,6 +33,7 @@ function SelectCategoriesUI(props) {
 		updateCategory,
 		subCategoryList,
 		createTemplate,
+		handleDeleteCategory,
 	} = props;
 
 	const renderCards = () => {
@@ -64,7 +65,9 @@ function SelectCategoriesUI(props) {
 						<Dropdown.Item onClick={() => setEditModal(res)}>
 							Edit
 						</Dropdown.Item>
-						<Dropdown.Item href="#/action-2">Delete</Dropdown.Item>
+						<Dropdown.Item onClick={() => handleDeleteCategory(res)}>
+							Delete
+						</Dropdown.Item>
 					</Dropdown.Menu>
 				</Dropdown>
 			</div>
