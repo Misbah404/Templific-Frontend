@@ -1,70 +1,12 @@
 import _ from "lodash";
 import React, { useRef, useState } from "react";
-import { ConeStriped } from "react-bootstrap-icons";
 import { connect } from "react-redux";
 import { useHistory } from "react-router-dom";
 import { useGetCategoryData, useMainCategory } from "../../api";
+import { SideBar } from "../../components";
 import { ROUTES, SOMETHING_WRONG } from "../../constants";
 import Util from "../../services/Util";
-import { Images } from "../../theme";
 import SelectCategoriesUI from "./SelectCategoriesUI";
-
-const template_types = [
-	{
-		image: Images.singleCard,
-		title: "Single",
-		templateType: "single",
-		layout: {
-			row: 1,
-			col: 1,
-		},
-	},
-	{
-		image: Images.doubleCard,
-		title: "Double-Sided",
-		templateType: "double",
-		layout: {
-			row: 1,
-			col: 1,
-		},
-	},
-	{
-		image: Images.bookFoldCard,
-		title: "Book - Fold",
-		templateType: "bookFold",
-		layout: {
-			row: 1,
-			col: 2,
-		},
-	},
-	{
-		image: Images.tentFoldCard,
-		title: "Tent Fold",
-		templateType: "tentFold",
-		layout: {
-			row: 2,
-			col: 1,
-		},
-	},
-	{
-		image: Images.geofilterCard,
-		title: "Geofilter",
-		templateType: "geoFilter",
-		layout: {
-			row: 1,
-			col: 1,
-		},
-	},
-	{
-		image: Images.customCard,
-		title: "Custom",
-		templateType: "customCard",
-		layout: {
-			row: 1,
-			col: 1,
-		},
-	},
-];
 
 function SelectCategories(props) {
 	const history = useHistory();
@@ -80,7 +22,6 @@ function SelectCategories(props) {
 
 	const [addTemplateModal, setAddTemplateModal] = useState(() => false);
 	const [addCategoryModal, setAddCategoryModal] = useState(() => false);
-	const [templateName, setTemplateName] = useState(() => "");
 	const [mainCategory, setMainCategory] = useState(() => "");
 	const [subCategory, setSubCategory] = useState(() => "");
 	const [imageFile, setImageFile] = useState(() => null);
@@ -270,7 +211,6 @@ function SelectCategories(props) {
 		addTemplateModal && setAddTemplateModal(false);
 		mainCategory && setMainCategory("");
 		subCategory && setSubCategory("");
-		templateName && setTemplateName("");
 		setImageFile(null);
 		isLoading && setIsLoading(false);
 		error && setError("");
@@ -359,37 +299,39 @@ function SelectCategories(props) {
 	);
 
 	return (
-		<SelectCategoriesUI
-			template_types={template_types}
-			history={history}
-			addCategoryModal={addCategoryModal}
-			addTemplateModal={addTemplateModal}
-			templateName={templateName}
-			mainCategory={mainCategory}
-			subCategory={subCategory}
-			filePickerRef={filePickerRef}
-			imageFile={imageFile}
-			isLoading={isLoading}
-			error={error}
-			mainCategoryList={mainCategoryList}
-			isEditing={isEditing}
-			editCategory={editCategory}
-			subCategoryList={subCategoryList}
-			setTemplateName={setTemplateName}
-			toggleAddCategoryModal={toggleAddCategoryModal}
-			toggleTemplateModal={toggleTemplateModal}
-			setMainCategory={setMainCategory}
-			setSubCategory={setSubCategory}
-			handleSetImage={handleSetImage}
-			triggerFilePickerClick={triggerFilePickerClick}
-			handleClickItemCard={handleClickItemCard}
-			createCategory={createCategory}
-			closeModals={closeModals}
-			setEditModal={setEditModal}
-			updateCategory={updateCategory}
-			createTemplate={createTemplate}
-			handleDeleteCategory={handleDeleteCategory}
-		/>
+		<>
+			{props?.layout?.sideBar && <SideBar />}
+
+			<SelectCategoriesUI
+				history={history}
+				addCategoryModal={addCategoryModal}
+				addTemplateModal={addTemplateModal}
+				mainCategory={mainCategory}
+				subCategory={subCategory}
+				filePickerRef={filePickerRef}
+				imageFile={imageFile}
+				isLoading={isLoading}
+				error={error}
+				mainCategoryList={mainCategoryList}
+				isEditing={isEditing}
+				editCategory={editCategory}
+				subCategoryList={subCategoryList}
+				toggleAddCategoryModal={toggleAddCategoryModal}
+				toggleTemplateModal={toggleTemplateModal}
+				setMainCategory={setMainCategory}
+				setSubCategory={setSubCategory}
+				handleSetImage={handleSetImage}
+				triggerFilePickerClick={triggerFilePickerClick}
+				handleClickItemCard={handleClickItemCard}
+				createCategory={createCategory}
+				closeModals={closeModals}
+				setEditModal={setEditModal}
+				updateCategory={updateCategory}
+				createTemplate={createTemplate}
+				handleDeleteCategory={handleDeleteCategory}
+				layout={props?.layout}
+			/>
+		</>
 	);
 }
 
@@ -397,6 +339,7 @@ const mapStateToProps = (state) => {
 	return {
 		mainCategoryList: state?.category?.mainCategory || [],
 		subCategoryList: state?.category?.subCategory || [],
+		layout: state.layout,
 	};
 };
 

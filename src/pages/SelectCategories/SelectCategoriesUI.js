@@ -13,8 +13,6 @@ function SelectCategoriesUI(props) {
 		addCategoryModal,
 		toggleTemplateModal,
 		toggleAddCategoryModal,
-		templateName,
-		setTemplateName,
 		mainCategory,
 		setMainCategory,
 		setSubCategory,

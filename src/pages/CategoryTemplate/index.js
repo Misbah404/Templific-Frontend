@@ -7,6 +7,7 @@ import CategoryTemplateUI from "./CategoryTemplateUI";
 import { connect } from "react-redux";
 import { useMainCategory } from "../../api";
 import Util from "../../services/Util";
+import { SideBar } from "../../components";
 
 function CategoryTemplate(props) {
 	const history = useHistory();
@@ -147,6 +148,9 @@ function CategoryTemplate(props) {
 	);
 
 	return (
+		<>
+		{props?.layout?.sideBar && <SideBar />}
+		
 		<CategoryTemplateUI
 			addTemplateModal={addTemplateModal}
 			templateName={templateName}
@@ -170,6 +174,7 @@ function CategoryTemplate(props) {
 			onClickTemplate={onClickTemplate}
 			selectedSubCategory={selectedSubCategory}
 		/>
+		</>
 	);
 }
 
@@ -181,6 +186,7 @@ const mapStateToProps = (state, params) => {
 		subCategoryList: [...state?.category?.subCategory],
 		mainCategoryList: [...state?.category?.mainCategory],
 		templateList: [...predefTemp],
+		layout: state?.layout,
 	};
 };
 

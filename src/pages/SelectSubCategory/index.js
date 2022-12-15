@@ -3,6 +3,7 @@ import React, { useRef, useState } from "react";
 import { connect } from "react-redux";
 import { useHistory, useParams } from "react-router-dom";
 import { useGetCategoryData, useMainCategory } from "../../api";
+import { SideBar } from "../../components";
 import { ROUTES, SOMETHING_WRONG } from "../../constants";
 import Util from "../../services/Util";
 import { Images } from "../../theme";
@@ -300,35 +301,39 @@ function SelectCategories(props) {
 	);
 
 	return (
-		<SelectSubCategoryUI
-			template_types={template_types}
-			history={history}
-			addCategoryModal={addCategoryModal}
-			addTemplateModal={addTemplateModal}
-			templateName={templateName}
-			mainCategory={mainCategory}
-			subCategory={subCategory}
-			setTemplateName={setTemplateName}
-			toggleAddCategoryModal={toggleAddCategoryModal}
-			toggleTemplateModal={toggleTemplateModal}
-			setMainCategory={setMainCategory}
-			setSubCategory={setSubCategory}
-			filePickerRef={filePickerRef}
-			imageFile={imageFile}
-			handleSetImage={handleSetImage}
-			triggerFilePickerClick={triggerFilePickerClick}
-			handleItemClick={handleItemClick}
-			selectedMainCategory={selectedMainCategory}
-			mainCategoryList={mainCategoryList}
-			isLoading={isLoading}
-			createCategory={createCategory}
-			error={error}
-			subCategoryOfMainCategory={subCategoryOfMainCategory}
-			openEditModal={openEditModal}
-			isEditing={isEditing}
-			handleEditCategoryReq={handleEditCategoryReq}
-			handleDeleteCategory={handleDeleteCategory}
-		/>
+		<>
+			{props?.layout?.sideBar && <SideBar />}
+
+			<SelectSubCategoryUI
+				template_types={template_types}
+				history={history}
+				addCategoryModal={addCategoryModal}
+				addTemplateModal={addTemplateModal}
+				templateName={templateName}
+				mainCategory={mainCategory}
+				subCategory={subCategory}
+				setTemplateName={setTemplateName}
+				toggleAddCategoryModal={toggleAddCategoryModal}
+				toggleTemplateModal={toggleTemplateModal}
+				setMainCategory={setMainCategory}
+				setSubCategory={setSubCategory}
+				filePickerRef={filePickerRef}
+				imageFile={imageFile}
+				handleSetImage={handleSetImage}
+				triggerFilePickerClick={triggerFilePickerClick}
+				handleItemClick={handleItemClick}
+				selectedMainCategory={selectedMainCategory}
+				mainCategoryList={mainCategoryList}
+				isLoading={isLoading}
+				createCategory={createCategory}
+				error={error}
+				subCategoryOfMainCategory={subCategoryOfMainCategory}
+				openEditModal={openEditModal}
+				isEditing={isEditing}
+				handleEditCategoryReq={handleEditCategoryReq}
+				handleDeleteCategory={handleDeleteCategory}
+			/>
+		</>
 	);
 }
 
@@ -336,6 +341,7 @@ const mapStateToProps = (state) => {
 	return {
 		mainCategoryList: state?.category?.mainCategory,
 		subCategoryList: state?.category?.subCategory,
+		layout: state?.layout,
 	};
 };
 
