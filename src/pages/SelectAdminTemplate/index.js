@@ -3,21 +3,11 @@ import { css } from "aphrodite";
 import { connect, useDispatch } from "react-redux";
 import styles from "./styles";
 import { Images } from "../../theme";
-import {
-	SelectBox,
-	ModalView,
-	TextField,
-	Button,
-	SideBar,
-} from "../../components";
-import { InputGroup } from "react-bootstrap";
+import { ModalView, TextField, SideBar } from "../../components";
 import _ from "lodash";
 import { MAX_CANVAS_SIZE, ROUTES } from "../../constants";
 import { useHistory, useParams } from "react-router-dom";
-import { disableSideBar, logoutModal } from "../../actions/LayoutAction";
-import { userNewCategory } from "../../actions/CanvasDataAction";
-import { CREATE_USER_CATEGORY } from "../../graphQueries";
-import { useMutation } from "@apollo/client";
+import { disableSideBar } from "../../actions/LayoutAction";
 
 const template_types = [
 	{
@@ -118,49 +108,6 @@ const SelectAdminTemplate = (props) => {
 		addNewCategory,
 		showAddNewCategory,
 	]);
-
-	const [createCategory] = useMutation(CREATE_USER_CATEGORY, {
-		onCompleted(data) {
-			setTemplateCategory(addNewCategory);
-
-			dispatch(
-				userNewCategory({
-					[addNewCategory]: {
-						name: addNewCategory,
-						id: data.createCategory.data.id,
-					},
-				})
-			);
-
-			setAddNewCategory("");
-		},
-
-		onError(err) {
-			console.error(err.message);
-			console.error(err);
-			setErrors(err.message);
-
-			if (err.message.includes("Received status code 401")) {
-				showTempModal && setShowTempModal(false);
-				dispatch(logoutModal({ data: true }));
-			}
-		},
-	});
-
-	const addInCategory = () => {
-		if (!_.isEmpty(addNewCategory)) {
-			if (template_categories.includes(addNewCategory?.trim())) {
-				setErrors("Category already created");
-				return;
-			}
-			createCategory({
-				variables: {
-					name: addNewCategory,
-					userId: props.user.id,
-				},
-			});
-		}
-	};
 
 	const disableSidebar = () => {
 		dispatch(disableSideBar());

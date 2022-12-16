@@ -118,6 +118,8 @@ const analytics = require("../assets/images/analytics/analytics.svg").default;
 const lineHeight = require("../assets/images/line.png").default;
 const plus = require("../assets/images/plus.svg").default;
 const ellipse = require("../assets/images/ellipse.svg").default;
+const arrowLeftIcon =
+	require("../assets/images/arrowLeft/arrowLeft.svg").default;
 
 export default {
 	authFlag,
@@ -216,5 +218,6 @@ export default {
 	lineHeight,
 	category,
 	plus,
-  ellipse
+	ellipse,
+	arrowLeftIcon,
 };

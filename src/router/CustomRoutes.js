@@ -37,6 +37,8 @@ import {
 	SelectSubCategory,
 	CategoryTemplate,
 	SelectAdminTemplate,
+	UserModuleSubCategory,
+	UserModuleTemplates,
 } from "../pages";
 
 import { Route, Switch, Redirect } from "react-router-dom";
@@ -321,6 +323,24 @@ function CustomRoutes(props) {
 			<AuthRoute
 				path={ROUTES.ETSY_AUTH}
 				component={EtsyAuthentication}
+				{...repeatedProps}
+			/>
+
+			<AuthRoute
+				path={ROUTES.USER_SUB_CATEGORIES}
+				component={UserModuleSubCategory}
+				sideMenuItems={[...homeMenuItems, ...settingMenuItems]}
+				darkSidePanel
+				hasBack={false}
+				{...repeatedProps}
+			/>
+
+			<AuthRoute
+				path={ROUTES.USER_CATEGORY_TEMPLATES}
+				component={UserModuleTemplates}
+				sideMenuItems={[...homeMenuItems, ...settingMenuItems]}
+				darkSidePanel
+				hasBack={false}
 				{...repeatedProps}
 			/>
 

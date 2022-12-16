@@ -243,6 +243,36 @@ function SelectCategories(props) {
 		setError(message);
 	};
 
+	const _validateAddTemplateModal = () => {
+		let isValid = true;
+
+		if (_.isEmpty(mainCategory)) {
+			isValid = false;
+			setError("Main Category is required.");
+			return isValid;
+		}
+
+		if (_.isEmpty(subCategory)) {
+			isValid = false;
+			setError("Sub Category is required.");
+			return isValid;
+		}
+
+		return isValid;
+	};
+
+	const handleAddModal = () => {
+		if (_validateAddTemplateModal()) {
+			history.push(
+				ROUTES.SELECT_ADMIN_TEMPLATE.replace(
+					":categoryId",
+					mainCategory
+				).replace(":subCategoryId", subCategory)
+			);
+			closeModals();
+		}
+	};
+
 	const closeModals = () => {
 		addCategoryModal && setAddCategoryModal(false);
 		addTemplateModal && setAddTemplateModal(false);
@@ -300,6 +330,10 @@ function SelectCategories(props) {
 		(c) => c?.mainCategory?.id == params?.id
 	);
 
+	const subCategoryListOptions = subCategoryList?.filter(
+		(c) => c?.mainCategory?.id == mainCategory
+	);
+
 	return (
 		<>
 			{props?.layout?.sideBar && <SideBar />}
@@ -332,6 +366,9 @@ function SelectCategories(props) {
 				isEditing={isEditing}
 				handleEditCategoryReq={handleEditCategoryReq}
 				handleDeleteCategory={handleDeleteCategory}
+				subCategoryListOptions={subCategoryListOptions}
+				handleAddModal={handleAddModal}
+				closeModals={closeModals}
 			/>
 		</>
 	);

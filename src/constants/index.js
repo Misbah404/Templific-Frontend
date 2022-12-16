@@ -103,6 +103,8 @@ export const ROUTES = {
 	CATEGORY_TEMPLATE: "/category/:categoryId/subCategory/:subCategoryId",
 	ADMIN_TEMPLATE_CREATE: "/admin/template/create",
 	ADMIN_TEMPLATE_UPDATE: "/admin/template/edit/:id",
+	USER_SUB_CATEGORIES: "/user/category/:mainCategoryId",
+	USER_CATEGORY_TEMPLATES: "/user/:mainCategoryId/subCategory/:subCategoryId",
 };
 
 export const EMAIL_REGEX =
@@ -185,6 +187,10 @@ export const homeMenuItems = [
 	{
 		name: "photos",
 		image: Images.photos,
+	},
+	{
+		name: "pre-define templates",
+		image: Images.category,
 	},
 	{
 		name: "category",

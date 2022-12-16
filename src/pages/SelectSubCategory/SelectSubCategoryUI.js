@@ -33,6 +33,9 @@ function SelectSubCategoryUI(props) {
 		isEditing,
 		handleEditCategoryReq,
 		handleDeleteCategory,
+		subCategoryListOptions,
+		closeModals,
+		handleAddModal,
 	} = props;
 
 	const renderCards = () => {
@@ -140,23 +143,15 @@ function SelectSubCategoryUI(props) {
 	const renderTemplateModalContent = () => {
 		return (
 			<div className="d-flex align-items-start flex-column w-100">
-				<p className={`${css(styles.formlabel)}`}>Template Name:</p>
-				<div className={`position-relative w-100`}>
-					<TextField
-						name={`canvas-height`}
-						styles={[styles.canvasInput]}
-						value={templateName}
-						onChange={(e) => setTemplateName(e.target.value)}
-						autofocus
-					/>
-				</div>
-
 				<SelectBox
 					styles={[styles.canvasInput]}
 					label="Main Category"
 					name={`main-category`}
 					value={mainCategory}
-					onChange={(value) => setMainCategory(value.target.value)}
+					onChange={(value) => {
+						setMainCategory(value.target.value);
+						setSubCategory("");
+					}}
 				>
 					<option disabled selected value="">
 						Choose category
@@ -175,14 +170,17 @@ function SelectSubCategoryUI(props) {
 					name={`main-category`}
 					value={subCategory}
 					onChange={(value) => setSubCategory(value.target.value)}
+					disabled={!!!mainCategory}
 				>
-					<option disabled>Choose category</option>
+					<option disabled selected value="">
+						Choose category
+					</option>
 
-					{/* {template_categories.map((res, idx) => (
-						<option value={res} key={idx}>
-							{res}
+					{subCategoryListOptions.map((res, idx) => (
+						<option value={res?.id} key={idx}>
+							{res?.name}
 						</option>
-					))} */}
+					))}
 				</SelectBox>
 			</div>
 		);
@@ -283,8 +281,8 @@ function SelectSubCategoryUI(props) {
 				submitText={"Create"}
 				showModal={addTemplateModal}
 				setShowModal={toggleTemplateModal}
-				cancelOnClick={toggleTemplateModal}
-				submitOnClick={toggleTemplateModal}
+				cancelOnClick={closeModals}
+				submitOnClick={handleAddModal}
 				isLoading={isLoading}
 			>
 				{renderTemplateModalContent()}
@@ -296,7 +294,7 @@ function SelectSubCategoryUI(props) {
 				submitText={isEditing ? "Update" : "Create"}
 				showModal={addCategoryModal}
 				setShowModal={toggleAddCategoryModal}
-				cancelOnClick={toggleAddCategoryModal}
+				cancelOnClick={closeModals}
 				submitOnClick={isEditing ? handleEditCategoryReq : createCategory}
 				isLoading={isLoading}
 			>

@@ -437,7 +437,8 @@ const DashboardLayout = (props) => {
 			if (
 				location.pathname === ROUTES.SELECT_TEMPLATE &&
 				element !== "template" &&
-				element !== "group templates"
+				element !== "group templates" && 
+				element !== "pre-define templates"
 			) {
 				// disable
 				props.layout.sideBar && handleDisableSidebar();
@@ -701,6 +702,7 @@ const DashboardLayout = (props) => {
 											<>
 												{res.name !== "template" &&
 													res.name !== "group templates" &&
+													res.name !== "pre-define templates" &&
 													(location.pathname === ROUTES.DASHBOARD_CREATE ||
 														location.pathname ===
 															ROUTES.ADMIN_TEMPLATE_CREATE ||
@@ -747,7 +749,8 @@ const DashboardLayout = (props) => {
 													)}
 
 												{(res.name === "template" ||
-													res.name === "group templates") && (
+													res.name === "group templates" ||
+													res.name === "pre-define templates") && (
 													<div
 														className={`menu-link template ${
 															res.name === props.layout.sideBarElement &&
@@ -760,11 +763,7 @@ const DashboardLayout = (props) => {
 														<SVG
 															width="auto"
 															height="auto"
-															src={
-																"bkground" === props.layout.sideBarElement
-																	? res.imageAlternate
-																	: res.image
-															}
+															src={res.image}
 															title={res.name}
 															fill={
 																res.name === props.layout.sideBarElement

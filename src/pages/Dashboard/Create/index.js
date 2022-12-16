@@ -101,7 +101,7 @@ const Dashboard = (props) => {
 	const [uploadFile] = useMutation(UPLOAD_FILE_TO_SERVER, {
 		onCompleted(data) {
 			setThumbnail({ ...data.upload.data.attributes, id: data.upload.data.id });
-
+			console.log("SAVING");
 			saveTemplates(data.upload.data.id);
 		},
 
@@ -609,6 +609,8 @@ const Dashboard = (props) => {
 		exact: true,
 	});
 
+	console.log({ canvasData });
+
 	useEffect(() => {
 		setTemplateCheckState({});
 		setTemplateCheckStateDuplicate({});
@@ -617,37 +619,120 @@ const Dashboard = (props) => {
 			location.pathname === ROUTES.DASHBOARD_CREATE ||
 			location.pathname === ROUTES.ADMIN_TEMPLATE_CREATE
 		) {
-			const moderateValue = 360;
-			if (
-				canvasAttrs?.canvas &&
-				canvasAttrs.canvas?.canvasHeight &&
-				canvasAttrs.canvas?.canvasWidth
-			) {
-				const { canvasHeight, canvasWidth } = canvasAttrs?.canvasInPx;
-				const optimizeValue =
-					canvasWidth >= canvasHeight
-						? canvasWidth / moderateValue
-						: canvasHeight / moderateValue;
+			if (!!!canvasData?.fromPredefine) {
+				const moderateValue = 360;
+				if (
+					canvasAttrs?.canvas &&
+					canvasAttrs.canvas?.canvasHeight &&
+					canvasAttrs.canvas?.canvasWidth
+				) {
+					const { canvasHeight, canvasWidth } = canvasAttrs?.canvasInPx;
+					const optimizeValue =
+						canvasWidth >= canvasHeight
+							? canvasWidth / moderateValue
+							: canvasHeight / moderateValue;
 
-				setZoomValue(parseInt(100 / optimizeValue));
-			}
+					setZoomValue(parseInt(100 / optimizeValue));
+				}
 
-			const findTemplate =
-				Object.keys(props?.userTemplates).find(
-					(key) => props?.userTemplates[key]?.name === canvasAttrs?.templateName
-				) || "";
+				const findTemplate =
+					Object.keys(props?.userTemplates).find(
+						(key) =>
+							props?.userTemplates[key]?.name === canvasAttrs?.templateName
+					) || "";
 
-			if (findTemplate === "") {
-				handleCreateCanvas();
+				if (findTemplate === "") {
+					handleCreateCanvas();
+				} else {
+					history.push(ROUTES.SELECT_TEMPLATE);
+				}
+
+				if (location?.pathname === ROUTES.ADMIN_TEMPLATE_CREATE) {
+					setMainCategoryId(canvasData?.mainCategory);
+					setModalMainCategoryId(canvasData?.mainCategory);
+					setSubCategoryId(canvasData?.subCategory);
+					setModalSubCategoryId(canvasData?.subCategory);
+				}
 			} else {
-				history.push(ROUTES.SELECT_TEMPLATE);
-			}
+				const moderateValue = 360;
+				if (
+					canvasAttrs?.canvas &&
+					canvasAttrs.canvas?.canvasHeight &&
+					canvasAttrs.canvas?.canvasWidth
+				) {
+					const { canvasHeight, canvasWidth } = canvasAttrs?.canvasInPx;
+					const optimizeValue =
+						canvasWidth >= canvasHeight
+							? canvasWidth / moderateValue
+							: canvasHeight / moderateValue;
 
-			if (location?.pathname === ROUTES.ADMIN_TEMPLATE_CREATE) {
-				setMainCategoryId(canvasData?.mainCategory);
-				setModalMainCategoryId(canvasData?.mainCategory);
-				setSubCategoryId(canvasData?.subCategory);
-				setModalSubCategoryId(canvasData?.subCategory);
+					setZoomValue(parseInt(100 / optimizeValue));
+				}
+
+				const allStagesRef = {};
+				let allLayouts = {};
+				let templateFeat = {};
+
+				let template = canvasData?.template || {};
+
+				let templateDuplicate = {};
+
+				Object.keys(template).map((layout) => {
+					allLayouts[layout] = {};
+					templateDuplicate[layout] = {};
+
+					Object.keys(template[layout])
+						.sort((a, b) => a.split("***")[1] - b.split("***")[1])
+						.map((row) => {
+							const rowName = row.split("***")[0];
+
+							templateDuplicate[layout][rowName] = {};
+							allLayouts[layout][rowName] = [];
+
+							Object.keys(template[layout][row])
+								.sort(
+									(a, b) =>
+										template[layout][row][a].order -
+										template[layout][row][b].order
+								)
+								.map((col) => {
+									allStagesRef[col] = createRef();
+
+									templateFeat[col] = {
+										orderingElements: template[layout][row][col].allElements,
+
+										allElements: template[layout][row][col].allElements,
+
+										bgColor: template[layout][row][col].bgColor,
+									};
+
+									templateDuplicate[layout][rowName] = {
+										...templateDuplicate[layout][rowName],
+										[col]: {
+											allElements: template[layout][row][col].allElements,
+											bgColor: template[layout][row][col].bgColor,
+										},
+									};
+
+									allLayouts = {
+										...allLayouts,
+										[layout]: {
+											...allLayouts[layout],
+											[rowName]: [...allLayouts[layout][rowName], col],
+										},
+									};
+								});
+						});
+				});
+
+				setTemplateCheckStateDuplicate(templateDuplicate);
+				setDuplicateStageChildElements(templateFeat);
+				setCanvasLayout(allLayouts);
+				setCanvasAttrs({
+					...canvasData?.canvasAttrs,
+					templateName: canvasData?.templateName,
+				});
+				setStagesRefs(allStagesRef);
 			}
 		}
 
@@ -982,6 +1067,7 @@ const Dashboard = (props) => {
 	const handleCreateCanvas = () => {
 		const newStagesRefsObj = {};
 
+		console.log({ canvasAttrs });
 		const layout = {};
 		if (canvasAttrs?.templateType?.layout) {
 			const { row, col } = canvasAttrs?.templateType?.layout;
@@ -1377,6 +1463,7 @@ const Dashboard = (props) => {
 	};
 
 	const saveTemplates = (id) => {
+		// debugger
 		let template = {};
 
 		let allFonts = {};
@@ -1420,17 +1507,17 @@ const Dashboard = (props) => {
 				width: parseInt(canvasAttrs.canvas.canvasWidth),
 				template,
 				name: canvasAttrs.templateName,
-				unit: canvasAttrs.canvas.selectedUnit,
+				unit: canvasAttrs?.canvas?.selectedUnit,
 				zoomValue,
-				categoryId: canvasAttrs.templateCategory.categoryId,
+				categoryId: canvasAttrs?.templateCategory?.categoryId,
 				userId: props.user.id,
 				image: thumbnail?.id || id,
 				demoId: uuid(),
 				transactionId: `${uuid()}_${uuid()}`,
 				canvasAttrs: {
-					templateType: canvasAttrs.templateType,
-					canvas: canvasAttrs.canvas,
-					canvasInPx: canvasAttrs.canvasInPx,
+					templateType: canvasAttrs?.templateType,
+					canvas: canvasAttrs?.canvas,
+					canvasInPx: canvasAttrs?.canvasInPx,
 					allFonts,
 				},
 			};
@@ -1444,6 +1531,7 @@ const Dashboard = (props) => {
 
 				createPredefinedTemplate({ variables: data });
 			} else {
+				console.log("SAVING");
 				saveTemplateToDB({ variables: data });
 			}
 		} else {
@@ -1812,7 +1900,7 @@ const Dashboard = (props) => {
 								className={`w-100 d-flex justify-content-between align-items-center`}
 							>
 								<div>
-									{canvasAttrs.templateType.templateType === "double" && (
+									{canvasAttrs?.templateType?.templateType === "double" && (
 										<span className={`${css(styles.canvasTitle)}`}>
 											{Object.keys(canvasLayout).findIndex(
 												(id) => id === layoutId

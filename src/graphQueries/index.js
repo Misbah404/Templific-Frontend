@@ -320,7 +320,7 @@ export const CREATE_USER_TEMPLATE = gql`
 		$unit: String!
 		$width: Float!
 		$zoomValue: Int!
-		$categoryId: ID!
+		$categoryId: ID
 		$userId: ID!
 		$image: ID!
 		$canvasAttrs: JSON!
