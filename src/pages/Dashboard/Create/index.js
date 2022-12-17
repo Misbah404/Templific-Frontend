@@ -87,7 +87,7 @@ const Dashboard = (props) => {
 		typeError: "",
 	});
 
-	const [canvasAttrs, setCanvasAttrs] = useState(canvasData);
+	const [canvasAttrs, setCanvasAttrs] = useState({ ...canvasData });
 	const [savedTemplateData, setSavedTemplateData] = useState({});
 	const [saveTemplateRes, setSaveTemplateRes] = useState({
 		success: "",
@@ -609,8 +609,6 @@ const Dashboard = (props) => {
 		exact: true,
 	});
 
-	console.log({ canvasData });
-
 	useEffect(() => {
 		setTemplateCheckState({});
 		setTemplateCheckStateDuplicate({});
@@ -1008,7 +1006,18 @@ const Dashboard = (props) => {
 		}
 	};
 
+	console.log({ selectElement });
+
 	const handleKeyPress = (e) => {
+		// debugger;
+
+		const targetName = e?.target?.tagName;
+		const formElements = ["INPUT", "TEXTAREA", "SELECT", "OPTION"];
+
+		if (formElements.includes(targetName)) {
+			return;
+		}
+
 		if (
 			(e.ctrlKey || e.metaKey) &&
 			e.key.toLowerCase() === "z" &&
@@ -1026,7 +1035,7 @@ const Dashboard = (props) => {
 
 		if (
 			e.key.toLowerCase() === "delete" ||
-			(e.metaKey && e.key.toLowerCase() === "backspace")
+			e.key.toLowerCase() === "backspace"
 		) {
 			selectedStage.canvas.current.handleDeleteElement();
 		}
@@ -1064,10 +1073,10 @@ const Dashboard = (props) => {
 		setDuplicateStageChildElements(allDuplicateStages);
 	};
 
+	console.log({ canvasAttrs });
 	const handleCreateCanvas = () => {
 		const newStagesRefsObj = {};
 
-		console.log({ canvasAttrs });
 		const layout = {};
 		if (canvasAttrs?.templateType?.layout) {
 			const { row, col } = canvasAttrs?.templateType?.layout;
@@ -1376,7 +1385,7 @@ const Dashboard = (props) => {
 		if (zoomValue > 0) {
 			const newZoomVal = zoomValue - 10;
 			if (newZoomVal < 0) {
-				setZoomValue(0);
+				setZoomValue(1);
 			} else setZoomValue(zoomValue - 10);
 		}
 	};
@@ -1739,7 +1748,8 @@ const Dashboard = (props) => {
 	};
 
 	const handleTemplateNameChange = (e) => {
-		setCanvasAttrs((state) => ({ ...state, templateName: e.target.value }));
+		// setCanvasAttrs((state) => ({ ...state, templateName: e.target.value }));
+		setCanvasAttrs({ ...canvasAttrs, templateName: e.target.value });
 		if (!_.isEmpty(savedTemplateData)) {
 			setSavedTemplateData((state) => ({ ...state, name: e.target.value }));
 		}

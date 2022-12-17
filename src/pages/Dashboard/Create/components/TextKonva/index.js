@@ -149,18 +149,18 @@ const TextKonva = forwardRef((props, ref) => {
 
 		setCurrentStateText({
 			...newText,
-			height: 
-			// textHeight < TEXT_MIN_HEIGHT ? TEXT_MIN_HEIGHT :
-			 textHeight,
-			width: textWidth 
+			height:
+				// textHeight < TEXT_MIN_HEIGHT ? TEXT_MIN_HEIGHT :
+				textHeight,
+			width: textWidth,
 			// < TEXT_MIN_WIDTH ? TEXT_MIN_WIDTH : textWidth,
 		});
 
 		handleTextDrag(text.id, {
 			...newText,
-			height: textHeight ,
+			height: textHeight,
 			// < TEXT_MIN_HEIGHT ? TEXT_MIN_HEIGHT : textHeight,
-			width: textWidth 
+			width: textWidth,
 			// < TEXT_MIN_WIDTH ? TEXT_MIN_WIDTH : textWidth,
 		});
 	};
@@ -256,7 +256,7 @@ const TextKonva = forwardRef((props, ref) => {
 					align={currentStateText.align}
 					letterSpacing={
 						currentStateText.letterSpacing
-							? parseInt(currentStateText.letterSpacing)
+							? parseInt(currentStateText.letterSpacing) * (zoomValue / 100)
 							: 0
 					}
 					strokeWidth={text.strokeWidth}

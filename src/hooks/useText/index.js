@@ -83,7 +83,8 @@ const useText = (
 				textWidth = width;
 			}
 
-			const letterSpacingWidth = (text.length * parseInt(letterSpacing)) / 1.75;
+			const letterSpacingWidth =
+				(text.length * parseInt(letterSpacing / (zoomValue / 100))) / 3.5;
 
 			textWidth += letterSpacingWidth;
 
@@ -91,7 +92,7 @@ const useText = (
 				font: fontFamily,
 				fontSize: `${fontSize}px`,
 				fontStyle: bold ? "bold" : "none",
-				letterSpacing,
+				letterSpacing: letterSpacing * (zoomValue / 100),
 				lineHeight,
 				// width: `${width}px`,
 			});
