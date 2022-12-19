@@ -5,6 +5,10 @@ const sendMail = require("../assets/images/sendMail/send-mail.svg").default;
 const handWave = require("../assets/images/handWave/hand-wave.svg").default;
 const checkmark = require("../assets/images/checkmark/checkmark.png").default;
 const category = require("../assets/images/category/category.svg").default;
+const categoryWhite =
+	require("../assets/images/category/categoryWhite.png").default;
+const categoryPurple =
+	require("../assets/images/category/categoryPurple.png").default;
 const verifyEmail =
 	require("../assets/images/verifyEmail/verify-email.svg").default;
 const templates = require("../assets/images/templates/templates.svg").default;
@@ -220,4 +224,6 @@ export default {
 	plus,
 	ellipse,
 	arrowLeftIcon,
+	categoryWhite,
+	categoryPurple,
 };

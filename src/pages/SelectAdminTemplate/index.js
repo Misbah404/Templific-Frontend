@@ -294,7 +294,7 @@ const SelectAdminTemplate = (props) => {
 					)} d-flex flex-column align-items-center justify-content-center position-relative`}
 				>
 					<span
-						onClick={() => history.push(ROUTES.DASHBOARD)}
+						onClick={() => history.push(ROUTES.SELECT_CATEGORIES)}
 						className={`cursor-pointer ${css(styles.closePopup)}`}
 					>
 						<i className={`fa fa-times font-weight-light`} />

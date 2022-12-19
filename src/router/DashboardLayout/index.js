@@ -52,6 +52,8 @@ const DashboardLayout = (props) => {
 	const [sidePanelMenu, setSidePanelMenu] = useState([]);
 	const location = useLocation();
 	const [hideSidePanel, setHideSidePanel] = useState(() => false);
+	const [toggleCategoryImage, setToggleCategoryImage] = useState(() => false);
+	const [togglePreDefineImage, setTogglePreDefineImage] = useState(() => false);
 
 	const [getCategories] = useLazyQuery(GET_USER_CATEGORIES, {
 		onCompleted(data) {
@@ -313,10 +315,14 @@ const DashboardLayout = (props) => {
 		let allItems = [...sideMenuItems];
 
 		if (props?.user?.isAdmin) {
-			allItems = [...sideMenuItems];
-			// ?.filter(
-			// 	(item) => item.name !== "stats" && item?.name !== "category"
-			// );
+			allItems = [...sideMenuItems]?.filter(
+				(item) =>
+					item.name === "category" ||
+					item?.name === "bkground" ||
+					item?.name === "photos" ||
+					item?.name === "text" ||
+					item?.name === "elements"
+			);
 		} else {
 			allItems = [...sideMenuItems]?.filter(
 				(item) => item?.name !== "category"
@@ -437,7 +443,7 @@ const DashboardLayout = (props) => {
 			if (
 				location.pathname === ROUTES.SELECT_TEMPLATE &&
 				element !== "template" &&
-				element !== "group templates" && 
+				element !== "group templates" &&
 				element !== "pre-define templates"
 			) {
 				// disable
@@ -472,6 +478,8 @@ const DashboardLayout = (props) => {
 		path: ROUTES.ADMIN_TEMPLATE_UPDATE,
 	});
 
+	console.log({ props });
+
 	return (
 		<>
 			<header
@@ -505,6 +513,7 @@ const DashboardLayout = (props) => {
 						)}
 						{location.pathname !== ROUTES.SETTINGS &&
 							location.pathname !== ROUTES.SETTINGS_PASSWORD &&
+							props?.user?.isAdmin !== true &&
 							// location.pathname !== ROUTES.ANALYTICS &&
 							location.pathname !== ROUTES.SETTINGS_SUBSCRIBTION && (
 								<>
@@ -594,14 +603,16 @@ const DashboardLayout = (props) => {
 						</Button>
 					)}
 
-					<Button
-						title={`New Template`}
-						className={`${css(styles.templateBtn)}`}
-						leftIcon
-						onClick={() => history.push(ROUTES.SELECT_TEMPLATE)}
-					>
-						<i className={`fa fa-plus ${css(styles.plusBtn)}`} />
-					</Button>
+					{props?.user?.isAdmin !== true && (
+						<Button
+							title={`New Template`}
+							className={`${css(styles.templateBtn)}`}
+							leftIcon
+							onClick={() => history.push(ROUTES.SELECT_TEMPLATE)}
+						>
+							<i className={`fa fa-plus ${css(styles.plusBtn)}`} />
+						</Button>
+					)}
 
 					<Dropdown className="d-inline">
 						<OverlayTrigger
@@ -627,16 +638,18 @@ const DashboardLayout = (props) => {
 						</OverlayTrigger>
 
 						<Dropdown.Menu>
-							<Dropdown.Item
-								onClick={() => history.push(ROUTES.CONNECT)}
-								style={{ outline: "none" }}
-							>
-								<i
-									className={`fa fa-plus font-weight-light`}
-									style={{ marginRight: "0.4vw" }}
-								/>
-								Add Manage Shop
-							</Dropdown.Item>
+							{props?.user?.isAdmin !== true && (
+								<Dropdown.Item
+									onClick={() => history.push(ROUTES.CONNECT)}
+									style={{ outline: "none" }}
+								>
+									<i
+										className={`fa fa-plus font-weight-light`}
+										style={{ marginRight: "0.4vw" }}
+									/>
+									Add Manage Shop
+								</Dropdown.Item>
+							)}
 							<Dropdown.Item onClick={handleLogout} style={{ outline: "none" }}>
 								Logout
 							</Dropdown.Item>
@@ -665,6 +678,13 @@ const DashboardLayout = (props) => {
 												: css(styles.sideMenuItem)
 										}`}
 										key={res.name}
+										onMouseOver={() => {
+											if (res.name === "category") setToggleCategoryImage(true);
+										}}
+										onMouseOut={() => {
+											if (res.name === "category")
+												setToggleCategoryImage(false);
+										}}
 									>
 										{res && res.link ? (
 											<NavLink
@@ -675,14 +695,31 @@ const DashboardLayout = (props) => {
 														: ""
 												} ${css(styles.menuLink)}`}
 											>
-												<SVG
-													width="auto"
-													height="auto"
-													src={res.image}
-													title={res.name}
-													fill={location.pathname == res.link ? "filled" : ""}
-													className={`${css(styles.menuImage)}`}
-												/>
+												{res.name !== "category" && (
+													<SVG
+														width="auto"
+														height="auto"
+														src={res.image}
+														title={res.name}
+														fill={location.pathname == res.link ? "filled" : ""}
+														className={`${css(styles.menuImage)}`}
+													/>
+												)}
+
+												{res.name === "category" && (
+													<img
+														src={
+															props?.children?.props?.darkSidePanel
+																? res.image
+																: toggleCategoryImage
+																? res.image
+																: res.imageAlternate
+														}
+														className={`${css(styles.menuImage)}`}
+														onMouseOver={() => setToggleCategoryImage(true)}
+														onMouseOut={() => setToggleCategoryImage(false)}
+													/>
+												)}
 
 												{_.isNil(res.bottomAlign) && (
 													<span
@@ -732,6 +769,7 @@ const DashboardLayout = (props) => {
 																}
 																className={`${css(styles.menuImage)}`}
 															/>
+
 															{_.isNil(res.bottomAlign) && (
 																<span
 																	className={`${css(styles.menuName)}`}
@@ -759,19 +797,45 @@ const DashboardLayout = (props) => {
 															res.name === "group templates" && "groupTemplate"
 														}  ${css(styles.menuLink)}`}
 														onClick={() => handleEnableSidebar(res.name)}
+														onMouseOver={() => {
+															if (res.name === "pre-define templates")
+																setTogglePreDefineImage(true);
+														}}
+														onMouseOut={() => {
+															if (res.name === "pre-define templates")
+																setTogglePreDefineImage(false);
+														}}
 													>
-														<SVG
-															width="auto"
-															height="auto"
-															src={res.image}
-															title={res.name}
-															fill={
-																res.name === props.layout.sideBarElement
-																	? "filled"
-																	: ""
-															}
-															className={`${css(styles.menuImage)}`}
-														/>
+														{res.name === "pre-define templates" && (
+															<img
+																src={
+																	props?.children?.props?.darkSidePanel
+																		? res.image
+																		: res.name === props.layout.sideBarElement
+																		? res.image
+																		: togglePreDefineImage
+																		? res.image
+																		: res.imageAlternate
+																}
+																className={`${css(styles.menuImage)}`}
+															/>
+														)}
+
+														{res.name !== "pre-define templates" && (
+															<SVG
+																width="auto"
+																height="auto"
+																src={res.image}
+																title={res.name}
+																fill={
+																	res.name === props.layout.sideBarElement
+																		? "filled"
+																		: ""
+																}
+																className={`${css(styles.menuImage)}`}
+															/>
+														)}
+
 														{_.isNil(res.bottomAlign) && (
 															<span
 																className={`${css(styles.menuName)}`}

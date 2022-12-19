@@ -190,12 +190,14 @@ export const homeMenuItems = [
 	},
 	{
 		name: "pre-define templates",
-		image: Images.category,
+		image: Images.categoryWhite,
+		imageAlternate: Images.categoryPurple,
 	},
 	{
 		name: "category",
 		link: ROUTES.SELECT_CATEGORIES,
-		image: Images.category,
+		image: Images.categoryWhite,
+		imageAlternate: Images.categoryPurple,
 	},
 	{
 		name: "stats",

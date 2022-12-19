@@ -400,8 +400,8 @@ const CustomStage = forwardRef((props, ref) => {
 			}
 
 			if (element.height && element.width && element.name != "text") {
-				element.height = element.height / (zoomValue / 100);
-				element.width = element.width / (zoomValue / 100);
+				element.height = element.height;
+				element.width = element.width;
 			}
 
 			if (element.name === "text") {

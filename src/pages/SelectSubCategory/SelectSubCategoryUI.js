@@ -36,6 +36,8 @@ function SelectSubCategoryUI(props) {
 		subCategoryListOptions,
 		closeModals,
 		handleAddModal,
+		imageFile,
+		showAddTemplateButton,
 	} = props;
 
 	const renderCards = () => {
@@ -96,26 +98,28 @@ function SelectSubCategoryUI(props) {
 	const actionButtons = () => {
 		return (
 			<div className={`${css(styles.buttonWrapper)}`}>
-				<Button
-					className={css(styles.addTemplate)}
-					leftIcon
-					btnWrap={styles.addTemplateWrap}
-					onClick={toggleTemplateModal}
-				>
-					<div
-						className={`${css(AppStyles.flexRow)} ${css(
-							AppStyles.alignItemsCenter
-						)} ${css(AppStyles.spaceBetween)}`}
+				{showAddTemplateButton && (
+					<Button
+						className={css(styles.addTemplate)}
+						leftIcon
+						btnWrap={styles.addTemplateWrap}
+						onClick={toggleTemplateModal}
 					>
-						<SVG
-							src={Images.plus}
-							height={"auto"}
-							width={"auto"}
-							className={`${css(styles.addIcon)}`}
-						/>
-						<span>Add Template</span>
-					</div>
-				</Button>
+						<div
+							className={`${css(AppStyles.flexRow)} ${css(
+								AppStyles.alignItemsCenter
+							)} ${css(AppStyles.spaceBetween)}`}
+						>
+							<SVG
+								src={Images.plus}
+								height={"auto"}
+								width={"auto"}
+								className={`${css(styles.addIcon)}`}
+							/>
+							<span>Add Template</span>
+						</div>
+					</Button>
+				)}
 
 				<Button
 					className={css(styles.addCategory)}
@@ -197,6 +201,15 @@ function SelectSubCategoryUI(props) {
 				>
 					<span>Upload Image</span>
 				</div>
+
+				{imageFile?.name && (
+					<p className={`text-center ${css(styles.formlabel)}`}>
+						{" "}
+						{imageFile.name?.length + 3 > 42
+							? imageFile.name?.substring(0, 39) + "..."
+							: imageFile.name}{" "}
+					</p>
+				)}
 
 				<input
 					ref={filePickerRef}

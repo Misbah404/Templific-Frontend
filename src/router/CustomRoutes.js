@@ -100,6 +100,14 @@ const AuthRoute = ({ ...props }) => {
 		}
 	}
 
+	if (
+		(props?.path === ROUTES.SELECT_TEMPLATE ||
+			props?.path === ROUTES.DASHBOARD) &&
+		props?.user?.isAdmin === true
+	) {
+		return <Redirect to={ROUTES.SELECT_CATEGORIES} />;
+	}
+
 	return (
 		<DashboardLayout>
 			<Route {...props} />

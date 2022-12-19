@@ -369,6 +369,10 @@ function SelectCategories(props) {
 				subCategoryListOptions={subCategoryListOptions}
 				handleAddModal={handleAddModal}
 				closeModals={closeModals}
+				showAddTemplateButton={
+					props?.mainCategoryList?.length > 0 &&
+					props?.subCategoryList?.length > 0
+				}
 			/>
 		</>
 	);

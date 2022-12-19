@@ -330,6 +330,10 @@ function SelectCategories(props) {
 				createTemplate={createTemplate}
 				handleDeleteCategory={handleDeleteCategory}
 				layout={props?.layout}
+				showAddTemplateButton={
+					props?.mainCategoryList?.length > 0 &&
+					props?.subCategoryList?.length > 0
+				}
 			/>
 		</>
 	);
