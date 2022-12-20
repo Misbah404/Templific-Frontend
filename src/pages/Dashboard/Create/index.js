@@ -56,6 +56,7 @@ const Dashboard = (props) => {
 	const [canvasLayout, setCanvasLayout] = useState(() => {});
 	const [zoomValue, setZoomValue] = useState(100);
 	const [selectElement, setSelectElement] = useState({});
+	const [multiNodesElement, setMultiNodesElement] = useState(() => []);
 	const [showModal, setShowModal] = useState(false);
 	const [deleteCanvasId, setDeleteCanvasId] = useState("");
 	const [showSaveModal, setShowSaveModal] = useState(false);
@@ -975,6 +976,7 @@ const Dashboard = (props) => {
 	]);
 
 	useEffect(() => {
+		setMultiNodesElement([]);
 		setSelectElement({});
 		if (selectedStage && selectedStage.canvas) {
 			window.addEventListener("keydown", handleKeyPress);
@@ -1005,8 +1007,6 @@ const Dashboard = (props) => {
 			setSelectElement(data);
 		}
 	};
-
-	console.log({ selectElement });
 
 	const handleKeyPress = (e) => {
 		// debugger;
@@ -1073,7 +1073,6 @@ const Dashboard = (props) => {
 		setDuplicateStageChildElements(allDuplicateStages);
 	};
 
-	console.log({ canvasAttrs });
 	const handleCreateCanvas = () => {
 		const newStagesRefsObj = {};
 
@@ -1860,6 +1859,7 @@ const Dashboard = (props) => {
 				selectedStage={selectedStage}
 				selectElement={selectElement}
 				zoomValue={zoomValue}
+				multiNodesElement={multiNodesElement}
 			/>
 
 			<div
@@ -1998,6 +1998,7 @@ const Dashboard = (props) => {
 															props.triggerDownloadTemplate
 														}
 														user={props.user}
+														setMultiNodesElement={setMultiNodesElement}
 													/>
 												))}
 										</div>

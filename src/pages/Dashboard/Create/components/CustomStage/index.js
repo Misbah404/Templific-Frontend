@@ -48,6 +48,7 @@ const CustomStage = forwardRef((props, ref) => {
 		isDemo,
 		triggerSaveTemplate,
 		triggerDownloadTemplate,
+		setMultiNodesElement,
 	} = props;
 
 	const { state, setState, goBack, goForward, states } = useUndoRedoState({
@@ -61,8 +62,18 @@ const CustomStage = forwardRef((props, ref) => {
 
 	const [strokeElement, setStrokeElement] = useState(() => {});
 
-	const trRef = createRef();
+	const trRef = useRef();
 	const strokeRef = createRef();
+	const selectionRectRef = useRef();
+	const layerRef = useRef();
+
+	const selection = useRef({
+		visible: false,
+		x1: 0,
+		y1: 0,
+		x2: 0,
+		y2: 0,
+	});
 
 	const [contextMenuAttrs, setContextMenuAttrs] = useState({
 		pageX: 0,
@@ -70,8 +81,11 @@ const CustomStage = forwardRef((props, ref) => {
 	});
 
 	const [templateFonts, setTemplateFonts] = useState([]);
+	const [selectedId, selectShape] = useState(null);
+	const [nodesArray, setNodes] = useState([]);
 
 	const [copyNodeAttrs, setCopyNodeAttrs] = useState({});
+	const [copyMultiElements, setCopyMultiElements] = useState([]);
 
 	const {
 		drawLineEnabled,
@@ -204,6 +218,8 @@ const CustomStage = forwardRef((props, ref) => {
 	const [bgColor, setBgColor] = useState("#ffffff");
 	let contextMenuRef = useRef();
 	const isDrawing = useRef(false);
+	const oldPos = useRef(null);
+	const Konva = window.Konva;
 
 	useEffect(() => {
 		document.addEventListener("mousedown", handleCloseContextMenu);
@@ -218,7 +234,13 @@ const CustomStage = forwardRef((props, ref) => {
 	}, [selectedStage]);
 
 	useEffect(() => {
+		setMultiNodesElement(nodesArray);
+	}, [nodesArray]);
+
+	useEffect(() => {
 		if (selectedElement && selectedElement.id) {
+			setCopyMultiElements([]);
+			setNodes([]);
 			handleSelectElementParent(selectedElement);
 		} else {
 			handleSelectElementParent(false);
@@ -250,6 +272,7 @@ const CustomStage = forwardRef((props, ref) => {
 
 	const handleContextMenu = (e) => {
 		e.evt.preventDefault();
+		selection.current.visible = false;
 
 		const stageHeight = e.currentTarget?.attrs?.height;
 		const stageWidth = e.currentTarget?.attrs?.width;
@@ -281,16 +304,21 @@ const CustomStage = forwardRef((props, ref) => {
 	};
 
 	const handleCopyNode = () => {
-		// if (copyNodeAttrs && Object.keys(copyNodeAttrs).length > 0)
-		// 	setCopyNodeAttrs((oldState) => ({ ...oldState, isCopied: true }));
-		// else {
-		if (!_.isEmpty(selectedElement)) {
+		if (!_.isEmpty(nodesArray)) {
+			const elements = allElements?.filter((element) =>
+				nodesArray.includes(element.id)
+			);
+
+			console.log({ elements });
+			if (elements?.length > 0) setCopyMultiElements(elements);
+			setCopyNodeAttrs({});
+		} else if (!_.isEmpty(selectedElement)) {
 			setCopyNodeAttrs({
 				...selectedElement,
 				isCopied: true,
 			});
+			setCopyMultiElements([]);
 		}
-		// }
 	};
 
 	const handleCutNode = () => {
@@ -308,7 +336,6 @@ const CustomStage = forwardRef((props, ref) => {
 			setAllElements([...newAllElements]);
 			setState({ ...state, allElements: [...newAllElements] });
 		}
-		// }
 	};
 
 	const handleCloneNode = () => {
@@ -336,6 +363,12 @@ const CustomStage = forwardRef((props, ref) => {
 			setState({ ...state, allElements: [...allElements, { ...newElement }] });
 		}
 	};
+
+	console.log({
+		copyMultiElements,
+		nodesArray,
+		elementsLength: allElements?.length,
+	});
 
 	const handlePasteNode = (fromKey = false) => {
 		if (copyNodeAttrs && Object.keys(copyNodeAttrs).length > 0) {
@@ -415,6 +448,85 @@ const CustomStage = forwardRef((props, ref) => {
 
 			setAllElements([...allElements, { ...element }]);
 			setState({ ...state, allElements: [...allElements, { ...element }] });
+		} else if (copyMultiElements?.length > 0) {
+			const elementsToCopy = [];
+
+			for (let el of copyMultiElements) {
+				const height =
+					(canvasData.canvasInPx?.canvasHeight / (zoomValue / 100)) * 0.05;
+
+				const width =
+					(canvasData.canvasInPx?.canvasWidth / (zoomValue / 100)) * 0.05;
+
+				const element = {
+					...el,
+					x: el.x + width,
+					y: el.y + height,
+
+					id: uuid(),
+					shapeRef: createRef(),
+				};
+				delete element.ref;
+
+				if (element.name === "ellipse") {
+					element.height = element.radiusY * 2;
+					element.width = element.radiusX * 2;
+				}
+
+				if (
+					element.name === "line" ||
+					element.name === "arrow" ||
+					element.name === "polygon"
+				) {
+					let xPoint = Math.abs(
+						parseInt(element.x) - parseInt(element.points[0])
+					);
+					let yPoint = Math.abs(
+						parseInt(element.y) - parseInt(element.points[1])
+					);
+
+					if (element.name === "polygon") {
+						element.points = element.points.map((p, i) => {
+							return p.map((pl, j) => {
+								if (j % 2 === 0) {
+									return pl + xPoint;
+								} else {
+									return pl + yPoint;
+								}
+							});
+						});
+					} else {
+						element.points = element.points.map((p, i) => {
+							if (i % 2 === 0) {
+								return p + xPoint;
+							} else {
+								return p + yPoint;
+							}
+						});
+					}
+
+					element.x = 0;
+					element.y = 0;
+				}
+
+				if (element.height && element.width && element.name != "text") {
+					element.height = element.height;
+					element.width = element.width;
+				}
+
+				if (element.name === "text") {
+					// element.fontSize = element.fontSize / (zoomValue / 100);
+					const { textHeight, textWidth } = calculateTextSize({ ...element });
+					element.height = textHeight;
+					element.width = textWidth;
+				}
+
+				delete element?.["isCopied"];
+
+				elementsToCopy.push(element);
+			}
+			setAllElements([...allElements, ...elementsToCopy]);
+			setState({ ...state, allElements: [...allElements, ...elementsToCopy] });
 		}
 	};
 
@@ -474,29 +586,47 @@ const CustomStage = forwardRef((props, ref) => {
 		}
 	};
 
+	const updateSelectionRect = () => {
+		const node = selectionRectRef.current;
+		node.setAttrs({
+			visible: selection.current.visible,
+			x: Math.min(selection.current.x1, selection.current.x2),
+			y: Math.min(selection.current.y1, selection.current.y2),
+			width: Math.abs(selection.current.x1 - selection.current.x2),
+			height: Math.abs(selection.current.y1 - selection.current.y2),
+			fill: "rgba(0, 161, 255, 0.3)",
+		});
+		node.getLayer().batchDraw();
+	};
+
 	const handleMouseDown = (e) => {
 		isDrawing.current = true;
 
 		// line
 		if (drawLineEnabled) {
 			handleLineOnMouseDown(e);
+			return;
 		}
 		// rect
 		if (drawRectangleEnabled) {
 			handleRectangleOnMouseDown(e);
+			return;
 		}
 
 		// ellipse
 		if (drawEllipseEnabled) {
 			handleEllipseOnMouseDown(e);
+			return;
 		}
 		// polygon
 		if (drawPolygonEnabled) {
 			handlePolygonOnMouseDown(e);
+			return;
 		}
 
 		if (drawArrowEnabled) {
 			handleArrowOnMouseDown(e);
+			return;
 		}
 
 		if (allElements?.length > 0) {
@@ -507,34 +637,116 @@ const CustomStage = forwardRef((props, ref) => {
 			});
 		}
 
+		const isElement = e.target.findAncestor(".elements-container");
+		const isTransformer = e.target.findAncestor("Transformer");
+
+		if (isElement || isTransformer) {
+			return;
+		}
+
 		handleDeSelectElement(e);
+
+		const pos = e.target.getStage().getPointerPosition();
+		selection.current.visible = true;
+		selection.current.x1 = pos.x;
+		selection.current.y1 = pos.y;
+		selection.current.x2 = pos.x;
+		selection.current.y2 = pos.y;
+		updateSelectionRect();
 	};
 
 	const handleMouseMove = (e) => {
-		if (!isDrawing.current) return;
+		// if (!isDrawing.current) return;
 
-		if (drawLineEnabled) {
-			handleLineOnMouseMove(e);
+		if (isDrawing.current) {
+			if (drawLineEnabled) {
+				handleLineOnMouseMove(e);
+				return;
+			}
+
+			// rect
+			if (drawRectangleEnabled) {
+				handleRectangleOnMouseMove(e);
+				return;
+			}
+
+			// ellipse
+			if (drawEllipseEnabled) {
+				handleEllipseOnMouseMove(e);
+				return;
+			}
+
+			// polygon
+			if (drawPolygonEnabled) {
+				handlePolygonOnMouseMove(e);
+				return;
+			}
+
+			if (drawArrowEnabled) {
+				handleArrowOnMouseMove(e);
+				return;
+			}
 		}
 
-		// rect
-		if (drawRectangleEnabled) {
-			handleRectangleOnMouseMove(e);
+		if (!selection.current.visible) {
+			return;
 		}
 
-		// ellipse
-		if (drawEllipseEnabled) {
-			handleEllipseOnMouseMove(e);
+		const pos = e.target.getStage().getPointerPosition();
+		selection.current.x2 = pos.x;
+		selection.current.y2 = pos.y;
+		updateSelectionRect();
+	};
+
+	const onClickTap = (e) => {
+		// if we are selecting with rect, do nothing
+		let stage = e.target.getStage();
+		let layer = layerRef.current;
+		let tr = trRef.current;
+
+		// if click on empty area - remove all selections
+		if (e.target === stage) {
+			selectShape(null);
+			setNodes([]);
+			tr.nodes([]);
+			layer.draw();
+			return;
 		}
 
-		// polygon
-		if (drawPolygonEnabled) {
-			handlePolygonOnMouseMove(e);
+		// do nothing if clicked NOT on our rectangles
+		if (
+			!e.target.hasName(".rect") ||
+			!e.target.hasName(".line") ||
+			!e.target.hasName(".arrow") ||
+			!e.target.hasName(".image") ||
+			!e.target.hasName(".text") ||
+			!e.target.hasName(".polygon") ||
+			!e.target.hasName(".ellipse")
+		) {
+			return;
 		}
 
-		if (drawArrowEnabled) {
-			handleArrowOnMouseMove(e);
+		// do we pressed shift or ctrl?
+		const metaPressed = e.evt.shiftKey || e.evt.ctrlKey || e.evt.metaKey;
+		const isSelected = tr.nodes().indexOf(e.target) >= 0;
+
+		if (!metaPressed && !isSelected) {
+			// if no key pressed and the node is not selected
+			// select just one
+			tr.nodes([e.target]);
+		} else if (metaPressed && isSelected) {
+			// if we pressed keys and node was selected
+			// we need to remove it from selection:
+			const nodes = tr.nodes().slice(); // use slice to have new copy of array
+			// remove node from array
+			nodes.splice(nodes.indexOf(e.target), 1);
+			tr.nodes(nodes);
+		} else if (metaPressed && !isSelected) {
+			// add the node into selection
+			const nodes = tr.nodes().concat([e.target]);
+			tr.nodes(nodes);
 		}
+		layer.draw();
 	};
 
 	const handleMouseUp = (e) => {
@@ -542,78 +754,144 @@ const CustomStage = forwardRef((props, ref) => {
 
 		if (drawLineEnabled) {
 			handleLineOnMouseUp(e);
+			return;
 		}
 
 		// rect
 		if (drawRectangleEnabled) {
 			handleRectangleOnMouseUp(e);
+			return;
 		}
 
 		// ellipse
 		if (drawEllipseEnabled) {
 			handleEllipseOnMouseUp(e);
+			return;
 		}
 
 		if (drawArrowEnabled) {
 			handleArrowOnMouseUp(e);
+			return;
 		}
 
 		if (drawPolygonEnabled) {
 			isDrawing.current = true;
-		}
-	};
-
-	const handleDeleteElement = () => {
-		const elementToDelete = allElements.find(
-			(element) => element.id === selectedElement.id
-		);
-
-		// if (_.isEmpty(elementToDelete)) return;
-		if (
-			elementToDelete?.name === "text" &&
-			elementToDelete?.shapeRef?.current?.isEditing
-		) {
 			return;
 		}
 
-		const updatedElements = allElements.filter(
-			(element) => element?.id !== selectedElement?.id
-		);
+		oldPos.current = null;
+		if (!selection.current.visible) {
+			return;
+		}
 
-		setAllElements([...updatedElements]);
-		setState({ ...state, allElements: [...updatedElements] });
+		const selBox = selectionRectRef.current.getClientRect();
 
-		handleSelectElementParent();
-		setSelectedElement({});
+		const elements = [];
+		const elementsIds = [];
+		layerRef.current
+			.find(".image, .text, .rect, .line, .ellipse, .polygon, .arrow")
+			.forEach((elementNode) => {
+				const elBox = elementNode.getClientRect();
+				if (Konva.Util.haveIntersection(selBox, elBox)) {
+					if (elementNode?.attrs?.isLocked !== true) {
+						elements.push(elementNode);
+						if (elementNode?.attrs?.id)
+							elementsIds.push(elementNode?.attrs?.id);
+					}
+				}
+			});
+
+		console.log({ elementsIds });
+		setNodes(elementsIds);
+
+		trRef.current.nodes?.(elements);
+		selection.current.visible = false;
+		// disable click event
+		Konva.listenClickTap = false;
+		updateSelectionRect();
+	};
+
+	const handleDeleteElement = () => {
+		if (!_.isEmpty(selectedElement)) {
+			const elementToDelete = allElements.find(
+				(element) => element.id === selectedElement?.id
+			);
+
+			if (
+				elementToDelete?.name === "text" &&
+				elementToDelete?.shapeRef?.current?.isEditing
+			) {
+				return;
+			}
+
+			const updatedElements = allElements.filter(
+				(element) => element?.id !== selectedElement?.id
+			);
+
+			setAllElements([...updatedElements]);
+			setState({ ...state, allElements: [...updatedElements] });
+
+			handleSelectElementParent();
+			setSelectedElement({});
+			trRef.current.nodes?.([]);
+		} else if (!_.isEmpty(nodesArray)) {
+			const newElements = [...allElements].filter(
+				(e) => !nodesArray.includes(e?.id)
+			);
+
+			setAllElements([...newElements]);
+			setState({ ...state, allElements: [...newElements] });
+			setStrokeElement({});
+			trRef.current.nodes?.([]);
+			setNodes([]);
+		}
 	};
 
 	const handleChangeElement = (data) => {
-		if (selectedElement.type === "line") {
-			handleUpdateLine(selectedElement, data);
-		}
+		if (!_.isEmpty(selectedElement)) {
+			if (selectedElement.type === "line") {
+				handleUpdateLine(selectedElement, data);
+			}
 
-		if (selectedElement.type === "rect") {
-			handleUpdateRect(selectedElement, data);
-		}
+			if (selectedElement.type === "rect") {
+				handleUpdateRect(selectedElement, data);
+			}
 
-		if (selectedElement.type === "arrow") {
-			handleUpdateArrow(selectedElement, data);
-		}
+			if (selectedElement.type === "arrow") {
+				handleUpdateArrow(selectedElement, data);
+			}
 
-		if (selectedElement.type === "polygon") {
-			handleUpdatePolygon(selectedElement, data);
-		}
+			if (selectedElement.type === "polygon") {
+				handleUpdatePolygon(selectedElement, data);
+			}
 
-		if (selectedElement.type === "ellipse") {
-			handleUpdateEllipse(selectedElement, data);
-		}
+			if (selectedElement.type === "ellipse") {
+				handleUpdateEllipse(selectedElement, data);
+			}
 
-		if (selectedElement.type === "image") {
-			handleUpdateImage(selectedElement, data);
-		}
+			if (selectedElement.type === "image") {
+				handleUpdateImage(selectedElement, data);
+			}
 
-		if (selectedElement.type === "star") {
-			handleUpdateStar(selectedElement, data);
+			if (selectedElement.type === "star") {
+				handleUpdateStar(selectedElement, data);
+			}
+		} else if (nodesArray?.length > 0) {
+			const newElements = allElements.map((element) => {
+				if (nodesArray?.includes(element?.id)) {
+					return {
+						...element,
+						...data,
+					};
+				}
+				return element;
+			});
+
+			setAllElements([...newElements]);
+			setState({ ...state, allElements: [...newElements] });
+			// setStrokeElement({});
+			// trRef.current.nodes?.([]);
+			// setNodes([]);
 		}
 	};
 
@@ -623,6 +901,10 @@ const CustomStage = forwardRef((props, ref) => {
 				e.target === e?.target?.getStage() || e.target.attrs.name === "bgColor";
 			if (clickedOnEmpty) {
 				setSelectedElement(null);
+				selectShape(null);
+				setNodes([]);
+				trRef.current?.nodes([]);
+				layerRef.current?.draw();
 			}
 		} catch (error) {
 			// setSelectedElement(null);
@@ -714,22 +996,40 @@ const CustomStage = forwardRef((props, ref) => {
 	};
 
 	const handleElementLockUpdate = (id) => {
-		const allShapes = [...allElements];
-		const idx = allShapes.findIndex((shape) => shape.id === id);
-		if (allShapes[idx]) {
-			allShapes[idx] = {
-				...allShapes[idx],
-				isLocked: !allShapes[idx].isLocked,
-			};
-			setState({ ...state, allElements: [...allShapes] });
-			setAllElements(allShapes);
-		}
+		if (id) {
+			const allShapes = [...allElements];
+			const idx = allShapes.findIndex((shape) => shape.id === id);
+			if (allShapes[idx]) {
+				allShapes[idx] = {
+					...allShapes[idx],
+					isLocked: !allShapes[idx].isLocked,
+				};
+				setState({ ...state, allElements: [...allShapes] });
+				setAllElements(allShapes);
+			}
 
-		if (id === selectedElement?.id) {
-			setSelectedElement({
-				...selectedElement,
-				isLocked: !selectedElement?.isLocked,
+			if (id === selectedElement?.id) {
+				setSelectedElement({
+					...selectedElement,
+					isLocked: !selectedElement?.isLocked,
+				});
+			}
+		} else {
+			const newElements = allElements?.map((element) => {
+				if (nodesArray?.includes(element?.id)) {
+					return {
+						...element,
+						isLocked: true,
+					};
+				}
+
+				return element;
 			});
+
+			setState({ ...state, allElements: [...newElements] });
+			setAllElements(newElements);
+			setNodes([]);
+			trRef.current.nodes?.([]);
 		}
 	};
 
@@ -824,6 +1124,7 @@ const CustomStage = forwardRef((props, ref) => {
 			handleCopyNode,
 			handlePasteNode,
 			handleCutNode,
+			nodesArray,
 			handleMouseDown: (e) => {
 				let removeSelectedElement = true;
 				if (allElements?.length > 0) {
@@ -893,7 +1194,10 @@ const CustomStage = forwardRef((props, ref) => {
 				key={id}
 				height={canvasHeight * (zoomValue / 100)}
 				width={canvasWidth * (zoomValue / 100)}
-				onClick={(e) => handleChangeRef(id)}
+				onClick={(e) => {
+					if (id === selectedStage?.key) onClickTap(e);
+					else handleChangeRef(id);
+				}}
 				onMouseMove={handleMouseMove}
 				onMouseDown={handleMouseDown}
 				onMouseUp={handleMouseUp}
@@ -1003,6 +1307,7 @@ const CustomStage = forwardRef((props, ref) => {
 				<Layer
 					offsetX={parseInt(-(offsetX / 2)) * (zoomValue / 100)}
 					offsetY={parseInt(-(offsetY / 2)) * (zoomValue / 100)}
+					ref={layerRef}
 				>
 					<Portal enabled={contextMenu}>
 						{contextMenu && (
@@ -1056,6 +1361,8 @@ const CustomStage = forwardRef((props, ref) => {
 										trRef={trRef}
 										strokeRef={strokeRef}
 										setStrokeElement={setStrokeElement}
+										setNodes={setNodes}
+										nodesArray={nodesArray}
 										strokeEnabled={
 											strokeElement?.id === element?.id &&
 											selectedElement?.id !== element.id
@@ -1076,6 +1383,8 @@ const CustomStage = forwardRef((props, ref) => {
 										trRef={trRef}
 										strokeRef={strokeRef}
 										setStrokeElement={setStrokeElement}
+										setNodes={setNodes}
+										nodesArray={nodesArray}
 										strokeEnabled={
 											strokeElement?.id === element?.id &&
 											selectedElement?.id !== element.id
@@ -1094,6 +1403,8 @@ const CustomStage = forwardRef((props, ref) => {
 										handleStarDrag={handleStarDrag}
 										ref={element.shapeRef}
 										trRef={trRef}
+										setNodes={setNodes}
+										nodesArray={nodesArray}
 										strokeRef={strokeRef}
 										setStrokeElement={setStrokeElement}
 										strokeEnabled={
@@ -1116,6 +1427,8 @@ const CustomStage = forwardRef((props, ref) => {
 										ref={element.shapeRef}
 										trRef={trRef}
 										strokeRef={strokeRef}
+										setNodes={setNodes}
+										nodesArray={nodesArray}
 										setStrokeElement={setStrokeElement}
 										strokeEnabled={
 											strokeElement?.id === element?.id &&
@@ -1137,6 +1450,8 @@ const CustomStage = forwardRef((props, ref) => {
 										trRef={trRef}
 										strokeRef={strokeRef}
 										setStrokeElement={setStrokeElement}
+										setNodes={setNodes}
+										nodesArray={nodesArray}
 										strokeEnabled={
 											strokeElement?.id === element?.id &&
 											selectedElement?.id !== element.id
@@ -1160,6 +1475,8 @@ const CustomStage = forwardRef((props, ref) => {
 											handleSelectElement("polygon", element)
 										}
 										isSelected={element.id === selectedElement?.id}
+										setNodes={setNodes}
+										nodesArray={nodesArray}
 										ref={element.shapeRef}
 										trRef={trRef}
 										strokeRef={strokeRef}
@@ -1191,6 +1508,8 @@ const CustomStage = forwardRef((props, ref) => {
 										calculateTextSize={calculateTextSize}
 										strokeRef={strokeRef}
 										setStrokeElement={setStrokeElement}
+										setNodes={setNodes}
+										nodesArray={nodesArray}
 										strokeEnabled={
 											strokeElement?.id === element?.id &&
 											selectedElement?.id !== element.id
@@ -1218,6 +1537,8 @@ const CustomStage = forwardRef((props, ref) => {
 												ref={element.shapeRef}
 												trRef={trRef}
 												user={props.user}
+												setNodes={setNodes}
+												nodesArray={nodesArray}
 												strokeRef={strokeRef}
 												setStrokeElement={setStrokeElement}
 												strokeEnabled={
@@ -1244,6 +1565,8 @@ const CustomStage = forwardRef((props, ref) => {
 												trRef={trRef}
 												user={props.user}
 												strokeRef={strokeRef}
+												setNodes={setNodes}
+												nodesArray={nodesArray}
 												setStrokeElement={setStrokeElement}
 												strokeEnabled={
 													strokeElement?.id === element?.id &&
@@ -1274,16 +1597,18 @@ const CustomStage = forwardRef((props, ref) => {
 						/>
 					)}
 
-					{selectedElement &&
-						Object.keys(selectedElement).length > 0 &&
+					{
+						// selectedElement &&
+						// Object.keys(selectedElement).length > 0 &&
 						triggerSaveTemplate !== true &&
-						triggerDownloadTemplate !== true && (
-							<TransformerKonva
-								ref={trRef}
-								selectedElement={selectedElement}
-								// currentSelectedElement={currentSelectedElement}
-							/>
-						)}
+							triggerDownloadTemplate !== true && (
+								<TransformerKonva
+									ref={trRef}
+									selectedElement={selectedElement}
+									// currentSelectedElement={currentSelectedElement}
+								/>
+							)
+					}
 
 					{strokeElement &&
 						Object.keys(strokeElement).length > 0 &&
@@ -1296,6 +1621,8 @@ const CustomStage = forwardRef((props, ref) => {
 								// currentSelectedElement={currentSelectedElement}
 							/>
 						)}
+
+					<Rect fill="rgba(0,0,255,0.5)" ref={selectionRectRef} />
 				</Layer>
 			</Stage>
 		</div>

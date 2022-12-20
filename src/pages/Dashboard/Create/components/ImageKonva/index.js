@@ -24,6 +24,8 @@ const ImageKonva = forwardRef((props, ref) => {
 		strokeEnabled,
 		strokeRef,
 		setStrokeElement,
+		nodesArray,
+		setNodes,
 	} = props;
 
 	const [imageSrc, setImageSrc] = useState(null);

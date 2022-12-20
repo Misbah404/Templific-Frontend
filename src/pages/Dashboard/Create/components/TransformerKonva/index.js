@@ -8,7 +8,7 @@ const TransformerKonva = forwardRef((props, ref) => {
 	const { selectedElement } = props;
 
 	const flipEnabled =
-		selectedElement?.name === "image" || selectedElement.name === "text"
+		selectedElement?.name === "image" || selectedElement?.name === "text"
 			? false
 			: true;
 
@@ -33,7 +33,7 @@ const TransformerKonva = forwardRef((props, ref) => {
 				boundBoxFunc={(oldBox, newBox) => {
 					const minStrokeWidth = 3;
 
-					if (selectedElement.isLocked) {
+					if (selectedElement?.isLocked) {
 						return oldBox;
 					}
 
@@ -57,12 +57,12 @@ const TransformerKonva = forwardRef((props, ref) => {
 		<Transformer
 			ref={ref}
 			flipEnabled={flipEnabled}
-			padding={selectedElement.name === "text" ? 8 : 0}
+			padding={selectedElement?.name === "text" ? 8 : 0}
 			boundBoxFunc={(oldBox, newBox) => {
-				if (selectedElement.isLocked) {
+				if (selectedElement?.isLocked) {
 					return oldBox;
 				}
-				if (selectedElement.name === "text") {
+				if (selectedElement?.name === "text") {
 					newBox.width = Math.max(20, newBox.width);
 					newBox.height = Math.max(20, newBox.height);
 					return newBox;

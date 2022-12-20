@@ -127,8 +127,8 @@ const GifImage = forwardRef((props, ref) => {
 				name="image"
 				opacity={image.opacity}
 				crossOrigin="Anonymous"
-        onMouseOver={() => setStrokeElement(image)}
-        onMouseOut={() => setStrokeElement({})}
+				onMouseOver={() => setStrokeElement(image)}
+				onMouseOut={() => setStrokeElement({})}
 			/>
 		</>
 	);
