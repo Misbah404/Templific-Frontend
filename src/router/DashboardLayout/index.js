@@ -478,6 +478,8 @@ const DashboardLayout = (props) => {
 		path: ROUTES.ADMIN_TEMPLATE_UPDATE,
 	});
 
+	console.log({ adminTemplateUpdate });
+
 	console.log({ props });
 
 	return (
@@ -513,13 +515,16 @@ const DashboardLayout = (props) => {
 						)}
 						{location.pathname !== ROUTES.SETTINGS &&
 							location.pathname !== ROUTES.SETTINGS_PASSWORD &&
-							props?.user?.isAdmin !== true &&
 							// location.pathname !== ROUTES.ANALYTICS &&
 							location.pathname !== ROUTES.SETTINGS_SUBSCRIBTION && (
 								<>
 									<li className={`d-inline-flex`}>
 										<NavLink
-											to={ROUTES.DASHBOARD}
+											to={
+												props?.user?.isAdmin !== true
+													? ROUTES.DASHBOARD
+													: ROUTES.SELECT_CATEGORIES
+											}
 											className={` ${css(styles.menuLi)} ${css(
 												styles.menuItem
 											)}`}
@@ -527,6 +532,7 @@ const DashboardLayout = (props) => {
 											{strings.HOME}
 										</NavLink>
 									</li>
+
 									{(location.pathname === ROUTES.DASHBOARD_CREATE ||
 										location.pathname === ROUTES.ADMIN_TEMPLATE_CREATE ||
 										params?.path === ROUTES.EDIT_TEMPLATE ||
