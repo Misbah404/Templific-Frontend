@@ -85,6 +85,7 @@ function SelectCategories(props) {
 	const [isLoading, setIsLoading] = useState(() => false);
 	const [editCategory, setEditCategory] = useState(() => ({}));
 	const [isEditing, setIsEditing] = useState(() => false);
+	const [deleteModal, setDeleteModal] = useState(() => false);
 	const [error, setError] = useState(() => "");
 	const filePickerRef = useRef();
 
@@ -94,6 +95,9 @@ function SelectCategories(props) {
 
 	const toggleAddCategoryModal = () => {
 		setAddCategoryModal(!addCategoryModal);
+	};
+	const toggleDeleteModal = () => {
+		setDeleteModal(!!!deleteModal);
 	};
 
 	const handleItemClick = (res) => {
@@ -212,9 +216,9 @@ function SelectCategories(props) {
 		getSubCategory();
 	};
 
-	const handleDeleteCategory = (data) => {
+	const handleDeleteCategory = () => {
 		const payload = {
-			id: data?.id,
+			id: editCategory?.id,
 			isDelete: true,
 		};
 
@@ -227,6 +231,7 @@ function SelectCategories(props) {
 					"Category Successfully Deleted.",
 					"success"
 				);
+				closeModals();
 			},
 			(message) => {
 				Util.postNotification(
@@ -284,6 +289,12 @@ function SelectCategories(props) {
 		error && setError("");
 		setIsEditing(false);
 		setEditCategory({});
+		deleteModal && setDeleteModal(false);
+	};
+
+	const handleSetCategoryDelete = (data) => {
+		setEditCategory(data);
+		setDeleteModal(true);
 	};
 
 	const openEditModal = (data) => {
@@ -369,6 +380,9 @@ function SelectCategories(props) {
 				subCategoryListOptions={subCategoryListOptions}
 				handleAddModal={handleAddModal}
 				closeModals={closeModals}
+				toggleDeleteModal={toggleDeleteModal}
+				deleteModal={deleteModal}
+				handleSetCategoryDelete={handleSetCategoryDelete}
 				showAddTemplateButton={
 					props?.mainCategoryList?.length > 0 &&
 					props?.subCategoryList?.length > 0
