@@ -120,7 +120,7 @@ function UserModuleTemplates(props) {
 							<div
 								className={`d-flex justify-content-start align-items-center`}
 							>
-								<img src={Images.arrowLeftIcon} />
+								<img src={Images.arrowLeftIcon} className="cursor-pointer" onClick={() => history.goBack()} />
 								<p className={`${css(styles.mainHeading)}`}>
 									{subCategory?.name || "All Sub Categories"}
 								</p>

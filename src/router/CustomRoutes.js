@@ -39,6 +39,7 @@ import {
 	SelectAdminTemplate,
 	UserModuleSubCategory,
 	UserModuleTemplates,
+	UserModuleMainCategory,
 } from "../pages";
 
 import { Route, Switch, Redirect } from "react-router-dom";
@@ -102,6 +103,7 @@ const AuthRoute = ({ ...props }) => {
 
 	if (
 		(props?.path === ROUTES.SELECT_TEMPLATE ||
+			props?.path === ROUTES.USER_MAIN_CATEGORY ||
 			props?.path === ROUTES.DASHBOARD) &&
 		props?.user?.isAdmin === true
 	) {
@@ -331,6 +333,15 @@ function CustomRoutes(props) {
 			<AuthRoute
 				path={ROUTES.ETSY_AUTH}
 				component={EtsyAuthentication}
+				{...repeatedProps}
+			/>
+
+			<AuthRoute
+				path={ROUTES.USER_MAIN_CATEGORY}
+				component={UserModuleMainCategory}
+				sideMenuItems={[...homeMenuItems, ...settingMenuItems]}
+				darkSidePanel
+				hasBack={false}
 				{...repeatedProps}
 			/>
 

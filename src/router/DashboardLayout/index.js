@@ -522,7 +522,7 @@ const DashboardLayout = (props) => {
 										<NavLink
 											to={
 												props?.user?.isAdmin !== true
-													? ROUTES.DASHBOARD
+													? ROUTES.USER_MAIN_CATEGORY
 													: ROUTES.SELECT_CATEGORIES
 											}
 											className={` ${css(styles.menuLi)} ${css(
@@ -701,16 +701,19 @@ const DashboardLayout = (props) => {
 														: ""
 												} ${css(styles.menuLink)}`}
 											>
-												{res.name !== "category" && (
-													<SVG
-														width="auto"
-														height="auto"
-														src={res.image}
-														title={res.name}
-														fill={location.pathname == res.link ? "filled" : ""}
-														className={`${css(styles.menuImage)}`}
-													/>
-												)}
+												{res.name !== "category" &&
+													res.name !== "pre-define templates" && (
+														<SVG
+															width="auto"
+															height="auto"
+															src={res.image}
+															title={res.name}
+															fill={
+																location.pathname == res.link ? "filled" : ""
+															}
+															className={`${css(styles.menuImage)}`}
+														/>
+													)}
 
 												{res.name === "category" && (
 													<img
@@ -724,6 +727,21 @@ const DashboardLayout = (props) => {
 														className={`${css(styles.menuImage)}`}
 														onMouseOver={() => setToggleCategoryImage(true)}
 														onMouseOut={() => setToggleCategoryImage(false)}
+													/>
+												)}
+
+												{res.name === "pre-define templates" && (
+													<img
+														src={
+															props?.children?.props?.darkSidePanel
+																? res.image
+																: res.name === props.layout.sideBarElement
+																? res.image
+																: togglePreDefineImage
+																? res.image
+																: res.imageAlternate
+														}
+														className={`${css(styles.menuImage)}`}
 													/>
 												)}
 

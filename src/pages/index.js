@@ -24,6 +24,7 @@ import CategoryTemplate from "./CategoryTemplate";
 import SelectAdminTemplate from "./SelectAdminTemplate";
 import UserModuleSubCategory from "./UserModuleSubCategory";
 import UserModuleTemplates from "./UserModuleTemplates";
+import UserModuleMainCategory from "./userModuleMainCategory";
 
 export {
 	Login,
@@ -51,4 +52,5 @@ export {
 	SelectAdminTemplate,
 	UserModuleSubCategory,
 	UserModuleTemplates,
+	UserModuleMainCategory,
 };
