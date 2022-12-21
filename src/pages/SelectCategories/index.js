@@ -22,6 +22,7 @@ function SelectCategories(props) {
 
 	const [addTemplateModal, setAddTemplateModal] = useState(() => false);
 	const [addCategoryModal, setAddCategoryModal] = useState(() => false);
+	const [deleteModal, setDeleteModal] = useState(() => false);
 	const [mainCategory, setMainCategory] = useState(() => "");
 	const [subCategory, setSubCategory] = useState(() => "");
 	const [imageFile, setImageFile] = useState(() => null);
@@ -38,6 +39,10 @@ function SelectCategories(props) {
 
 	const toggleAddCategoryModal = () => {
 		setAddCategoryModal(!addCategoryModal);
+	};
+
+	const toggleDeleteModal = () => {
+		setDeleteModal(!deleteModal);
 	};
 
 	const handleClickItemCard = (res) => {
@@ -216,6 +221,7 @@ function SelectCategories(props) {
 		error && setError("");
 		setEditCategory({});
 		isEditing && setIsEditing(false);
+		deleteModal && setDeleteModal(false);
 	};
 
 	const setEditModal = (data) => {
@@ -223,6 +229,11 @@ function SelectCategories(props) {
 		setIsEditing(true);
 		setAddCategoryModal(true);
 		setEditCategory(data);
+	};
+
+	const handleCategoryForDelete = (data) => {
+		setEditCategory(data);
+		setDeleteModal(true);
 	};
 
 	const _validateAddTemplate = () => {
@@ -275,16 +286,17 @@ function SelectCategories(props) {
 		);
 
 		getMainCategory();
+		closeModals();
 	};
 
 	const handleDeleteErrorCallback = () => {
 		Util.postNotification("Category Delete", SOMETHING_WRONG, "danger");
 	};
 
-	const handleDeleteCategory = (data) => {
+	const handleDeleteCategory = () => {
 		const payload = {
 			isDelete: true,
-			id: data?.id,
+			id: editCategory?.id,
 		};
 
 		deleteMainCategory(
@@ -329,7 +341,10 @@ function SelectCategories(props) {
 				updateCategory={updateCategory}
 				createTemplate={createTemplate}
 				handleDeleteCategory={handleDeleteCategory}
+				toggleDeleteModal={toggleDeleteModal}
+				deleteModal={deleteModal}
 				layout={props?.layout}
+				handleCategoryForDelete={handleCategoryForDelete}
 				showAddTemplateButton={
 					props?.mainCategoryList?.length > 0 &&
 					props?.subCategoryList?.length > 0

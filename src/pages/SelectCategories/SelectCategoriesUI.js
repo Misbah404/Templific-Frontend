@@ -34,6 +34,9 @@ function SelectCategoriesUI(props) {
 		handleDeleteCategory,
 		imageFile,
 		showAddTemplateButton,
+		deleteModal,
+		toggleDeleteModal,
+		handleCategoryForDelete,
 	} = props;
 
 	const renderCards = () => {
@@ -65,7 +68,7 @@ function SelectCategoriesUI(props) {
 						<Dropdown.Item onClick={() => setEditModal(res)}>
 							Edit
 						</Dropdown.Item>
-						<Dropdown.Item onClick={() => handleDeleteCategory(res)}>
+						<Dropdown.Item onClick={() => handleCategoryForDelete(res)}>
 							Delete
 						</Dropdown.Item>
 					</Dropdown.Menu>
@@ -246,6 +249,16 @@ function SelectCategoriesUI(props) {
 		);
 	};
 
+	const renderDeleteModalContent = () => {
+		return (
+			<div className="d-flex w-100">
+				<p className={`text-center ${css(styles.formlabel)}`}>
+					Are you sure you want to delete this category ?
+				</p>
+			</div>
+		);
+	};
+
 	const emptyList = () => {
 		return (
 			<div className="d-flex justify-content-center align-items-center">
@@ -297,6 +310,19 @@ function SelectCategoriesUI(props) {
 				isLoading={isLoading}
 			>
 				{renderCategoryModalContent()}
+			</ModalView>
+
+			<ModalView
+				title={"Delete Category"}
+				cancelText={"Cancel"}
+				submitText={"Delete"}
+				showModal={deleteModal}
+				setShowModal={toggleDeleteModal}
+				cancelOnClick={toggleDeleteModal}
+				submitOnClick={handleDeleteCategory}
+				isLoading={isLoading}
+			>
+				{renderDeleteModalContent()}
 			</ModalView>
 		</div>
 	);

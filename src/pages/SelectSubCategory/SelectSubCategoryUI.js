@@ -38,6 +38,9 @@ function SelectSubCategoryUI(props) {
 		handleAddModal,
 		imageFile,
 		showAddTemplateButton,
+		toggleDeleteModal,
+		deleteModal,
+		handleSetCategoryDelete
 	} = props;
 
 	const renderCards = () => {
@@ -67,7 +70,7 @@ function SelectSubCategoryUI(props) {
 						<Dropdown.Item onClick={() => openEditModal(res)}>
 							Edit
 						</Dropdown.Item>
-						<Dropdown.Item onClick={() => handleDeleteCategory(res)}>
+						<Dropdown.Item onClick={() => handleSetCategoryDelete(res)}>
 							Delete
 						</Dropdown.Item>
 					</Dropdown.Menu>
@@ -268,6 +271,16 @@ function SelectSubCategoryUI(props) {
 		);
 	};
 
+	const renderDeleteModalContent = () => {
+		return (
+			<div className="d-flex w-100">
+				<p className={`text-center ${css(styles.formlabel)}`}>
+					Are you sure you want to delete this category ?
+				</p>
+			</div>
+		);
+	};
+
 	return (
 		<div
 			className={`${css(
@@ -312,6 +325,19 @@ function SelectSubCategoryUI(props) {
 				isLoading={isLoading}
 			>
 				{renderCategoryModalContent()}
+			</ModalView>
+
+			<ModalView
+				title={"Delete Category"}
+				cancelText={"Cancel"}
+				submitText={"Delete"}
+				showModal={deleteModal}
+				setShowModal={toggleDeleteModal}
+				cancelOnClick={toggleDeleteModal}
+				submitOnClick={handleDeleteCategory}
+				isLoading={isLoading}
+			>
+				{renderDeleteModalContent()}
 			</ModalView>
 		</div>
 	);
