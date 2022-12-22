@@ -1014,10 +1014,6 @@ const Dashboard = (props) => {
 		const targetName = e?.target?.tagName;
 		const formElements = ["INPUT", "TEXTAREA", "SELECT", "OPTION"];
 
-		if (formElements.includes(targetName)) {
-			return;
-		}
-
 		if (
 			(e.ctrlKey || e.metaKey) &&
 			e.key.toLowerCase() === "z" &&
@@ -1031,6 +1027,10 @@ const Dashboard = (props) => {
 			((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "y")
 		) {
 			selectedStage.canvas.current.handleRedo();
+		}
+
+		if (formElements.includes(targetName)) {
+			return;
 		}
 
 		if (

@@ -620,7 +620,7 @@ const DashboardLayout = (props) => {
 						</Button>
 					)}
 
-					<Dropdown className="d-inline">
+					<Dropdown className="d-inline" style={{margin: "0vw 1vw"}}>
 						<OverlayTrigger
 							overlay={
 								<Tooltip style={{ fontSize: ".8vw" }}>

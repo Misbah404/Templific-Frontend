@@ -448,6 +448,7 @@ const CustomStage = forwardRef((props, ref) => {
 
 			setAllElements([...allElements, { ...element }]);
 			setState({ ...state, allElements: [...allElements, { ...element }] });
+			setSelectedElement({ ...element });
 		} else if (copyMultiElements?.length > 0) {
 			const elementsToCopy = [];
 
@@ -801,7 +802,7 @@ const CustomStage = forwardRef((props, ref) => {
 				}
 			});
 
-		console.log({ elementsIds });
+		console.log({ elements });
 		setNodes(elementsIds);
 
 		trRef.current.nodes?.(elements);
@@ -958,6 +959,7 @@ const CustomStage = forwardRef((props, ref) => {
 
 		handleSelectElementParent();
 		setSelectedElement({});
+		trRef.current.nodes?.([]);
 	};
 
 	const handleRedo = () => {
