@@ -40,7 +40,8 @@ function SelectSubCategoryUI(props) {
 		showAddTemplateButton,
 		toggleDeleteModal,
 		deleteModal,
-		handleSetCategoryDelete
+		handleSetCategoryDelete,
+		editCategory,
 	} = props;
 
 	const renderCards = () => {
@@ -154,7 +155,8 @@ function SelectSubCategoryUI(props) {
 					styles={[styles.canvasInput]}
 					label="Main Category"
 					name={`main-category`}
-					value={mainCategory}
+					value={selectedMainCategory}
+					disabled
 					onChange={(value) => {
 						setMainCategory(value.target.value);
 						setSubCategory("");
@@ -177,13 +179,13 @@ function SelectSubCategoryUI(props) {
 					name={`main-category`}
 					value={subCategory}
 					onChange={(value) => setSubCategory(value.target.value)}
-					disabled={!!!mainCategory}
+					disabled={!!!selectedMainCategory}
 				>
 					<option disabled selected value="">
 						Choose category
 					</option>
 
-					{subCategoryListOptions.map((res, idx) => (
+					{subCategoryOfMainCategory.map((res, idx) => (
 						<option value={res?.id} key={idx}>
 							{res?.name}
 						</option>
@@ -205,13 +207,22 @@ function SelectSubCategoryUI(props) {
 					<span>Upload Image</span>
 				</div>
 
-				{imageFile?.name && (
+				{imageFile?.name ? (
 					<p className={`text-center ${css(styles.formlabel)}`}>
 						{" "}
 						{imageFile.name?.length + 3 > 42
 							? imageFile.name?.substring(0, 39) + "..."
 							: imageFile.name}{" "}
 					</p>
+				) : editCategory?.image?.name && isEditing ? (
+					<p className={`text-center ${css(styles.formlabel)}`}>
+						{" "}
+						{editCategory?.image?.name?.length + 3 > 42
+							? editCategory?.image?.name?.substring(0, 39) + "..."
+							: editCategory?.image?.name}{" "}
+					</p>
+				) : (
+					<></>
 				)}
 
 				<input

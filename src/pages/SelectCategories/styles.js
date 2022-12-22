@@ -71,16 +71,19 @@ export default StyleSheet.create({
 		":hover": {
 			borderColor: Colors.themeColor,
 		},
+		height: "13vw"
 	},
 	templateImg: {
-		width: "5.5vw",
-		height: "8vw",
-		marginBottom: "0.8vw",
+		maxWidth: "100%",
+		maxHeight: "9vw",
+		margin: "0 0.8vw",
 		objectFit: "cover"
 	},
 	templateName: {
 		fontSize: "1vw",
 		lineHeight: "1vw",
+		position: "absolute",
+		bottom: ".3vw"
 	},
 
 	// Form css
