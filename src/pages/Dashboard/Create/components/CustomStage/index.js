@@ -57,6 +57,7 @@ const CustomStage = forwardRef((props, ref) => {
 	});
 
 	const [allElements, setAllElements] = useState(() => []);
+	const [triggerPaste, setTriggerPaste] = useState(() => Math.random());
 
 	const [contextMenu, setContextMenu] = useState(() => false);
 
@@ -86,6 +87,7 @@ const CustomStage = forwardRef((props, ref) => {
 
 	const [copyNodeAttrs, setCopyNodeAttrs] = useState({});
 	const [copyMultiElements, setCopyMultiElements] = useState([]);
+	const [pasteElements, setPasteElements] = useState(() => []);
 
 	const {
 		drawLineEnabled,
@@ -232,6 +234,28 @@ const CustomStage = forwardRef((props, ref) => {
 	useEffect(() => {
 		selectedElement && setSelectedElement({});
 	}, [selectedStage]);
+
+	useEffect(() => {
+		if (!_.isEmpty(pasteElements)) {
+			setTimeout(() => {
+				let elements = [];
+				layerRef.current
+					.find(".image, .text, .rect, .line, .ellipse, .polygon, .arrow")
+					.forEach((elementNode) => {
+						const isElement = pasteElements?.find(
+							(e) => e.id === elementNode?.attrs?.id
+						);
+
+						if (!_.isEmpty(isElement)) elements.push(elementNode);
+					});
+
+				console.log(elements);
+
+				trRef.current.nodes?.(elements);
+				setPasteElements([]);
+			}, 1000);
+		}
+	}, [pasteElements]);
 
 	useEffect(() => {
 		setMultiNodesElement(nodesArray);
@@ -526,6 +550,8 @@ const CustomStage = forwardRef((props, ref) => {
 
 				elementsToCopy.push(element);
 			}
+
+			setPasteElements(elementsToCopy);
 			setAllElements([...allElements, ...elementsToCopy]);
 			setState({ ...state, allElements: [...allElements, ...elementsToCopy] });
 		}

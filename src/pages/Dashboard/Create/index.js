@@ -954,7 +954,9 @@ const Dashboard = (props) => {
 		selectedStage?.canvas?.current?.setSelectedElement({});
 
 		if (props.triggerSaveTemplate) {
-			if (!props.user.accountSuspended) createCanvasThumbnail();
+			if (!props.user.accountSuspended && props?.user?.isAdmin !== true)
+				createCanvasThumbnail();
+			else if (props?.user?.isAdmin == true) createCanvasThumbnail();
 			else setShowSaveModal(true);
 
 			dispatch(saveTemplateAction(false));

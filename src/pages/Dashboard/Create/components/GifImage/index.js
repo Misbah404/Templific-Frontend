@@ -88,6 +88,7 @@ const GifImage = forwardRef((props, ref) => {
 			};
 
 			handleImageDrag(newImage.id, newImage);
+			trRef?.current?.nodes?.([]);
 		}
 	};
 

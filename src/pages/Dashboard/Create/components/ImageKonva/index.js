@@ -72,6 +72,7 @@ const ImageKonva = forwardRef((props, ref) => {
 			};
 
 			handleImageDrag(newRect.id, newRect);
+			trRef?.current?.nodes?.([]);
 		}
 	};
 

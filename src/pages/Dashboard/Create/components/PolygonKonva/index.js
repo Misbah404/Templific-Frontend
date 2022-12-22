@@ -46,6 +46,7 @@ const PolygonKonva = forwardRef((props, ref) => {
 			};
 
 			handlePolygonDrag(poly.id, newPoly);
+			trRef?.current?.nodes?.([]);
 		}
 	};
 

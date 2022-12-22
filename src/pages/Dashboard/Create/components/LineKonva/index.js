@@ -93,7 +93,10 @@ const LineKonva = forwardRef((props, ref) => {
 				points={line.points.map((point) => {
 					return point * (zoomValue / 100);
 				})}
-				onDragEnd={handleDragEnd}
+				onDragEnd={(e) => {
+					handleDragEnd(e);
+					trRef?.current?.nodes?.([]);
+				}}
 				onClick={handleClick}
 				onTap={handleClick}
 				onTransformEnd={handleDragEnd}

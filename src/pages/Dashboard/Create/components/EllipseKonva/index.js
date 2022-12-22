@@ -41,6 +41,8 @@ const EllipseKonva = forwardRef((props, ref) => {
 			};
 
 			handleEllipseDrag(newEllipse.id, newEllipse);
+
+			trRef?.current?.nodes?.([]);
 		}
 	};
 

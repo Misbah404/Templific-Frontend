@@ -27,6 +27,7 @@ const TextKonva = forwardRef((props, ref) => {
 		strokeEnabled,
 		strokeRef,
 		setStrokeElement,
+		nodesArray,
 	} = props;
 
 	const [isEditing, setIsEditing] = useState(false);
@@ -173,7 +174,11 @@ const TextKonva = forwardRef((props, ref) => {
 		};
 		setCurrentStateText(newText);
 		handleTextDrag(text.id, newText);
+
+		trRef?.current?.nodes?.([]);
 	};
+
+	console.log({ nodesArray });
 
 	const handleClick = () => {
 		handleSelectElement(shapeRef);

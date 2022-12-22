@@ -199,7 +199,7 @@ const SelectAdminTemplate = (props) => {
 			templateName: templateName.trim(),
 			templateCategory: {
 				templateCategory,
-				categoryId: props?.canvasData?.categories[templateCategory].id,
+				categoryId: ""
 			},
 			templateType,
 			canvas: {

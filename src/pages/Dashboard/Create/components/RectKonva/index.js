@@ -41,6 +41,8 @@ const RectKonva = forwardRef((props, ref) => {
 			};
 
 			handleRectangleDrag(newRect.id, newRect);
+
+			trRef?.current?.nodes?.([]);
 		}
 	};
 
