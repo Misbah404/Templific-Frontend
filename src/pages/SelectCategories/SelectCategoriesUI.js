@@ -37,6 +37,7 @@ function SelectCategoriesUI(props) {
 		deleteModal,
 		toggleDeleteModal,
 		handleCategoryForDelete,
+		editCategory,
 	} = props;
 
 	const renderCards = () => {
@@ -217,13 +218,22 @@ function SelectCategoriesUI(props) {
 					<span>Upload Image</span>
 				</div>
 
-				{imageFile?.name && (
+				{imageFile?.name ? (
 					<p className={`text-center ${css(styles.formlabel)}`}>
 						{" "}
 						{imageFile.name?.length + 3 > 42
 							? imageFile.name?.substring(0, 39) + "..."
 							: imageFile.name}{" "}
 					</p>
+				) : editCategory?.image?.name && isEditing ? (
+					<p className={`text-center ${css(styles.formlabel)}`}>
+						{" "}
+						{editCategory?.image?.name?.length + 3 > 42
+							? editCategory?.image?.name?.substring(0, 39) + "..."
+							: editCategory?.image?.name}{" "}
+					</p>
+				) : (
+					<></>
 				)}
 
 				<input

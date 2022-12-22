@@ -54,9 +54,8 @@ function UserModuleSubCategory(props) {
 						alt={res?.image?.name}
 						className={`${css(styles.templateImg)}`}
 					/>
-					<div>
-						<div className={`${css(styles.templateName)}`}>{res?.name}</div>
-					</div>
+
+					<div className={`${css(styles.templateName)}`}>{res?.name}</div>
 				</div>
 			</div>
 		);
@@ -120,14 +119,30 @@ function UserModuleSubCategory(props) {
 }
 
 const mapStateToProps = (state, params) => {
-	const subCategoryList = state?.category?.subCategory?.filter(
+	let subCategoryList = state?.category?.subCategory?.filter(
 		(category) =>
 			category?.mainCategory?.id == params?.match?.params?.mainCategoryId
+	);
+
+	subCategoryList = subCategoryList?.map((item) => {
+		const templateList = state?.category?.preDefineTemplates?.filter(
+			(temp) => temp?.subCategory?.id === item?.id
+		);
+
+		return {
+			...item,
+			templateList,
+		};
+	});
+
+	subCategoryList = subCategoryList.filter(
+		(sub) => sub?.templateList?.length !== 0
 	);
 
 	const mainCategory = state?.category?.mainCategory?.find(
 		(category) => category?.id == params?.match?.params?.mainCategoryId
 	);
+
 	return {
 		layout: state?.layout,
 		subCategoryList,

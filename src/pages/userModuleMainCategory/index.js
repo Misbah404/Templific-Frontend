@@ -24,6 +24,8 @@ function UserModuleMainCategory(props) {
 		category?.name?.toLowerCase().match(search?.toLowerCase())
 	);
 
+	console.log(filteredSubCategory);
+
 	const renderCards = () => {
 		return (
 			<div className={`w-100 ${css(styles.tempRow)}`}>
@@ -51,9 +53,7 @@ function UserModuleMainCategory(props) {
 						alt={res?.image?.name}
 						className={`${css(styles.templateImg)}`}
 					/>
-					<div>
-						<div className={`${css(styles.templateName)}`}>{res?.name}</div>
-					</div>
+					<div className={`${css(styles.templateName)}`}>{res?.name}</div>
 				</div>
 			</div>
 		);
@@ -117,9 +117,39 @@ function UserModuleMainCategory(props) {
 }
 
 const mapStateToProps = (state, params) => {
+	let mainCategoryList = state?.category.mainCategory?.map((main) => {
+		let subCategories = state?.category?.subCategory?.filter(
+			(sub) => sub?.mainCategory?.id === main?.id
+		);
+
+		subCategories = subCategories?.map((sub) => {
+			const temp = state?.category?.preDefineTemplates?.filter(
+				(template) => template?.subCategory?.id === sub?.id
+			);
+
+			return {
+				...sub,
+				templateList: [...temp],
+			};
+		});
+
+		subCategories = subCategories?.filter(
+			(sub) => sub?.templateList?.length !== 0
+		);
+
+		return {
+			...main,
+			subCategoryList: subCategories,
+		};
+	});
+
+	mainCategoryList = mainCategoryList?.filter(
+		(main) => main?.subCategoryList?.length !== 0
+	);
+
 	return {
 		layout: state?.layout,
-		mainCategoryList: state?.category.mainCategory ?? [],
+		mainCategoryList: mainCategoryList ?? [],
 	};
 };
 

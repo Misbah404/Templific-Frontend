@@ -686,10 +686,15 @@ const DashboardLayout = (props) => {
 										key={res.name}
 										onMouseOver={() => {
 											if (res.name === "category") setToggleCategoryImage(true);
+											if (res.name === "pre-define templates")
+												setTogglePreDefineImage(true);
 										}}
 										onMouseOut={() => {
 											if (res.name === "category")
 												setToggleCategoryImage(false);
+
+											if (res.name === "pre-define templates")
+												setTogglePreDefineImage(false);
 										}}
 									>
 										{res && res.link ? (

@@ -251,12 +251,6 @@ function SelectCategories(props) {
 	const _validateAddTemplateModal = () => {
 		let isValid = true;
 
-		if (_.isEmpty(mainCategory)) {
-			isValid = false;
-			setError("Main Category is required.");
-			return isValid;
-		}
-
 		if (_.isEmpty(subCategory)) {
 			isValid = false;
 			setError("Sub Category is required.");
@@ -269,10 +263,10 @@ function SelectCategories(props) {
 	const handleAddModal = () => {
 		if (_validateAddTemplateModal()) {
 			history.push(
-				ROUTES.SELECT_ADMIN_TEMPLATE.replace(
-					":categoryId",
-					mainCategory
-				).replace(":subCategoryId", subCategory)
+				ROUTES.SELECT_ADMIN_TEMPLATE.replace(":categoryId", params?.id).replace(
+					":subCategoryId",
+					subCategory
+				)
 			);
 			closeModals();
 		}
@@ -342,8 +336,10 @@ function SelectCategories(props) {
 	);
 
 	const subCategoryListOptions = subCategoryList?.filter(
-		(c) => c?.mainCategory?.id == mainCategory
+		(c) => c?.mainCategory?.id == selectedMainCategory
 	);
+
+	console.log({ subCategoryOfMainCategory });
 
 	return (
 		<>
@@ -383,10 +379,7 @@ function SelectCategories(props) {
 				toggleDeleteModal={toggleDeleteModal}
 				deleteModal={deleteModal}
 				handleSetCategoryDelete={handleSetCategoryDelete}
-				showAddTemplateButton={
-					props?.mainCategoryList?.length > 0 &&
-					props?.subCategoryList?.length > 0
-				}
+				showAddTemplateButton={subCategoryOfMainCategory?.length > 0}
 			/>
 		</>
 	);
