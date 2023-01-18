@@ -522,7 +522,7 @@ const DashboardLayout = (props) => {
 										<NavLink
 											to={
 												props?.user?.isAdmin !== true
-													? ROUTES.USER_MAIN_CATEGORY
+													? ROUTES.HOME
 													: ROUTES.SELECT_CATEGORIES
 											}
 											className={` ${css(styles.menuLi)} ${css(
@@ -620,7 +620,7 @@ const DashboardLayout = (props) => {
 						</Button>
 					)}
 
-					<Dropdown className="d-inline" style={{margin: "0vw 1vw"}}>
+					<Dropdown className="d-inline" style={{ margin: "0vw 1vw" }}>
 						<OverlayTrigger
 							overlay={
 								<Tooltip style={{ fontSize: ".8vw" }}>

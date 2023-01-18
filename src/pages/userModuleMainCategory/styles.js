@@ -71,7 +71,7 @@ export default StyleSheet.create({
 		fontSize: "2vw",
 	},
 	mainHeading: {
-		fontSize: "1.5vw",
+		fontSize: "1.3vw",
 		margin: "2vw 0 2vw",
 	},
 	tempRow: {
@@ -97,13 +97,13 @@ export default StyleSheet.create({
 		maxWidth: "100%",
 		maxHeight: "9vw",
 		margin: "0 0.8vw",
-		objectFit: "cover"
+		objectFit: "cover",
 	},
 	templateName: {
 		fontSize: "1vw",
 		lineHeight: "1vw",
 		position: "absolute",
-		bottom: ".2vw"
+		bottom: ".2vw",
 	},
 
 	// Form css

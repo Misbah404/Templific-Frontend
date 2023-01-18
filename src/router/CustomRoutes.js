@@ -103,7 +103,7 @@ const AuthRoute = ({ ...props }) => {
 
 	if (
 		(props?.path === ROUTES.SELECT_TEMPLATE ||
-			props?.path === ROUTES.USER_MAIN_CATEGORY ||
+			props?.path === ROUTES.HOME ||
 			props?.path === ROUTES.DASHBOARD) &&
 		props?.user?.isAdmin === true
 	) {
@@ -163,7 +163,6 @@ function CustomRoutes(props) {
 	return (
 		<Switch>
 			{/* Non Logged In users routes are below */}
-			<NoAuthRoute path={ROUTES.HOME} component={Login} {...repeatedProps} />
 
 			<NoAuthRoute path={ROUTES.LOGIN} component={Login} {...repeatedProps} />
 
@@ -207,6 +206,15 @@ function CustomRoutes(props) {
 			/>
 
 			{/* Loged in users Routes are below */}
+			<AuthRoute
+				path={ROUTES.HOME}
+				component={UserModuleMainCategory}
+				sideMenuItems={[...homeMenuItems, ...settingMenuItems]}
+				darkSidePanel
+				hasBack={false}
+				{...repeatedProps}
+			/>
+
 			<AuthRoute
 				path={ROUTES.CONNECT}
 				component={Connect}
@@ -335,7 +343,7 @@ function CustomRoutes(props) {
 				component={EtsyAuthentication}
 				{...repeatedProps}
 			/>
-
+			{/* 
 			<AuthRoute
 				path={ROUTES.USER_MAIN_CATEGORY}
 				component={UserModuleMainCategory}
@@ -343,7 +351,7 @@ function CustomRoutes(props) {
 				darkSidePanel
 				hasBack={false}
 				{...repeatedProps}
-			/>
+			/> */}
 
 			<AuthRoute
 				path={ROUTES.USER_SUB_CATEGORIES}

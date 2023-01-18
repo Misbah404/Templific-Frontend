@@ -162,6 +162,12 @@ export const CHECKBOX_THEME = {
 };
 
 export const homeMenuItems = [
+	// {
+	// 	name: "home",
+	// 	image: Images.categoryWhite,
+	// 	imageAlternate: Images.categoryPurple,
+	// 	link: ROUTES.USER_MAIN_CATEGORY,
+	// },
 	{
 		name: "template",
 		// link: "/template",
@@ -188,12 +194,6 @@ export const homeMenuItems = [
 	{
 		name: "photos",
 		image: Images.photos,
-	},
-	{
-		name: "pre-define templates",
-		image: Images.categoryWhite,
-		imageAlternate: Images.categoryPurple,
-		link: ROUTES.USER_MAIN_CATEGORY,
 	},
 	{
 		name: "category",

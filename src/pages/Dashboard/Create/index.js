@@ -659,12 +659,19 @@ const Dashboard = (props) => {
 					canvasAttrs.canvas?.canvasHeight &&
 					canvasAttrs.canvas?.canvasWidth
 				) {
-					const { canvasHeight, canvasWidth } = canvasAttrs?.canvasInPx;
+					const { canvasHeight, canvasWidth } =
+						canvasAttrs?.canvasAttrs?.canvasInPx;
 					const optimizeValue =
 						canvasWidth >= canvasHeight
 							? canvasWidth / moderateValue
 							: canvasHeight / moderateValue;
 
+					console.log({
+						optimizeValue,
+						zoomValue: parseInt(100 / optimizeValue),
+					});
+
+					// debugger;
 					setZoomValue(parseInt(100 / optimizeValue));
 				}
 

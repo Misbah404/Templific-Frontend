@@ -91,7 +91,7 @@ function UserModuleMainCategory(props) {
 			<div
 				className={`${css(
 					styles.main
-				)} d-flex flex-column align-items-center justify-content-center`}
+				)} d-flex flex-column align-items-start justify-content-start`}
 			>
 				<div
 					className={`${css(
@@ -104,7 +104,9 @@ function UserModuleMainCategory(props) {
 						)}`}
 					>
 						<h2 className={`${css(styles.mainHeading)}`}>
-							{"Main Categories"}
+							{
+								"Get started! Customize our preset templates categories, or create a new template from scratch"
+							}
 						</h2>
 						{actionButtons()}
 					</div>

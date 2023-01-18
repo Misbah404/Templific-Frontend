@@ -93,7 +93,7 @@ function UserModuleSubCategory(props) {
 			<div
 				className={`${css(
 					styles.main
-				)} d-flex flex-column align-items-center justify-content-center`}
+				)} d-flex flex-column align-items-center justify-content-start`}
 			>
 				<div
 					className={`${css(

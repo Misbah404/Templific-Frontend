@@ -104,7 +104,7 @@ function UserModuleTemplates(props) {
 			<div
 				className={`${css(
 					styles.main
-				)} d-flex flex-column align-items-center justify-content-center`}
+				)} d-flex flex-column align-items-center justify-content-start`}
 			>
 				<div
 					className={`${css(
@@ -120,7 +120,11 @@ function UserModuleTemplates(props) {
 							<div
 								className={`d-flex justify-content-start align-items-center`}
 							>
-								<img src={Images.arrowLeftIcon} className="cursor-pointer" onClick={() => history.goBack()} />
+								<img
+									src={Images.arrowLeftIcon}
+									className="cursor-pointer"
+									onClick={() => history.goBack()}
+								/>
 								<p className={`${css(styles.mainHeading)}`}>
 									{subCategory?.name || "All Sub Categories"}
 								</p>
