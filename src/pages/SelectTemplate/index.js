@@ -357,12 +357,6 @@ const SelectTemplate = (props) => {
 						styles.templateBox
 					)} d-flex flex-column align-items-center justify-content-center position-relative`}
 				>
-					<span
-						onClick={() => history.push(ROUTES.DASHBOARD)}
-						className={`cursor-pointer ${css(styles.closePopup)}`}
-					>
-						<i className={`fa fa-times font-weight-light`} />
-					</span>
 					<h2 className={`${css(styles.mainHeading)}`}>
 						Lets get Started! Create a new template
 					</h2>

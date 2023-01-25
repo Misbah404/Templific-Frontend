@@ -105,7 +105,6 @@ export const ROUTES = {
 	ADMIN_TEMPLATE_UPDATE: "/admin/template/edit/:id",
 	USER_SUB_CATEGORIES: "/user/category/:mainCategoryId",
 	USER_CATEGORY_TEMPLATES: "/user/:mainCategoryId/subCategory/:subCategoryId",
-	USER_MAIN_CATEGORY: "/user/mainCategories",
 };
 
 export const EMAIL_REGEX =
@@ -166,7 +165,6 @@ export const homeMenuItems = [
 	// 	name: "home",
 	// 	image: Images.categoryWhite,
 	// 	imageAlternate: Images.categoryPurple,
-	// 	link: ROUTES.USER_MAIN_CATEGORY,
 	// },
 	{
 		name: "template",

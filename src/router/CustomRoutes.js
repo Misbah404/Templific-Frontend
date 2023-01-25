@@ -343,15 +343,6 @@ function CustomRoutes(props) {
 				component={EtsyAuthentication}
 				{...repeatedProps}
 			/>
-			{/* 
-			<AuthRoute
-				path={ROUTES.USER_MAIN_CATEGORY}
-				component={UserModuleMainCategory}
-				sideMenuItems={[...homeMenuItems, ...settingMenuItems]}
-				darkSidePanel
-				hasBack={false}
-				{...repeatedProps}
-			/> */}
 
 			<AuthRoute
 				path={ROUTES.USER_SUB_CATEGORIES}

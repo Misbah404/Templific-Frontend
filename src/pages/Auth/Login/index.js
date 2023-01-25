@@ -40,7 +40,7 @@ const Login = (props) => {
 					if (data.login?.user?.isAdmin) {
 						history.push(ROUTES.SELECT_CATEGORIES);
 					} else {
-						history.push(ROUTES.USER_MAIN_CATEGORY);
+						history.push(ROUTES.HOME);
 					}
 				} else {
 					history.push({
