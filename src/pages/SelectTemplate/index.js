@@ -254,13 +254,13 @@ const SelectTemplate = (props) => {
 		let widthInPX = canvasWidth;
 
 		if (selectedUnit === "mm") {
-			widthInPX = widthInPX * 3.7795275591;
-			heightInPX = heightInPX * 3.7795275591;
+			widthInPX = widthInPX * 11.811023622047244;
+			heightInPX = heightInPX * 11.811023622047244;
 		}
 
 		if (selectedUnit === "inches") {
-			widthInPX = widthInPX * 96;
-			heightInPX = heightInPX * 96;
+			widthInPX = widthInPX * 300;
+			heightInPX = heightInPX * 300;
 		}
 
 		const data = {
@@ -297,19 +297,19 @@ const SelectTemplate = (props) => {
 		let newHeight = 0;
 		if (selectedUnit === "pixels") {
 			if (e.target.value === "inches") {
-				newWidth = canvasWidth / 96;
-				newHeight = canvasHeight / 96;
+				newWidth = canvasWidth / 300;
+				newHeight = canvasHeight / 300;
 			}
 
 			if (e.target.value === "mm") {
-				newWidth = canvasWidth / 3.7795275591;
-				newHeight = canvasHeight / 3.7795275591;
+				newWidth = canvasWidth / 11.811023622047244;
+				newHeight = canvasHeight / 11.811023622047244;
 			}
 		}
 		if (selectedUnit === "mm") {
 			if (e.target.value === "pixels") {
-				newWidth = canvasWidth * 3.7795275591;
-				newHeight = canvasHeight * 3.7795275591;
+				newWidth = canvasWidth * 11.811023622047244;
+				newHeight = canvasHeight * 11.811023622047244;
 			}
 
 			if (e.target.value === "inches") {
@@ -320,8 +320,8 @@ const SelectTemplate = (props) => {
 
 		if (selectedUnit === "inches") {
 			if (e.target.value === "pixels") {
-				newWidth = canvasWidth * 96;
-				newHeight = canvasHeight * 96;
+				newWidth = canvasWidth * 300;
+				newHeight = canvasHeight * 300;
 			}
 
 			if (e.target.value === "mm") {

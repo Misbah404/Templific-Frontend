@@ -95,6 +95,8 @@ const Dashboard = (props) => {
 		err: "",
 	});
 
+	console.log({ canvasAttrs });
+
 	const [templateCheckState, setTemplateCheckState] = useState({});
 	const [templateCheckStateDuplicate, setTemplateCheckStateDuplicate] =
 		useState({});
@@ -1626,15 +1628,17 @@ const Dashboard = (props) => {
 			let img =
 				downloadForm.type === "JPG"
 					? stagesRefs[canvas].current.stage.toDataURL({
-							pixelRatio: window.devicePixelRatio,
+							pixelRatio: 1,
 							mimeType: "image/jpeg",
 							quality: 1,
 					  })
 					: stagesRefs[canvas].current.stage.toDataURL({
-							pixelRatio: window.devicePixelRatio,
+							pixelRatio: 1,
 							mimeType: "image/png",
 							quality: 1,
 					  });
+
+			console.log({ img });
 
 			const daurl15dpi = changeDpiDataUrl(img, 300);
 
@@ -1671,66 +1675,42 @@ const Dashboard = (props) => {
 	const downloadPdf = (currentZoomValue) => {
 		const stageKeys = Object.keys(stagesRefs);
 
-		const height = stagesRefs[stageKeys[0]].current.stage.height();
-		const width = stagesRefs[stageKeys[0]].current.stage.width();
+		// const height = stagesRefs[stageKeys[0]].current.stage.height();
+		// const width = stagesRefs[stageKeys[0]].current.stage.width();
+		const height = canvasAttrs?.canvasInPx?.canvasHeight;
+		const width = canvasAttrs?.canvasInPx?.canvasWidth;
+
+		const orientation = width > height ? "l" : "p";
 
 		if (!!downloadForm.paper) {
-			let maxHeight = 3508;
-			let maxWidth = 2480;
-
-			const doc = new jsPDF("p", "px", [maxHeight, maxWidth]);
-
-			let calculatedHeight = 0;
-			let calculatedWidth = 0;
+			const doc = new jsPDF(orientation, "px", [height, width]);
 
 			stageKeys.map((canvas, i) => {
-				// if (i !== 0) doc.addPage();
-
-				if (width > maxWidth - calculatedWidth) {
-					calculatedHeight += height + 30;
-					calculatedWidth = 0;
-				}
-
-				if (height > maxHeight - calculatedHeight) {
-					doc.addPage();
-					calculatedHeight = 0;
-					calculatedWidth = 0;
-				}
+				if (i !== 0) doc.addPage();
 
 				const img = stagesRefs[canvas].current.stage.toDataURL({
-					pixelRatio: window.devicePixelRatio,
+					pixelRatio: 1,
 					mimeType: "image/jpeg",
 				});
 				const daurl15dpi = changeDpiDataUrl(img, 300);
 
-				doc.addImage(
-					daurl15dpi,
-					"JPEG",
-					calculatedWidth,
-					calculatedHeight,
-					width,
-					height,
-					`alias-${i + 1}`
-				);
-
-				// calculatedHeight += height
-				calculatedWidth += width + 30;
+				doc.addImage(daurl15dpi, "JPEG", 0, 0, width, height, `alias-${i + 1}`);
 			});
 
 			doc.save(
 				`${canvasAttrs.templateName || savedTemplateData.name}-canvas.pdf`
 			);
 		} else {
-			const doc = new jsPDF("p", "px", [height, width]);
+			const doc = new jsPDF(orientation, "px", [height, width]);
 
 			stageKeys.map((canvas, i) => {
 				if (i !== 0) doc.addPage();
 
 				const img = stagesRefs[canvas].current.stage.toDataURL({
-					pixelRatio: window.devicePixelRatio,
+					pixelRatio: 1,
 					mimeType: "image/jpeg",
 				});
-				const daurl15dpi = changeDpiDataUrl(img, 600);
+				const daurl15dpi = changeDpiDataUrl(img, 300);
 				doc.addImage(daurl15dpi, "JPEG", 0, 0, width, height, `alias-${i + 1}`);
 			});
 

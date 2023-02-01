@@ -149,8 +149,8 @@ export const MIN_CANVAS_SIZE = {
 
 export const MAX_CANVAS_SIZE = {
 	pixels: 10000,
-	mm: 2645,
-	inches: 104,
+	mm: 846,
+	inches: 33.336,
 };
 
 export const CHECKBOX_THEME = {
