@@ -102,8 +102,6 @@ const TextTools = ({ selectElement, selectedStage, zoomValue, fonts }) => {
 		}));
 	};
 
-	console.log({ zoomValue });
-
 	const handleUnderLine = () => {
 		selectedStage?.canvas?.current?.handleUpdateText(
 			{ underLine: !textState?.underLine },
@@ -401,7 +399,7 @@ const TextTools = ({ selectElement, selectedStage, zoomValue, fonts }) => {
 				</OverlayTrigger>
 
 				<Dropdown.Menu className={`${css(styles.toolBarMenu)}`}>
-					{[...Array(501).keys()].map((i) => (
+					{[...Array(501).keys()].slice(1).map((i) => (
 						<Dropdown.Item
 							className={`d-flex align-items-center`}
 							onClick={() => handleUpdateFont(i)}

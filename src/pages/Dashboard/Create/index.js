@@ -962,6 +962,16 @@ const Dashboard = (props) => {
 	useEffect(() => {
 		selectedStage?.canvas?.current?.setSelectedElement({});
 
+		if (
+			(props?.triggerSaveTemplate || props?.triggerDownloadTemplate) &&
+			canvasAttrs?.templateName?.includes(".")
+		) {
+			setTemplateNameError("Invalid Name, Remove '.' to proceed.");
+			dispatch(downloadTemplateAction(false));
+			dispatch(saveTemplateAction(false));
+			return;
+		}
+
 		if (props.triggerSaveTemplate) {
 			if (!props.user.accountSuspended && props?.user?.isAdmin !== true)
 				createCanvasThumbnail();

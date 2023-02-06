@@ -225,6 +225,11 @@ const SelectTemplate = (props) => {
 			return;
 		}
 
+		if (templateName.includes(".")) {
+			setErrors("Invalid Name, Remove '.' to proceed");
+			return;
+		}
+
 		const templateWithSameName = allTemplatesName?.find(
 			(temp) => temp.name?.toLowerCase() === templateName?.toLowerCase()
 		);
