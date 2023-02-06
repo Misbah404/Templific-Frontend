@@ -19,8 +19,6 @@ function UserModuleTemplates(props) {
 	);
 
 	const handleClickItemCard = (temp) => {
-		console.log({ temp });
-
 		const data = {
 			templateName: temp?.name?.trim(),
 			zoomValue: temp?.zoomValue,

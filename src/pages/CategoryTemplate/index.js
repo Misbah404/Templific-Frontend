@@ -40,7 +40,6 @@ function CategoryTemplate(props) {
 	};
 
 	const openEditModal = (res) => {
-		console.log(res);
 		setEditTemplate(res);
 		setTemplateName(res?.name);
 		setMainCategory(params?.categoryId);
@@ -149,31 +148,31 @@ function CategoryTemplate(props) {
 
 	return (
 		<>
-		{props?.layout?.sideBar && <SideBar />}
-		
-		<CategoryTemplateUI
-			addTemplateModal={addTemplateModal}
-			templateName={templateName}
-			setTemplateName={setTemplateName}
-			toggleTemplateModal={toggleTemplateModal}
-			errors={errors}
-			handleSubmitTemplateName={handleSubmitTemplateName}
-			subCategoryList={subCategoryFilteredMain}
-			mainCategoryList={mainCategoryList}
-			templateList={templateList}
-			toggleEditModal={toggleEditModal}
-			editModal={editModal}
-			openEditModal={openEditModal}
-			subCategory={subCategory}
-			mainCategory={mainCategory}
-			setSubCategory={setSubCategory}
-			setMainCategory={setMainCategory}
-			handleUpdateTemplate={handleUpdateTemplateReq}
-			closeModal={closeModal}
-			handleDeleteTemplate={handleDeleteTemplate}
-			onClickTemplate={onClickTemplate}
-			selectedSubCategory={selectedSubCategory}
-		/>
+			{props?.layout?.sideBar && <SideBar />}
+
+			<CategoryTemplateUI
+				addTemplateModal={addTemplateModal}
+				templateName={templateName}
+				setTemplateName={setTemplateName}
+				toggleTemplateModal={toggleTemplateModal}
+				errors={errors}
+				handleSubmitTemplateName={handleSubmitTemplateName}
+				subCategoryList={subCategoryFilteredMain}
+				mainCategoryList={mainCategoryList}
+				templateList={templateList}
+				toggleEditModal={toggleEditModal}
+				editModal={editModal}
+				openEditModal={openEditModal}
+				subCategory={subCategory}
+				mainCategory={mainCategory}
+				setSubCategory={setSubCategory}
+				setMainCategory={setMainCategory}
+				handleUpdateTemplate={handleUpdateTemplateReq}
+				closeModal={closeModal}
+				handleDeleteTemplate={handleDeleteTemplate}
+				onClickTemplate={onClickTemplate}
+				selectedSubCategory={selectedSubCategory}
+			/>
 		</>
 	);
 }

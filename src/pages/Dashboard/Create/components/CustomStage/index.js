@@ -249,8 +249,6 @@ const CustomStage = forwardRef((props, ref) => {
 						if (!_.isEmpty(isElement)) elements.push(elementNode);
 					});
 
-				console.log(elements);
-
 				trRef.current.nodes?.(elements);
 				setPasteElements([]);
 			}, 1000);
@@ -333,7 +331,6 @@ const CustomStage = forwardRef((props, ref) => {
 				nodesArray.includes(element.id)
 			);
 
-			console.log({ elements });
 			if (elements?.length > 0) setCopyMultiElements(elements);
 			setCopyNodeAttrs({});
 		} else if (!_.isEmpty(selectedElement)) {
@@ -387,12 +384,6 @@ const CustomStage = forwardRef((props, ref) => {
 			setState({ ...state, allElements: [...allElements, { ...newElement }] });
 		}
 	};
-
-	console.log({
-		copyMultiElements,
-		nodesArray,
-		elementsLength: allElements?.length,
-	});
 
 	const handlePasteNode = (fromKey = false) => {
 		if (copyNodeAttrs && Object.keys(copyNodeAttrs).length > 0) {
@@ -828,7 +819,6 @@ const CustomStage = forwardRef((props, ref) => {
 				}
 			});
 
-		console.log({ elements });
 		setNodes(elementsIds);
 
 		trRef.current.nodes?.(elements);
@@ -1198,6 +1188,8 @@ const CustomStage = forwardRef((props, ref) => {
 
 	offsetX = isTrim ? offsetX + 40 : offsetX;
 	offsetY = isTrim ? offsetY + 40 : offsetY;
+
+	console.log({ allElements });
 
 	return (
 		<div

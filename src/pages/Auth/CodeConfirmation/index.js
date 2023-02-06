@@ -12,7 +12,6 @@ import { generateOtp } from "../../../services/userHelper";
 
 const CodeConfirmation = (props) => {
 	const { email, accessToken } = props.user;
-	console.log({ user: props.user });
 	const location = useLocation();
 	const history = useHistory();
 	const [otp, setOtp] = useState(() => "");

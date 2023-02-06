@@ -478,10 +478,6 @@ const DashboardLayout = (props) => {
 		path: ROUTES.ADMIN_TEMPLATE_UPDATE,
 	});
 
-	console.log({ adminTemplateUpdate });
-
-	console.log({ props });
-
 	return (
 		<>
 			<header
