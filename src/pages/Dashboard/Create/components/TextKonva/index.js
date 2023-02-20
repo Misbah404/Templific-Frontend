@@ -178,8 +178,6 @@ const TextKonva = forwardRef((props, ref) => {
 		trRef?.current?.nodes?.([]);
 	};
 
-	console.log({ nodesArray });
-
 	const handleClick = () => {
 		handleSelectElement(shapeRef);
 	};
@@ -264,7 +262,7 @@ const TextKonva = forwardRef((props, ref) => {
 							? parseInt(currentStateText.letterSpacing) * (zoomValue / 100)
 							: 0
 					}
-					strokeWidth={text.strokeWidth}
+					strokeWidth={text.strokeWidth ?? 0}
 					stroke={currentStateText.color}
 					fontFamily={currentStateText.fontFamily}
 					lineHeight={currentStateText.lineHeight || 1}

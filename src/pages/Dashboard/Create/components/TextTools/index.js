@@ -102,8 +102,6 @@ const TextTools = ({ selectElement, selectedStage, zoomValue, fonts }) => {
 		}));
 	};
 
-	console.log({ zoomValue });
-
 	const handleUnderLine = () => {
 		selectedStage?.canvas?.current?.handleUpdateText(
 			{ underLine: !textState?.underLine },
@@ -200,12 +198,24 @@ const TextTools = ({ selectElement, selectedStage, zoomValue, fonts }) => {
 	const handleStrokeChange = (e) => {
 		setStrokeSlider(e.target.value);
 
+		const val = e.target?.value;
+
 		selectedStage?.canvas?.current?.handleUpdateText(
-			{ strokeWidth: parseInt(e.target.value) },
+			{
+				strokeWidth:
+					textState?.outlined && val == "0" ? 1 : parseInt(e.target.value),
+				oldStrokeWidth:
+					textState?.outlined && val == "0" ? 1 : parseInt(e.target.value),
+			},
 			selectElement.id
 		);
 
-		setTextState({ ...textState, strokeWidth: e.target.value });
+		setTextState({
+			...textState,
+			strokeWidth: textState?.outlined && val == "0" ? 1 : e.target.value,
+			oldStrokeWidth:
+				textState?.outlined && val == "0" ? 1 : parseInt(e.target.value),
+		});
 	};
 	const handleShadowChange = (e) => {
 		setShadowOffset(e.target.value);
@@ -237,7 +247,14 @@ const TextTools = ({ selectElement, selectedStage, zoomValue, fonts }) => {
 
 	const handleChangeTextOutlined = () => {
 		selectedStage?.canvas?.current?.handleUpdateText(
-			{ outlined: !textState.outlined },
+			{
+				outlined: !textState.outlined,
+				strokeWidth: !textState.outlined
+					? textState?.strokeWidth == 0
+						? 1
+						: parseInt(textState?.strokeWidth)
+					: parseInt(textState?.oldStrokeWidth),
+			},
 			selectElement.id
 		);
 
@@ -266,6 +283,8 @@ const TextTools = ({ selectElement, selectedStage, zoomValue, fonts }) => {
 
 	allGlyphs =
 		allGlyphs?.length <= textState?.fontFamily?.length ? [] : allGlyphs;
+
+	console.log({ textState });
 
 	return (
 		<div className={`d-flex justify-content-between ${css(styles.main)}`}>
@@ -401,7 +420,7 @@ const TextTools = ({ selectElement, selectedStage, zoomValue, fonts }) => {
 				</OverlayTrigger>
 
 				<Dropdown.Menu className={`${css(styles.toolBarMenu)}`}>
-					{[...Array(501).keys()].map((i) => (
+					{[...Array(501).keys()].slice(1).map((i) => (
 						<Dropdown.Item
 							className={`d-flex align-items-center`}
 							onClick={() => handleUpdateFont(i)}
@@ -585,7 +604,7 @@ const TextTools = ({ selectElement, selectedStage, zoomValue, fonts }) => {
 						<input
 							type="range"
 							max="20"
-							min="0"
+							min={textState.outlined === true ? "1" : "0"}
 							step="1"
 							value={rangeSlider}
 							onChange={handleRangeChange}
@@ -726,7 +745,7 @@ const TextTools = ({ selectElement, selectedStage, zoomValue, fonts }) => {
 						<input
 							type="range"
 							max="20"
-							min="1"
+							min="0"
 							step="1"
 							value={strokeSlider}
 							onChange={handleStrokeChange}

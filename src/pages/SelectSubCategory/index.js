@@ -138,8 +138,6 @@ function SelectCategories(props) {
 			return;
 		}
 
-		console.log({ mainCategory });
-
 		// if (!_.isEmpty(categoryWithSameName) && categoryWithSameName) {
 		// 	isValid = false;
 		// 	setError("Category name is already taken.");
@@ -338,8 +336,6 @@ function SelectCategories(props) {
 	const subCategoryListOptions = subCategoryList?.filter(
 		(c) => c?.mainCategory?.id == selectedMainCategory
 	);
-
-	console.log({ subCategoryOfMainCategory });
 
 	return (
 		<>

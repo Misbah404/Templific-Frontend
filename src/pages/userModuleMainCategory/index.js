@@ -24,8 +24,6 @@ function UserModuleMainCategory(props) {
 		category?.name?.toLowerCase().match(search?.toLowerCase())
 	);
 
-	console.log(filteredSubCategory);
-
 	const renderCards = () => {
 		return (
 			<div className={`w-100 ${css(styles.tempRow)}`}>

@@ -25,7 +25,7 @@ export default StyleSheet.create({
 		gridTemplateColumns: "15vw auto 24vw",
 		boxShadow: "0 0 0.2vw 0 rgba(0, 0, 0, 0.5)",
 		position: "relative",
-		zIndex: 3,
+		zIndex: 13,
 	},
 	menuItem: {
 		fontSize: "1vw",
@@ -103,9 +103,10 @@ export default StyleSheet.create({
 	sidePanel: {
 		background: Colors.lightPurple2,
 		boxShadow: "0 0.1vw 0.18vw 0 rgba(0, 0, 0, 0.5)",
-		zIndex: 2,
+		zIndex: 13,
 		marginTop: "0.1vw",
 		width: "6vw",
+		position: "relative",
 		// height: 'calc(100vh - 5vw)'
 	},
 	darkSidePanel: {
@@ -156,9 +157,9 @@ export default StyleSheet.create({
 	editCategoryButton: {
 		border: "0.1vw solid #F0EDFF",
 		color: "#593FE9",
-    background: "transparent",
-    marginRight: ".2vw",
-    padding: "0.8vw 1.2vw",
+		background: "transparent",
+		marginRight: ".2vw",
+		padding: "0.8vw 1.2vw",
 		fontSize: "1vw",
 	},
 });

@@ -34,10 +34,11 @@ const useText = (
 			transformedText: "Aa",
 			name: "text",
 			opacity: 1,
-			strokeWidth: 1,
+			strokeWidth: 0,
 			shadowOffset: 0,
 			shadowColor: "#000",
 			lineHeight: 1,
+			oldStrokeWidth: 0,
 		};
 
 		setAllElements([...allElements, newText]);

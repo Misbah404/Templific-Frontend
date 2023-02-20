@@ -95,8 +95,6 @@ const Dashboard = (props) => {
 		err: "",
 	});
 
-	console.log({ canvasAttrs });
-
 	const [templateCheckState, setTemplateCheckState] = useState({});
 	const [templateCheckStateDuplicate, setTemplateCheckStateDuplicate] =
 		useState({});
@@ -104,7 +102,6 @@ const Dashboard = (props) => {
 	const [uploadFile] = useMutation(UPLOAD_FILE_TO_SERVER, {
 		onCompleted(data) {
 			setThumbnail({ ...data.upload.data.attributes, id: data.upload.data.id });
-			console.log("SAVING");
 			saveTemplates(data.upload.data.id);
 		},
 
@@ -668,11 +665,6 @@ const Dashboard = (props) => {
 							? canvasWidth / moderateValue
 							: canvasHeight / moderateValue;
 
-					console.log({
-						optimizeValue,
-						zoomValue: parseInt(100 / optimizeValue),
-					});
-
 					// debugger;
 					setZoomValue(parseInt(100 / optimizeValue));
 				}
@@ -868,8 +860,6 @@ const Dashboard = (props) => {
 			try {
 				let template = templateData?.template || {};
 
-				console.log({ templateData });
-
 				let templateDuplicate = {};
 
 				setThumbnail(templateData?.image);
@@ -961,6 +951,16 @@ const Dashboard = (props) => {
 	// triggering save template
 	useEffect(() => {
 		selectedStage?.canvas?.current?.setSelectedElement({});
+
+		if (
+			(props?.triggerSaveTemplate || props?.triggerDownloadTemplate) &&
+			canvasAttrs?.templateName?.includes(".")
+		) {
+			setTemplateNameError("Invalid Name, Remove '.' to proceed.");
+			dispatch(downloadTemplateAction(false));
+			dispatch(saveTemplateAction(false));
+			return;
+		}
 
 		if (props.triggerSaveTemplate) {
 			if (!props.user.accountSuspended && props?.user?.isAdmin !== true)
@@ -1550,7 +1550,6 @@ const Dashboard = (props) => {
 
 				createPredefinedTemplate({ variables: data });
 			} else {
-				console.log("SAVING");
 				saveTemplateToDB({ variables: data });
 			}
 		} else {
@@ -1637,8 +1636,6 @@ const Dashboard = (props) => {
 							mimeType: "image/png",
 							quality: 1,
 					  });
-
-			console.log({ img });
 
 			const daurl15dpi = changeDpiDataUrl(img, 300);
 
